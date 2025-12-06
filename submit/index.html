@@ -509,7 +509,7 @@
     
             async function fetchFormConfiguration() {
                 const formId = getUrlParameter('id');
-                const API_BASE_URL = 'http://127.0.0.1:6500/form/'; 
+                const API_BASE_URL = `${window.baseUrl}/form/`; 
                 const endpoint = API_BASE_URL + (formId || 'default-form');
     
                 console.log(`Attempting to FETCH configuration from: ${endpoint}`);
