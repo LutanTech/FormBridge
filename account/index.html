@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FormBridge || Account</title>
+  <meta name="title" content="FormBridge – Smart University Form Automation">
+<meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
+
+<link rel="canonical" href="https://formbridge.vercel.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://formbridge.vercel.app/">
+<meta property="og:title" content="FormBridge – Smart University Form Automation">
+<meta property="og:description" content="Fast, secure digital form management for universities.">
+<meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://formbridge.vercel.app/">
+<meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
+<meta name="twitter:description" content="Digital form management built for universities.">
+<meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "FormBridge",
+  "alternateName": "Form Bridge Platform",
+  "url": "https://formbridge.vercel.app/",
+  "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
+  "sameAs": []
+}
+</script>
+
+<meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
+<meta name="robots" content="index, follow">
+  <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
+  <link rel="icon" href="/assets/logo.png" type="image/x-icon">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/utils.css">
+  <script src="/assets/scripts/utils.js"></script>
+  <link rel="stylesheet" href="/assets/css/account.css">
+
+</head>
+
+<body>
+
+  <div class="fixed-background-container">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2" style="animation-delay: 2s;"></div>
+  </div>
+  <style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .account-button {
+    background: #0000;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 0;
+  }
+
+  </style>
+
+  <nav class="glass-nav">
+    <div class="nav-container">
+      <div class="nav-content">
+        <div class="brand-logo" onclick="window.location.href='/'">
+          <div class="logo-icon-wrapper">
+            <img src="/assets/images/logo-nbg.png" alt="" srcset="">
+          </div>
+          <span class="brand-name">FormBridge
+        </div>
+        <div class="username" style="font-size: 1.2em; font-weight:bolder"></div>
+
+        <div class="desktop-menu">
+          <button class="account-button" onclick="window.location.href='/login'">
+            Login
+          </button>
+          <div class="menu-divider"></div>
+          <div class="register-button-group">
+            <button class="register-button" onclick="window.location.href='/logout'">
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div class="mobile-menu-btn-wrapper">
+          <button id="mobile-menu-account-btn" class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="mobile-menu" class="hidden mobile-menu-panel">
+      <div class="mobile-menu-items-container">
+        <a href="/login" class="mobile-nav-link">Login</a>
+        <a href="/account" class="mobile-nav-link">Account</a>
+        <a href="/support" class="mobile-nav-link">Support</a>
+        <div class="mobile-button-group">
+          <button class="mobile-login-button">Log In</button>
+          <button class="mobile-register-button">
+            Register Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <style>
+
+  </style>
+
+  <main class="main-content-area">
+    <div id="app">
+
+      <div class="sidebar collapsed">
+        <div class="closeMenu">&times</div>
+        <div class="s-nav">
+          <div class="item"> <i class="fas fa-plus"></i> New Form</div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="stats">
+          <div class="username"></div>
+          <div class="phone"></div>
+          <div class="email"></div>
+          <div class="joined"></div>
+        </div>
+        <div class="cards">
+          <div class="card forms" data-id="forms">
+            <div class="card-icon">
+              <i class="fas fa-message"></i>
+            </div>
+            <div class="card-title">Forms</div>
+            <div class="card-desc">View and Manage Forms</div>
+          </div>
+          <div class="card data" data-id="data">
+            <div class="card-icon">
+              <i class="fas fa-globe"></i>
+            </div>
+            <div class="card-title">Data</div>
+            <div class="card-desc">View and Manage your Data</div>
+          </div>
+          <div class="card settings" data-id="settings">
+            <div class="card-icon">
+              <i class="fas fa-cogs"></i>
+            </div>
+            <div class="card-title">Settings</div>
+            <div class="card-desc">Modify Settings</div>
+          </div>
+          <div class="card profile" data-id="profile">
+            <div class="card-icon">
+              <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="card-title">Profile</div>
+            <div class="card-desc">Edit Profile</div>
+          </div>
+        </div>
+      </div>
+      <style>
+
+      </style>
+      <div class="overlay vissible">
+
+        <div class="back-btn" title="Back"> &larr;</div>
+
+        <div class="newForm">
+          <div class="inner">
+            <form action="/new_form" id="newFormForm" method="post" onsubmit="return false">
+              <div class="input">
+                <label for="name">Enter Form Name <i>(Eg. SAS101, EMP400, PSY320)</i></label>
+                <input type="text" class="f-input" maxLength="20" id="name" placeholder="Max: 20 Characters" required>
+              </div>
+              <div class="input">
+                <label for="deadline" style="display: flex;justify-content:space-between">Submisssion Deadline
+                  <div class="feedback">34Hr 18mins from Now</div>
+                </label>
+                <input type="datetime-local" class="f-input" id="deadline" required>
+              </div>
+              <div class="input">
+                <label for="desc">Enter Form Description <i>(Optional) Only Visible to you</i> </label>
+                <textarea class="f-input" id="desc" placeholder=" Max: 255 Characters"></textarea>
+              </div>
+              <div class="input">
+                <label for="instructions">Enter Specific Instructions for Students <i>(Optional)</i></label>
+                <textarea placeholder="Max: 512 Characters" class="f-input" id="instructions"></textarea>
+              </div>
+
+              <div class="input fields">
+                <h3>Select Fields to collect Data</h3>
+                <div class="lb nm">
+                  <input type="checkbox" name="" id="-name">
+                  <i class="fas fa-user-circle"></i>
+                  <label for="-name">Name</label>
+
+                </div>
+                <div class="lb">
+                  <input type="checkbox" name="" id="adm">
+                  <label for="adm">
+                    <i class="fas fa-"></i>
+                    Admission Number
+                  </label>
+                </div>
+                <div class="lb">
+                  <input type="checkbox" name="" id="phone">
+
+                  <label for="phone"><i class="fas fa-phone"></i> Phone</label>
+                </div>
+                <div class="lb">
+                  <input type="checkbox" name="" id="age"><label for="age"><i class="fas fa"></i> Age</label>
+                </div>
+
+                <div class="lb">
+                  <input type="checkbox" name="" id="email">
+                  <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                </div>
+                <div class="lb">
+                  <input type="checkbox" name="" id="topic">
+                  <label for="topic"> <i class="fas fa-pen"></i> Topic</label>
+                </div>
+                <div class="lb">
+                  <input type="checkbox" name="" id="units">
+                  <label for="units"> <i class="fas fa-book"></i> Units</label>
+                </div>
+              </div>
+              <hr style="width: 100vw; border:0.2px solid #eeeeee2c">
+              <button type="submit" id="create-form"> Create </button>
+
+            </form>
+          </div>
+          <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const checkBoxes = document.querySelectorAll('.lb input');
+            const form = document.querySelector('#newFormForm');
+            const allInputs = form.querySelectorAll('input');
+            const ts = form.querySelectorAll('textarea');
+            
+                let savedData = JSON.parse(localStorage.getItem('saveData') || '{}');
+            
+                allInputs.forEach(i => {
+                    if (savedData[i.id] !== undefined) {
+            
+                        if (i.type === 'checkbox') {
+                            i.checked = savedData[i.id];
+                        } else {
+                            i.value = savedData[i.id];
+                        }
+            
+                    }
+                })
+                    ts.forEach(i => {
+                        if (savedData[i.id] !== undefined) {
+                       i.value = savedData[i.id];
+                        }
+            });
+            
+
+            if (form) {
+                const allInputs = form.querySelectorAll('input');
+
+                let savedData = JSON.parse(localStorage.getItem('saveData') || '{}');
+                
+                allInputs.forEach(i => {
+                    i.addEventListener('input', () => {
+                
+                        if (i.type === 'checkbox') {
+                            savedData[i.id] = i.checked;
+                        } else {
+                            savedData[i.id] = i.value.trim();
+                        }
+                
+                        localStorage.setItem('saveData', JSON.stringify(savedData));
+                    });
+                });
+                ts.forEach(i => {
+                    i.addEventListener('input', () => {
+                            savedData[i.id] = i.value.trim();
+                        localStorage.setItem('saveData', JSON.stringify(savedData));
+                    });
+                });
+                
+              form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const selected = [...checkBoxes]
+                  .filter(c => c.checked)
+                  .map(c => c.id);
+
+
+                if (selected.length < 1) {
+                  alert('Fields Required', 'Please Select Fields', 'error')
+                }
+                const name = form.querySelector('#name').value.trim()
+                const deadline = form.querySelector('#deadline').value.trim()
+                const desc = form.querySelector('#desc').value.trim()
+                const ins = form.querySelector('#instructions').value.trim()
+
+                if (!name) {
+                  alert('Error', 'Form Name and Deadline Required ', 'error')
+                }
+                const user = jdf(getCookie('user'))
+                if(user){
+                    const uid = user.id
+                    const token = getCookie('token')
+
+                    const data = {
+                    'deadline': deadline,
+                    'name': name,
+                    'selected': selected,
+                    'desc': desc ? desc : '',
+                    'ins': ins ? ins : '',
+                    'uid':uid,
+                    'token':token
+                    }
+            
+                createForm((data))
+            } else{
+                alert('Error','Please Login before continuing', 'error')
+            }
+              });
+            }
+
+            function createForm(data) {
+              if (data) {
+                toggleBtn('create-form', 'Create', true)
+                fetch(`${baseUrl}/new_form`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      data: data
+                    })
+                  })
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.error) {
+                      alert('Error', data.error, 'error')
+                      toggleBtn('create-form', 'Create', false)
+                    }
+                    if (data.msg) {
+                      alert('Success', 'Form Added Successfully', 'success')
+                      toggleBtn('create-form', 'Create', false)
+                    }
+                  })
+                  .catch(e => {
+                    alert('Connection Error', 'Check your Network connection', 'error')
+                    toggleBtn('create-form', 'Create', false)
+                  })
+              }
+
+            }
+          });
+
+          </script>
+        </div>
+        <style>
+            .forms-ov{
+                display: flex;
+                z-index: 2044;
+                transform: translate(0);
+                background: #000000;
+                position: absolute;
+                top: 0;
+                right: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                padding: 30px;
+
+            }
+        </style>
+        <div class="forms-ov">
+          <div class="forms-wrapper">
+            <div class="form">
+                <div class="form-logo">
+                  <img src="/assets/images/icon.png" alt="">
+                </div>
+                <div class="form-name">
+                  SAS401
+                </div>
+                <hr>
+                <div class="form-desc">
+                  Receive details of SAS 401 as from 28th January 2026
+                </div>
+                <div class="form-created">
+                  24/03/2025 5:24 PM
+                </div>
+                <div class="form-actions">
+                  <div class="copy" t="Copy Link">
+                    <i class="fas fa-copy"></i>
+                  </div>
+                  <div class="delete" t="Delete">
+                    <i class="fas fa-trash"></i>
+                  </div>
+                  <div class="edit" t="Edit">
+                    <i class="fas fa-edit"></i>
+                  </div>
+                  <div class="info" t="Info">
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+                  <div class="toggle" t="Toggle Visibility">
+                    <i class="fas fa-eye"></i>
+                  </div>
+                  <div class="database" t="Open Database">
+                    <i class="fas fa-server"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="form">
+                <div class="form-logo">
+                  <img src="/assets/images/icon.png" alt="">
+                </div>
+                <div class="form-name">
+                  SAS401
+                </div>
+                <hr>
+                <div class="form-desc">
+                  Receive details of SAS 401 as from 28th January 2026
+                </div>
+                <div class="form-created">
+                  24/03/2025 5:24 PM
+                </div>
+                <div class="form-actions">
+                  <div class="copy" t="Copy Link">
+                    <i class="fas fa-copy"></i>
+                  </div>
+                  <div class="delete" t="Delete">
+                    <i class="fas fa-trash"></i>
+                  </div>
+                  <div class="edit" t="Edit">
+                    <i class="fas fa-edit"></i>
+                  </div>
+                  <div class="info" t="Info">
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+                  <div class="toggle" t="Toggle Visibility">
+                    <i class="fas fa-eye"></i>
+                  </div>
+                  <div class="database" t="Open Database">
+                    <i class="fas fa-server"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="form">
+                
+              </div>
+              <div class="form">
+                <div class="form-logo">
+                  <img src="/assets/images/icon.png" alt="">
+                </div>
+                <div class="form-name">
+                  SAS401
+                </div>
+                <hr>
+                <div class="form-desc">
+                  Receive details of SAS 401 as from 28th January 2026
+                </div>
+                <div class="form-created">
+                  24/03/2025 5:24 PM
+                </div>
+                <div class="form-actions">
+                  <div class="copy" t="Copy Link">
+                    <i class="fas fa-copy"></i>
+                  </div>
+                  <div class="delete" t="Delete">
+                    <i class="fas fa-trash"></i>
+                  </div>
+                  <div class="edit" t="Edit">
+                    <i class="fas fa-edit"></i>
+                  </div>
+                  <div class="info" t="Info">
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+                  <div class="toggle" t="Toggle Visibility">
+                    <i class="fas fa-eye"></i>
+                  </div>
+                  <div class="database" t="Open Database">
+                    <i class="fas fa-server"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="form">
+                <div class="form-logo">
+                  <img src="/assets/images/icon.png" alt="">
+                </div>
+                <div class="form-name">
+                  SAS401
+                </div>
+                <hr>
+                <div class="form-desc">
+                  Receive details of SAS 401 as from 28th January 2026
+                </div>
+                <div class="form-created">
+                  24/03/2025 5:24 PM
+                </div>
+                <div class="form-actions">
+                  <div class="copy" t="Copy Link">
+                    <i class="fas fa-copy"></i>
+                  </div>
+                  <div class="delete" t="Delete">
+                    <i class="fas fa-trash"></i>
+                  </div>
+                  <div class="edit" t="Edit">
+                    <i class="fas fa-edit"></i>
+                  </div>
+                  <div class="info" t="Info">
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+                  <div class="toggle" t="Toggle Visibility">
+                    <i class="fas fa-eye"></i>
+                  </div>
+                  <div class="database" t="Open Database">
+                    <i class="fas fa-server"></i>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </main>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('.sidebar')
+    const btn = document.querySelector('#mobile-menu-account-btn')
+    const overlay = document.querySelector('.overlay')
+    const cbtn = document.querySelector('.closeMenu')
+    if (nav && btn) {
+      btn.addEventListener('click', () => {
+        nav.classList.toggle('collapsed')
+      })
+      cbtn.addEventListener('click', () => {
+        nav.classList.toggle('collapsed')
+      })
+    }
+
+    function initAccount() {
+      const content = document.querySelector('.content')
+      const user = jdf(getCookie('user'))
+      const token = jdf(getCookie('tokn'))
+      if (user.username) {
+        // pingAccount(user.username, token)
+      }
+      document.querySelector('.username').textContent = user.username
+
+    }
+    initAccount()
+
+    const cards = document.querySelectorAll('.card')
+    cards.forEach(c => {
+      c.addEventListener('click', () => {
+        const attr = c.getAttribute('data-id')
+        overlay.classList.toggle('vissible')
+        if(c.attr == 'forms'){
+            overlay.querySelector('.forms-ov').setAttribute('style','z-index:4000')
+        }
+      })
+    })
+
+    const backBtn = document.querySelector('.back-btn')
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        overlay.classList.toggle('vissible')
+      })
+    }
+
+    function initForms(){
+        const user = jdf(getCookie('user'))
+        const token = getCookie('token')
+        const wrapper = document.querySelector('.forms-wrapper')
+        if(user){
+            wrapper.innerHTML = 'Fetching your forms...'
+            fetch(`${baseUrl}/get_forms/${user.id}/${token}`)
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.error){
+                    alert('Error', data.error, 'error')
+                }
+                if(data.msg){
+                    alert('No Forms Found', data.msg, 'info')
+              }
+              wrapper.innerHTML = ''
+                const forms = data.forms
+                if(forms.length > 0){
+                    forms.forEach(f=>{
+                   const div = document.createElement('div')
+                   div.classList.add('form')
+                   div.innerHTML = `
+                   <div class="form-logo">
+                  <img src="/assets/images/icon.png" alt="">
+                </div>
+                <div class="form-name">
+                  ${f.name_str}
+                </div>
+                <hr>
+                <div class="form-desc">
+                  ${f.desc ? f.desc : 'No description added'}
+                </div>
+                <div class="form-created">
+                  ${f.added}
+                </div>
+                <div class="form-actions">
+                  <div class="copy" t="Copy Link">
+                    <i class="fas fa-copy"></i>
+                  </div>
+                  <div class="delete" t="Delete">
+                    <i class="fas fa-trash"></i>
+                  </div>
+                  <div class="edit" t="Edit">
+                    <i class="fas fa-edit"></i>
+                  </div>
+                  <div class="info" t="Info">
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+                  <div class="toggle" t="Toggle Visibility">
+                    <i class="fas fa-eye"></i>
+                  </div>
+                  <div class="database" t="Open Database">
+                    <i class="fas fa-server"></i>
+                  </div>
+                </div>
+                   `
+                   wrapper.appendChild(div)
+                   div.querySelector('.copy').addEventListener('click', ()=>{
+                    const link = `${window.origin}/submit/?${f.name_str}&id=${f.id}`
+                    navigator.clipboard.writeText(link)
+                    alert('Link copied', link, 'success')
+                   })
+                   div.querySelector('.database').addEventListener('click', ()=>{
+                    const link = `${window.origin}/database/?id=${f.id}`
+                    window.open(link, '_blank', 'DB')
+                   })
+            })
+
+                } else{
+                    wrapper.innerHTML = 'No forms found. Add some'
+                }
+            })
+        }
+    }
+    initForms()
+
+  })
+
+  </script>
+</body>
+
+</html>

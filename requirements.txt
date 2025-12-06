@@ -1,0 +1,8 @@
+Flask
+flask_cors
+flask_sqlalchemy
+Werkzeug
+Flask-Mail
+Flask-Migrate
+user-agents
+python-dateutil

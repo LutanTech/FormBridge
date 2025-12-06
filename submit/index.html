@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormBridge</title>
+    <meta name="title" content="FormBridge – Smart University Form Automation">
+<meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
+
+<link rel="canonical" href="https://formbridge.vercel.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://formbridge.vercel.app/">
+<meta property="og:title" content="FormBridge – Smart University Form Automation">
+<meta property="og:description" content="Fast, secure digital form management for universities.">
+<meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://formbridge.vercel.app/">
+<meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
+<meta name="twitter:description" content="Digital form management built for universities.">
+<meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "FormBridge",
+  "alternateName": "Form Bridge Platform",
+  "url": "https://formbridge.vercel.app/",
+  "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
+  "sameAs": []
+}
+</script>
+
+<meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
+<meta name="robots" content="index, follow">
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="icon" href="/assets/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/utils.css">
+    <script src="/assets/scripts/utils.js" defer></script>
+
+</head>
+<body>
+
+    <div class="fixed-background-container">
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2" style="animation-delay: 2s;"></div>
+    </div>
+    <style>
+        .account-button{
+            background: #0000;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            border: 0;
+        }
+    </style>
+<!-- 
+    <nav class="glass-nav">
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="brand-logo" onclick="window.location.href='/'">
+                    <div class="logo-icon-wrapper">
+                        <img src="/assets/images/logo-nbg.png" alt="" srcset="">
+                    </div>
+                    <span class="brand-name">FormBridge
+                </div>
+
+                <div class="desktop-menu">
+                    <button class="account-button" onclick="window.location.href='/account'">
+                        Account
+                    </button>
+                    <div class="menu-divider"></div>
+                    <div class="register-button-group">
+                        <button class="register-button" onclick="window.location.href='/register'">
+                            Register
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-menu-btn-wrapper">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden mobile-menu-panel">
+            <div class="mobile-menu-items-container">
+                <a href="/login" class="mobile-nav-link">Login</a>
+                <a href="/account" class="mobile-nav-link">Account</a>
+                <a href="/support" class="mobile-nav-link">Support</a>
+                <div class="mobile-button-group">
+                    <button class="mobile-login-button">Log In</button>
+                    <button class="mobile-register-button">
+                        Register Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav> -->
+    
+
+    <main class="main-content-area">
+        <style>
+            :root {
+                --color-bg-dark: #0d1117;
+                --color-bg-card: #161b22;
+                --color-border: #30363d;
+                --color-text-light: #c9d1d9;
+                --color-text-muted: #8b949e;
+                --color-primary-start: #6a5acd;
+                --color-primary-end: #4f46e5;
+                --color-success: #3fb950;
+                --color-error: #f85149;
+            }
+    
+            .hidden-force { display: none !important; }
+            .flex-force { display: flex !important; }
+            .uppercase { text-transform: uppercase; }
+    
+            .bg-decor {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                z-index: -10;
+            }
+            .blob {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(100px);
+                opacity: 0.15;
+            }
+            .blob-1 { top: -20%; left: -15%; width: 60%; height: 60%; background-color: var(--color-primary-end); }
+            .blob-2 { bottom: -10%; right: -20%; width: 50%; height: 50%; background-color: #6d28d9; }
+    
+            .loader {
+                width: 48px; height: 48px; border: 5px solid #30363d; 
+                border-bottom-color: var(--color-primary-end); border-radius: 50%; 
+                display: inline-block; box-sizing: border-box; animation: rotation 1s linear infinite;
+            }
+            @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            
+            .container {
+                width: 100%;
+                max-width: 540px;
+                z-index: 10;
+            }
+    
+            .header-section { text-align: center; margin-bottom: 2rem; }
+            .icon-box {
+                display: inline-flex; align-items: center; justify-content: center;
+                width: 72px; height: 72px; border-radius: 50%; 
+                background: linear-gradient(135deg, var(--color-primary-start), var(--color-primary-end));
+                color: white;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+                margin-bottom: 1rem;
+                border: 2px solid rgba(255, 255, 255, 0.1);
+            }
+            .header-title { font-size: 2rem; font-weight: 700; color: white; letter-spacing: -0.05em; }
+            .header-subtitle { color: var(--color-text-muted); font-size: 0.95rem; margin-top: 0.5rem; }
+          
+            .divider { width: 80%; height: 1px; background-color: var(--color-border); margin: 1rem auto; opacity: 0.5; }
+    
+            .countdown {
+                margin: 0 !important;
+                display: inline-block; padding: 0.5rem 1.25rem;
+                background-color: rgba(79, 70, 229, 0.2);
+                color: #93c5fd; font-size: 0.9rem; font-weight: 500;
+                border-radius: 9999px; border: 1px solid rgba(79, 70, 229, 0.5);
+                backdrop-filter: blur(8px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s;
+            }
+            .countdown:hover { box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }
+    
+            .form-card {
+                background-color: var(--color-bg-card);
+                border-radius: 1.25rem;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+                border: 1px solid var(--color-border);
+                overflow: hidden;
+                transition: all 0.3s;
+            }
+            .form-content { padding: 2rem; }
+            
+            .input-group { position: relative; margin-bottom: 1.5rem; }
+            .input-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+            .input-wrapper { position: relative; }
+            .input-icon { 
+                position: absolute; top: 0; bottom: 0; left: 0; padding-left: 1rem; 
+                display: flex; align-items: center; pointer-events: none; 
+                color: var(--color-text-muted); transition: color 0.2s;
+            }
+            .form-input {
+                width: 100%; padding: 10px 10px 10px 45px;
+                background-color: var(--color-bg-dark); border: 2px solid var(--color-border);
+                border-radius: 0.75rem; outline: none; color: var(--color-text-light);
+                transition: all 0.3s ease;
+                font-weight: 500;
+                font-size: large;
+            }
+            .form-input::placeholder { color: #475569; font-weight: 300; }
+            .form-input:focus { background-color: #0d1117; border-color: var(--color-primary-end); box-shadow: 0 0 0 1px var(--color-primary-end); }
+            .form-input:focus + .input-icon { color: var(--color-primary-end); }
+            
+            /* Autofill Fix for dark mode inputs */
+            input:-webkit-autofill {
+                -webkit-text-fill-color: var(--color-text-light) !important;
+                box-shadow: 0 0 0 30px var(--color-bg-dark) inset !important;
+                -webkit-box-shadow: 0 0 0 30px var(--color-bg-dark) inset !important;
+            }
+    
+            .input-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+            @media (min-width: 500px) { .input-grid { grid-template-columns: repeat(2, 1fr); } }
+    
+            .submit-button {
+                width: 100%; padding: 1rem 1.5rem;
+                background-image: linear-gradient(90deg, var(--color-primary-start) 0%, var(--color-primary-end) 100%);
+                color: white;
+                font-weight: 600; border-radius: 0.75rem;
+                box-shadow: 0 8px 20px -5px rgba(79, 70, 229, 0.6);
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+            .submit-button:hover { 
+                box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.8); 
+                transform: translateY(-2px);
+                filter: brightness(1.1);
+            }
+            .submit-button:active { transform: translateY(0); filter: brightness(0.9); }
+            .submit-button:focus { outline: none; }
+            .submit-info { text-align: center; font-size: 0.75rem; color: var(--color-text-muted); margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;}
+    
+            .footer-section { margin-top: 2.5rem; text-align: center; }
+            .support-text { font-size: 0.8rem; color: var(--color-text-muted); }
+            .support-link { color: #818cf8; font-weight: 500; transition: color 0.2s; }
+            .support-link:hover { color: white; }
+            .system-info { font-size: 0.8rem; color: #6b7280; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+            .social-links { display: flex; gap: 1rem; margin-top: 0.75rem; }
+            .social-link {
+                display: flex; align-items: center; gap: 0.5rem;
+                padding: 0.5rem 1rem; border-radius: 0.75rem;
+                background-color: var(--color-bg-card); border: 1px solid var(--color-border);
+                transition: background-color 0.2s, color 0.2s; font-size: 0.75rem;
+                color: var(--color-text-light);
+                text-decoration: none;
+            }
+            .social-link.whatsapp { color: var(--color-success); }
+            .social-link.website { color: var(--color-primary-start); }
+            .social-link:hover { background-color: #21262d; border-color: #4f46e5; }
+    
+            .modal-overlay {
+                position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(6px); z-index: 50;
+                flex-direction: column; align-items: center; justify-content: center; padding: 1rem;
+                transition: opacity 0.3s;
+            }
+    
+            .modal-content {
+                background-color: var(--color-bg-card); border-radius: 1rem;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+                width: 100%; max-width: 448px;
+                overflow: hidden; border: 1px solid #30363d;
+            }
+    
+            .confirm-header { padding: 1rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
+            .confirm-title { font-weight: 700; color: white; display: flex; align-items: center; gap: 0.5rem; }
+            .confirm-body { padding: 1.5rem; }
+            .confirm-text { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1rem; }
+            .confirm-details-box { background-color: #0d1117; border-radius: 0.75rem; padding: 1rem; font-size: 0.875rem; border: 1px solid var(--color-border); }
+            .detail-row { display: flex; justify-content: space-between; border-bottom: 1px solid #161b22; padding-bottom: 0.5rem; margin-bottom: 0.75rem; }
+            .detail-row:last-child { border-bottom: none; margin-bottom: 0; }
+            .detail-label { color: var(--color-text-muted); }
+            .detail-value { font-weight: 600; color: var(--color-text-light); text-align: right; }
+            .confirm-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-top: 1.5rem; }
+            .btn-edit { background-color: #30363d; color: var(--color-text-light); font-weight: 500; border-radius: 0.75rem; padding: 0.75rem 1rem; transition: background-color 0.2s; border: none; }
+            .btn-edit:hover { background-color: #484f58; }
+            .btn-submit { background: linear-gradient(90deg, var(--color-primary-start), var(--color-primary-end)); color: white; font-weight: 500; border-radius: 0.75rem; padding: 0.75rem 1rem; transition: opacity 0.2s; border: none; }
+            .btn-submit:hover { opacity: 0.9; }
+            .home-link{
+                color: #0f0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                font-size: large;
+                font-family: fantasy;
+            }
+    
+            .status-modal-content { text-align: center; padding: 2rem; }
+            .status-icon { margin-bottom: 1rem; font-size: 3rem; }
+            .status-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.5rem; }
+            .status-text { color: var(--color-text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+            .btn-close { 
+                width: 100%; padding: 0.75rem 1rem; 
+                background-color: var(--color-bg-dark); color: white; 
+                font-weight: 500; border-radius: 0.75rem; 
+                transition: background-color 0.2s; border: 1px solid var(--color-border);
+            }
+            .btn-close:hover { background-color: #161b22; }
+            .main-content-area{
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body>
+    
+        <div class="bg-decor">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+        </div>
+    
+        <div class="container">
+            <div class="header-section">
+                <div class="icon-box">
+                    <img style="width: 50px;" src="/assets/images/logo-nbg.png" alt="">
+                </div>
+                <h1 class="header-title" id="main-form-title">Loading Form...</h1>
+                <p class="header-subtitle" id="form-subtitle">Fetching configuration...</p>
+    
+                <div class="divider"></div>
+    
+                <div id="countdown" class="countdown">
+                    Calculating time...
+                </div>
+            </div>
+    
+            <div id="form-card" class="form-card" style="    width: 95%;
+    margin: auto;">
+                <form id="dynamic-form" class="form-content">
+                    <div id="loading-spinner" style="padding: 2.5rem 0; text-align: center;">
+                        <span class="loader" style="margin-bottom: 1rem;"></span>
+                        <p style="color: var(--color-text-light); font-weight: 500; letter-spacing: 0.05em;">Loading form data...</p>
+                    </div>
+                </form>
+            </div>
+    
+            <div class="footer-section">
+                <p class="support-text">
+                    Technical Support: <a href="tel:0711808286" class="support-link">0711 808 286</a>
+                </p>
+                <div class="system-info" style="margin-bottom: 20px;">
+                    <p class="submit-info">
+                        <a href="/" class="home-link"><i class="fas fa-home"></i>Home</a>
+                    </p>
+                    <div class="social-links">
+                        <a class="social-link whatsapp" target="_blank" href="https://wa.me/send?phone=254711808286&text=Hello, Lutan Tech"> 
+                            <i class="fab fa-whatsapp"></i> Whatsapp 
+                        </a> 
+                        <a class="social-link website" target="_blank" href="https://lutan-tech.is-great.org?utm_medium=direct&source=submissions_sas"> 
+                            <i class="fas fa-globe"></i> Website 
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    
+        <div id="confirmDiv" class="modal-overlay hidden-force">
+            <div class="modal-content">
+                <div class="confirm-header">
+                    <h3 class="confirm-title">
+                        <i class="fas fa-clipboard-list" style="color: var(--color-primary-end);"></i> Review Submission
+                    </h3>
+                </div>
+                
+                <div class="confirm-body">
+                    <p class="confirm-text">Please review your details before final submission.</p>
+                    
+                    <div id="confirmation-details" class="confirm-details-box">
+                        <p style="color: var(--color-text-muted);">Loading confirmation details...</p>
+                    </div>
+    
+                    <div class="confirm-actions">
+                        <button id="confirmNo" type="button" class="btn-edit">
+                            Edit
+                        </button>
+                        <button id="confirmYes" type="button" class="btn-submit">
+                            Confirm & Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div id="loader" class="modal-overlay hidden-force" style="z-index: 60; background-color: rgba(0, 0, 0, 0.95);">
+            <span class="loader" style="margin-bottom: 1rem;"></span>
+            <p id="loader-text" style="color: #cbd5e1; font-weight: 500; letter-spacing: 0.05em; animation: pulse 1.5s infinite;">Processing Submission...</p>
+        </div>
+    
+        <div id="statusMessage" class="modal-overlay hidden-force" style="z-index: 70;">
+            <div class="modal-content">
+                <div class="status-modal-content" style="position: relative;">
+                    <div id="statusIcon" class="status-icon">
+                        <i class="fas fa-info-circle" style="color: var(--color-primary-end);"></i>
+                    </div>
+                    <h3 id="statusTitle" class="status-title"></h3>
+                    <p id="statusText" class="status-text"></p>
+                    <button id="closeStatus" type="button" class="btn-close">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <script>
+            let currentFormData = null; 
+            let deadlineTime = null;
+    
+            const mainTitleEl = document.getElementById('main-form-title');
+            const subtitleEl = document.getElementById('form-subtitle');
+            const formElement = document.getElementById('dynamic-form');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const countdownEl = document.getElementById('countdown');
+            const formCard = document.getElementById('form-card');
+            
+            const confirmDiv = document.getElementById('confirmDiv');
+            const confirmDetailsEl = document.getElementById('confirmation-details');
+            const confirmYes = document.getElementById('confirmYes');
+            const confirmNo = document.getElementById('confirmNo');
+            
+            const statusMessageEl = document.getElementById('statusMessage');
+            const statusTitleEl = document.getElementById('statusTitle');
+            const statusTextEl = document.getElementById('statusText');
+            const statusIconEl = document.getElementById('statusIcon');
+            const closeStatusButton = document.getElementById('closeStatus');
+            const loader = document.getElementById('loader');
+            const loaderText = document.getElementById('loader-text');
+            
+            const fieldMap = {
+                'name': { label: 'Full Name', type: 'text', icon: 'fas fa-user', required: true, maxLength: 50 },
+                'adm': { label: 'Admission No.', type: 'text', icon: 'fas fa-id-card', required: true, customClass: 'uppercase', maxLength: 15 },
+                'phone': { label: 'Phone No.', type: 'tel', icon: 'fas fa-phone', required: true, maxLength: 10 },
+                'age': { label: 'Age', type: 'number', icon: 'fas fa-birthday-cake', required: true, grid: true },
+                'email': { label: 'Email Address', type: 'email', icon: 'fas fa-envelope', required: true, grid: true },
+                'units': { label: 'Units/Courses', type: 'text', icon: 'fas fa-book', required: true, maxLength: 100 },
+                'topic': { label: 'Topic Name', type: 'text', icon: 'fas fa-tag', required: true, maxLength: 150 }
+            };
+    
+            function showLoader(text = "Processing Submission...") {
+                loaderText.textContent = text;
+                loader.classList.remove('hidden-force');
+                loader.classList.add('flex-force');
+            }
+    
+            function hideLoader() {
+                loader.classList.add('hidden-force');
+                loader.classList.remove('flex-force');
+            }
+    
+            function showStatusMessage(title, message, isSuccess = false) {
+                statusTitleEl.textContent = title;
+                statusTextEl.innerHTML = message;
+                
+                statusIconEl.innerHTML = isSuccess
+                    ? `<i class="fas fa-check-circle" style="color: var(--color-success);"></i>`
+                    : `<i class="fas fa-times-circle" style="color: var(--color-error);"></i>`;
+    
+                statusMessageEl.classList.remove('hidden-force');
+                statusMessageEl.classList.add('flex-force');
+            }
+            
+            function hideStatusMessage() {
+                statusMessageEl.classList.add('hidden-force');
+                statusMessageEl.classList.remove('flex-force');
+            }
+    
+            function showConfirm(submissionData) {
+                let detailsHtml = '';
+                for (const key in submissionData.user_data) {
+                    const fieldConfig = fieldMap[key];
+                    if (fieldConfig) {
+                        detailsHtml += `
+                            <div class="detail-row">
+                                <span class="detail-label">${fieldConfig.label}</span>
+                                <span class="detail-value ${fieldConfig.customClass || ''}">${submissionData.user_data[key] || 'N/A'}</span>
+                            </div>
+                        `;
+                    }
+                }
+                confirmDetailsEl.innerHTML = detailsHtml || `<p style="color: var(--color-text-muted);">No data collected to confirm.</p>`;
+                confirmDiv.classList.remove('hidden-force');
+                confirmDiv.classList.add('flex-force');
+            }
+            
+            function hideConfirm() {
+                confirmDiv.classList.add('hidden-force');
+                confirmDiv.classList.remove('flex-force');
+            }
+            
+            function getUrlParameter(name) {
+                name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                const results = regex.exec(location.search);
+                return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            }
+    
+            async function fetchFormConfiguration() {
+                const formId = getUrlParameter('id');
+                const API_BASE_URL = 'http://127.0.0.1:6500/form/'; 
+                const endpoint = API_BASE_URL + (formId || 'default-form');
+    
+                console.log(`Attempting to FETCH configuration from: ${endpoint}`);
+    
+                try {
+                    const response = await fetch(endpoint, { signal: AbortSignal.timeout(4000) });
+    
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data.form;
+    
+                } catch (error) {
+                    console.warn(`Could not connect to local server at ${endpoint}. Falling back to mock data. Error:`, error.message);
+                    
+                
+                }
+            }
+            
+            function renderForm(formData) {
+                mainTitleEl.textContent = formData.name_str || 'Dynamic Form';
+                subtitleEl.innerHTML = formData.desc || 'No description provided.';
+                
+                deadlineTime = new Date(formData.deadline);
+    
+                formElement.innerHTML = ''; 
+    
+                let inputsArray;
+                try {
+                    inputsArray = JSON.parse(formData.inputs || '[]');
+                } catch (e) {
+                    showStatusMessage('Configuration Error', 'Could not process form input configuration. Please contact support.', false);
+                    return;
+                }
+                
+                let gridDiv = null;
+    
+                inputsArray.forEach(key => {
+                    const normalizedKey = key.replace(/^-/, '').trim();
+                    const fieldConfig = fieldMap[normalizedKey];
+    
+                    if (fieldConfig) {
+                        const fieldName = normalizedKey;
+                        const labelText = fieldConfig.label;
+                        const isRequired = fieldConfig.required ? 'required' : '';
+                        const customClass = fieldConfig.customClass || '';
+    
+                        const inputGroup = document.createElement('div');
+                        inputGroup.className = 'input-group';
+    
+                        const label = document.createElement('label');
+                        label.htmlFor = fieldName;
+                        label.className = 'input-label';
+                        label.textContent = labelText;
+    
+                        const inputWrapper = document.createElement('div');
+                        inputWrapper.className = 'input-wrapper';
+    
+                        const icon = document.createElement('div');
+                        icon.className = 'input-icon';
+                        icon.innerHTML = `<i class="${fieldConfig.icon}"></i>`;
+                        
+                        const input = document.createElement('input');
+                        input.type = fieldConfig.type || 'text';
+                        input.id = fieldName;
+                        input.name = fieldName;
+                        input.placeholder = `Enter your ${labelText.toLowerCase()}...`;
+                        input.className = `form-input ${customClass}`;
+                        input.setAttribute(isRequired, isRequired);
+                        if (fieldConfig.maxLength) {
+                            input.maxLength = fieldConfig.maxLength;
+                        }
+    
+                        inputWrapper.appendChild(icon);
+                        inputWrapper.appendChild(input);
+                        inputGroup.appendChild(label);
+                        inputGroup.appendChild(inputWrapper);
+                        
+                        if (fieldConfig.grid && !gridDiv) {
+                            gridDiv = document.createElement('div');
+                            gridDiv.className = 'input-grid';
+                            formElement.appendChild(gridDiv);
+                        } else if (!fieldConfig.grid && gridDiv) {
+                            gridDiv = null;
+                        }
+    
+                        if (gridDiv) {
+                            gridDiv.appendChild(inputGroup);
+                        } else {
+                            formElement.appendChild(inputGroup);
+                        }
+                    }
+                });
+                
+                if (gridDiv) {
+                    gridDiv = null;
+                }
+    
+                formElement.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', saveDraft);
+                    input.addEventListener('focusout', saveDraft);
+                });
+                
+                const submitContainer = document.createElement('div');
+                submitContainer.style.paddingTop = '0.5rem';
+    
+                const submitButton = document.createElement('button');
+                submitButton.type = 'submit';
+                submitButton.innerHTML = 'Submit Details <i class="fas fa-arrow-right" style="margin-left: 0.5rem; font-size: 0.875rem; opacity: 0.8;"></i>';
+                submitButton.className = 'submit-button';
+    
+                submitContainer.appendChild(submitButton);
+                submitContainer.innerHTML += `
+                    <p class="submit-info">
+                        <i class="fas fa-lock"></i> Progress saved automatically
+                    </p>
+                    
+                `;
+                formElement.appendChild(submitContainer);
+    
+                formElement.addEventListener('submit', handleFormPreSubmit);
+                
+                initForm();
+                updateCountdown(); 
+                setInterval(updateCountdown, 1000); 
+            }
+    
+            function saveDraft() {
+                const formData = new FormData(formElement);
+                const draft = {};
+                formData.forEach((value, key) => {
+                    draft[key] = value;
+                });
+                localStorage.setItem('dynamicFormDraft', JSON.stringify(draft));
+            }
+            
+            function initForm() {
+                const storedDraft = localStorage.getItem('dynamicFormDraft');
+                if (storedDraft) {
+                    const draft = JSON.parse(storedDraft);
+                    for (const key in draft) {
+                        const input = formElement.querySelector(`[name="${key}"]`);
+                        if (input) {
+                            input.value = draft[key];
+                        }
+                    }
+                }
+            }
+    
+            function updateCountdown() {
+                if (!deadlineTime) return;
+    
+                const now = new Date();
+                const diff = deadlineTime - now;
+                let mss = diff;
+
+// Get absolute value
+            let remSeconds = Math.floor(Math.abs(mss) / 1000);
+            let remhours = Math.floor(remSeconds / 3600);
+            let remminutes = Math.floor((remSeconds % 3600) / 60);
+            let remseconds = remSeconds % 60;
+
+
+                
+                if (diff < 0) {
+                    formCard.innerHTML = `
+                    <div class="form-content" style="text-align: center;">
+                       <div style="color: var(--color-error); font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-clock"></i></div>
+                       <h2 style="font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Submission Closed (-${remhours}h ${remminutes}m ${remseconds}s Ago)</h2>
+                       <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 1rem;">The deadline for submissions has passed.</p>
+                       <p style="color: var(--color-text-muted); font-size: 0.75rem;">Form ID: ${currentFormData.id}</p>
+                    </div>
+                    `;
+                    countdownEl.textContent = "Deadline Passed";
+                    countdownEl.style.backgroundColor = 'rgba(248, 81, 73, 0.2)';
+                    countdownEl.style.color = "var('--color-error')";
+                    countdownEl.style.borderColor = 'rgba(248, 81, 73, 0.5)';
+                    return;
+                }
+                
+                const totalSeconds = Math.floor(diff / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                
+                countdownEl.innerHTML = `<i class="far fa-clock" style="margin-right: 0.25rem;"></i> Deadline in: ${hours}h ${minutes}m ${seconds}s`;
+            }
+            
+            function handleFormPreSubmit(event) {
+                event.preventDefault();
+                
+                if (formElement.checkValidity()) {
+                    const formData = new FormData(formElement);
+                    const submissionData = {
+                        form_id: currentFormData.id,
+                        form_name: currentFormData.name_str,
+                        submission_time: new Date().toISOString(),
+                        user_data: {}
+                    };
+                    formData.forEach((value, key) => submissionData.user_data[key] = value);
+                    if (submissionData.user_data.phone && submissionData.user_data.phone.startsWith('254') || submissionData.user_data.phone.startsWith('+254')) {
+                        alert('Error',"Phone starting with 254 is not allowed. Please use 07...", 'error');
+                        return; 
+                    }
+                    
+                    confirmYes.onclick = () => { hideConfirm(); handleFormSubmit(submissionData); };
+                    
+                    showConfirm(submissionData);
+                } else {
+                    formElement.reportValidity();
+                }
+            }
+    
+            async function handleFormSubmit(submissionData) {
+                showLoader("Submitting data...");
+                
+                const endpoint = 'https://jsonplaceholder.typicode.com/posts'; 
+    
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(submissionData)
+                    });
+    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+    
+                    const result = await response.json();
+                    
+                    hideLoader();
+                    localStorage.removeItem('dynamicFormDraft');
+                    formElement.reset();
+    
+                    showStatusMessage(
+                        'Submission Successful',
+                        `Your details for form <b>${currentFormData.id}</b> have been recorded.`,
+                        true
+                    );
+    
+                } catch (error) {
+                    hideLoader();
+                    console.error('Submission failed:', error);
+                    showStatusMessage(
+                        'Submission Failed', 
+                        `Failed to submit data. If the local server (127.0.0.1:6500) is running, check your network and CORS configuration. Details: ${error.message}`, 
+                        false
+                    );
+                }
+            }
+    
+            async function initializeApplication() {
+                closeStatusButton.addEventListener('click', hideStatusMessage);
+                confirmNo.addEventListener('click', hideConfirm);
+                
+                try {
+                    const data = await fetchFormConfiguration();
+                    currentFormData = data;
+                    
+                    if (data.is_open) {
+                        renderForm(currentFormData);
+                    } else {
+                        mainTitleEl.textContent = `${data.name_str} - Closed`;
+                        subtitleEl.textContent = data.desc || 'This form is currently closed for submissions.';
+                        formElement.innerHTML = `
+                            <div style="padding: 2rem; text-align: center; background-color: var(--color-bg-dark); border-radius: 0.75rem; border: 1px solid var(--color-border);">
+                                <i class="fas fa-lock" style="font-size: 3rem; color: var(--color-error); margin-bottom: 1rem;"></i>
+                                <h2 style="font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Form Closed</h2>
+                                <p style="color: var(--color-text-muted);">${data.instructions || 'The form submission period has ended or is temporarily unavailable.'}</p>
+                            </div>
+                        `;
+                        countdownEl.textContent = "Closed";
+                        countdownEl.style.backgroundColor = 'rgba(248, 81, 73, 0.2)';
+                        countdownEl.style.color = "var('--color-error')";
+                        countdownEl.style.borderColor = 'rgba(248, 81, 73, 0.5)';
+                    }
+                    
+                } catch (error) {
+                    mainTitleEl.textContent = 'Error Loading Form';
+                    subtitleEl.textContent = 'Could not load form configuration.';
+                    loadingSpinner.innerHTML = `<p style="color: var(--color-error); font-weight: 500;">Error loading Form. Refresh the page or Contact your Instructor.</p>`;
+                    console.error('Initialization error:', error);
+                }
+            }
+    
+            window.onload = initializeApplication;
+        </script>
+<!-- 
+        </main>
+    <footer class="page-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand-section">
+                    <div class="footer-brand-info">
+                        <i class="fas fa-university footer-brand-icon"></i>
+                        <span class="footer-brand-text">Form<span class="footer-brand-highlight">Bridge</span></span>
+                    </div>
+                    <p class="footer-description">
+                        Empowering University students and administration with seamless digital tools.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="footer-column-heading">Quick Links</h4>
+                    <ul class="footer-list">
+                        <li><a href="/" class="footer-list-link">Home</a></li>
+                        <li><a href="/register" class="footer-list-link">Register</a></li>
+                        <li><a href="/support" class="footer-list-link">Support</a></li>
+                        <li><a href="/login" class="footer-list-link">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="footer-column-heading">Legal</h4>
+                    <ul class="footer-list">
+                        <li><a href="/privacy_policy" class="footer-list-link">Privacy Policy</a></li>
+                        <li><a href="/terms" class="footer-list-link">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 FormBridge. All rights reserved.</p>
+                <p>Developed by <a href="http://lutan-tech.is-great.org" target="_blank" class="lutan-tech-link">Lutan Tech</a></p>
+            </div>
+        </div>
+    </footer> -->
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormBridge</title>
+    <meta name="title" content="FormBridge – Smart University Form Automation">
+<meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
+
+<link rel="canonical" href="https://formbridge.vercel.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://formbridge.vercel.app/">
+<meta property="og:title" content="FormBridge – Smart University Form Automation">
+<meta property="og:description" content="Fast, secure digital form management for universities.">
+<meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://formbridge.vercel.app/">
+<meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
+<meta name="twitter:description" content="Digital form management built for universities.">
+<meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "FormBridge",
+  "alternateName": "Form Bridge Platform",
+  "url": "https://formbridge.vercel.app/",
+  "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
+  "sameAs": []
+}
+</script>
+
+<meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
+<meta name="robots" content="index, follow">
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
+    <link rel="icon" href="/assets/logo.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/utils.css">
+    <script src="/assets/scripts/utils.js" defer></script>
+    <link rel="stylesheet" href="/assets/css/verify.css">
+
+</head>
+<body>
+
+    <div class="fixed-background-container">
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2" style="animation-delay: 2s;"></div>
+    </div>
+    <style>
+        .account-button{
+            background: #0000;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            border: 0;
+        }
+    </style>
+
+    <nav class="glass-nav">
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="brand-logo" onclick="window.location.href='/'">
+                    <div class="logo-icon-wrapper">
+                        <img src="/assets/images/logo-nbg.png" alt="" srcset="">
+                    </div>
+                    <span class="brand-name">FormBridge
+                </div>
+
+                <div class="desktop-menu">
+                    <button class="account-button" onclick="window.location.href='/account'">
+                        Account
+                    </button>
+                    <div class="menu-divider"></div>
+                    <div class="register-button-group">
+                        <button class="register-button" onclick="window.location.href='/register'">
+                            Register
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-menu-btn-wrapper">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden mobile-menu-panel">
+            <div class="mobile-menu-items-container">
+                <a href="/login" class="mobile-nav-link">Login</a>
+                <a href="/account" class="mobile-nav-link">Account</a>
+                <a href="/support" class="mobile-nav-link">Support</a>
+                <div class="mobile-button-group">
+                    <button class="mobile-login-button">Log In</button>
+                    <button class="mobile-register-button">
+                        Register Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content-area">
+        <div class="form">
+            <form action="/verify" onsubmit="return false" id="form">
+                <div class="stats">
+                    <div class="name">
+                        <hr style="width: 100%;">
+                        <h2>Form<span style="color: #ad40fa;">Bridge</span></h2>
+                        <hr>
+                    </div>
+                    <div class="page">
+                        <h2 style="text-align: center; margin-top:10px">Verify Email</h2>
+                    </div>
+                </div>
+                <h5>Enter OTP sent to your email</h5>
+                
+                <div class="div">
+                    <input type="text" index="0"  name="" id="otp-1" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="1"  name="" id="otp-2" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="2"  name="" id="otp-3" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="3"  name="" id="otp-4" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="4"  name="" id="otp-5" maxLength="1" class="otp-inputs" autocomplete="address">
+                </div>
+                <div class="btn">
+                    <button type="submit" onclick="verify()">Verify</button>
+                </div>
+                <hr style="width: 100%; border:0.2px solid rgba(255, 255, 255, 0.11);">
+                <div class="actions">
+                    <div class="didnt">
+                        <p>Didn't receive code? <a href="/resend_otp">Resend</a></p>
+                    </div>
+                    <div class="reg"><hr><a href="/register">Register</a><hr></div>
+                    <div class="home"><a href="/">Home</a></div>
+                </div>
+            </form>
+        </div>
+
+        </main>
+    <footer class="page-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand-section">
+                    <div class="footer-brand-info">
+                        <i class="fas fa-university footer-brand-icon"></i>
+                        <span class="footer-brand-text">Form<span class="footer-brand-highlight">Bridge</span></span>
+                    </div>
+                    <p class="footer-description">
+                        Empowering University students and administration with seamless digital tools.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="footer-column-heading">Quick Links</h4>
+                    <ul class="footer-list">
+                        <li><a href="/" class="footer-list-link">Home</a></li>
+                        <li><a href="/register" class="footer-list-link">Register</a></li>
+                        <li><a href="/support" class="footer-list-link">Support</a></li>
+                        <li><a href="/login" class="footer-list-link">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="footer-column-heading">Legal</h4>
+                    <ul class="footer-list">
+                        <li><a href="/privacy_policy" class="footer-list-link">Privacy Policy</a></li>
+                        <li><a href="/terms" class="footer-list-link">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 FormBridge. All rights reserved.</p>
+                <p>Developed by <a href="http://lutan-tech.is-great.org" target="_blank" class="lutan-tech-link">Lutan Tech</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputs = document.querySelectorAll('.otp-inputs');
+    
+        inputs.forEach((input, idx) => {
+            input.addEventListener('input', () => {
+                if (input.value.trim().length === 1 && idx < inputs.length - 1) {
+                    inputs[idx + 1].focus();
+                }
+            });
+    
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && idx > 0) {
+                    inputs[idx - 1].focus();
+                }
+            });
+    
+            input.addEventListener('focus', () => {
+                input.select();
+            });
+        });
+    
+        const p = new URLSearchParams(window.location.search);
+        const em = p.get('email');
+        const otp = p.get('otp');
+    
+        if (em && otp) {
+            let cleanEmail = deobf(em);
+            let cleanOtp = deobf(otp);
+    
+            if (cleanEmail.startsWith('"') && cleanEmail.endsWith('"')) {
+                cleanEmail = cleanEmail.slice(1, -1);
+            }
+            if (cleanOtp.startsWith('"') && cleanOtp.endsWith('"')) {
+                cleanOtp = cleanOtp.slice(1, -1);
+            }
+    
+            const payload = {
+                'email': cleanEmail,
+                'otp': cleanOtp
+            };
+            verify(payload);
+        }
+    });
+
+function verify(payload) {
+    const inputs = document.querySelectorAll('.otp-inputs');
+    toggleBtn('Verify', true);
+
+    let domOtp = '';
+    inputs.forEach(inp => {
+        domOtp += inp.value.trim();
+    });
+
+    const domEmail = jdf(getCookie('user')).email;
+
+    const finalPayload = payload || {
+        'email': domEmail,
+        'otp': domOtp.toUpperCase()
+    };
+
+    if (finalPayload.email && finalPayload.otp.length > 4) {
+        fetch(`${baseUrl}/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: jof(finalPayload)
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error', data.error, 'error');
+                    toggleBtn('Verify', false);
+                }
+                if (data.info) {
+                    alert('Info', data.info);
+                    toggleBtn('Verify', false);
+                    setTimeout(() => {
+                        window.location.href = "/login"
+                    }, 1000);
+                } else if (data.msg) {
+                    alert('Success', data.msg, 'success');
+                    setTimeout(() => {
+                        window.location.href = "/login"
+                    }, 1000);
+                    toggleBtn('Verify', false);
+                }
+            })
+            .catch(err => {
+                alert('Network Error', 'Failed to communicate with server', 'error');
+                toggleBtn('Verify', false);
+            });
+    } else {
+        alert('Error', 'OTP incomplete', 'error');
+        toggleBtn('Verify', false);
+    }
+}
+</script>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormBridge || Register</title>
+    <meta name="title" content="FormBridge – Smart University Form Automation">
+<meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
+
+<link rel="canonical" href="https://formbridge.vercel.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://formbridge.vercel.app/">
+<meta property="og:title" content="FormBridge – Smart University Form Automation">
+<meta property="og:description" content="Fast, secure digital form management for universities.">
+<meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://formbridge.vercel.app/">
+<meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
+<meta name="twitter:description" content="Digital form management built for universities.">
+<meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "FormBridge",
+  "alternateName": "Form Bridge Platform",
+  "url": "https://formbridge.vercel.app/",
+  "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
+  "sameAs": []
+}
+</script>
+
+<meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
+<meta name="robots" content="index, follow">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
+    <link rel="icon" href="/assets/logo.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="/assets/scripts/utils.js" defer></script>
+    <link rel="stylesheet" href="/assets/css/utils.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151e2e',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+</head>
+<body class="bg-slate-950 min-h-screen flex flex-col text-slate-200 antialiased selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+
+    <!-- Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] " style="animation-delay: 2s;"></div>
+    </div>
+
+    <style>
+        main{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-wrapper{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 700px;
+            margin: 50px auto;
+            width: 90%;
+            
+            height: fit-content;
+        }
+        form{
+            display: flex;
+            flex-direction:row;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            div{
+                flex-grow: 1;
+            }
+        }
+        .div-inp{
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+
+        }
+        .div{
+            position: relative;
+            display: flex;
+            gap: 5px;
+            flex-direction: column;
+            max-width: 400px;
+
+        }
+        .div-inp input{
+            display: flex;
+            padding: 10px;
+            padding-left: 40px;
+            flex-grow: 1;
+            border: 0;
+            outline: 2px solid indigo;
+            font-size: small;
+            min-width: 300px;
+            border: 0;
+            border-bottom: 2px solid blue;
+            color: rgb(255, 255, 255);
+            background: rgba(255, 255, 255, 0);
+
+            }
+            .div-inp input:-webkit-autofill,
+.div-inp input:-webkit-autofill:hover,
+.div-inp input:-webkit-autofill:focus,
+.div-inp input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0) inset !important;
+    box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0) inset !important;
+    -webkit-text-fill-color: rgb(255, 255, 255) !important;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+
+        .div i:nth-of-type(1){
+            position: absolute;
+            left: 0px;
+            color: rgba(255, 255, 255, 0.479);
+            padding: 10px;
+        }
+        .eye{
+            position: absolute;
+            right: 5px;
+            width: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            cursor: pointer;
+            height: 30px;
+            &:active{
+                scale: 0.97;
+            }
+            i{
+                position: relative !important;
+                color: rgb(15, 15, 15) !important;
+                padding: 0 !important;
+                left: 0 !important;
+            }
+        }
+        h3, h2, h1{
+            font-weight: bolder;
+            text-align: center;
+        }
+        h2{
+            font-size: 1.5em;
+        }
+        .logo{
+            background: white;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            border-radius: 50%;
+            justify-content: center;
+            margin: auto;
+            img{
+                width: 100%;
+
+            }
+        }
+
+
+        .actions{
+            display: flex;
+            gap: 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        form button{
+            background: green;
+            border: 0px;
+            padding: 10px 20px;
+            flex-grow: 1;
+            width: 80%;
+            border-radius: 10px;
+            max-width: 300px;
+
+        }
+        .name{
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            align-items: center;
+            hr{
+            flex-grow: 1;
+            }
+        }
+        .reg{
+            display: flex;
+            width: 100%;
+            margin-bottom: 5px;
+            justify-content: center;
+            align-items: center;
+            max-width: 300px;
+            gap: 10px;
+            hr{
+                flex-grow: 1;
+                padding: 1px;
+
+            }
+        }
+    </style>
+
+    <main class="flex-grow flex flex-col">
+        <div class="form-wrapper">
+            <form action="/register" onsubmit="return false" method="post">
+                <div class="dat">
+                <div class="logo">
+                    <img src="/assets/images/logo-nbg.png" alt="">
+                </div>
+                <div class="name"> 
+                <h2 class="3xl">Form<span style="color: rgb(173, 64, 250);">Bridge</span></h2></div>
+                </div>
+                <hr style="width: 100%;">
+                <div class="div">
+                    <label for="username">Enter Username</label>
+                    <div class="div-inp">
+                        <i class="fas fa-user-circle"></i>
+                        <input type="text" name="username" id="username" placeholder="Username" maxLength="10" required>
+                    </div>
+                </div>
+                <div class="div">
+                    <label for="email">Enter Email</label>
+                    <div class="div-inp">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" id="email" placeholder="Email" required>
+                    </div>
+                </div>
+                <div class="div">
+                    <label for="password">Enter Password</label>
+                    <div class="div-inp">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="password" placeholder="Password" required>
+                    </div>
+                </div>
+                                <div class="div">
+                    <label for="c-password">Confirm Password</label>
+                    <div class="div-inp">
+                        <i class="fas fa-lock-open"></i>
+                        <input type="text" autocomplete="off" name="c-password" id="c-password" placeholder="Confirm Password" required>
+                    </div>
+                </div>
+                <div class="actions" style="width: 100%;">
+                    <button type="submit">Register</button>
+                    <div class="reg">
+                        <hr> 
+                    <a href="/login" style="color: #0f0;"> Login </a>
+                    <hr>
+                </div>
+                <a href="/" style="color: rgb(179, 0, 255);"> Home </a>
+            
+                </div>
+            </form>
+        </div>
+
+        </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', ()=>{
+
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', (e)=>{
+           e.preventDefault()
+           e.stopImmediatePropagation()
+
+           const username = form.querySelector('#username').value.trim()
+           const password = form.querySelector('#password').value.trim()
+           const email = form.querySelector('#email').value.trim()
+           const c_password = form.querySelector('#c-password').value.trim()
+
+           if(username && password && email && c_password){
+            if(password !== c_password){
+                alert('Mismatch Error', 'Passwords do not match', 'error')
+                return
+            }
+            const payload = {
+            username:username,
+            password:password,
+            email:email
+            }
+            login(jof(payload))
+           }
+
+        })
+        function login(payload){
+            console.log(payload)
+            toggleBtn(true)
+            fetch(`http://127.0.0.1:6500/register`, {
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                 method:'POST',
+                 body:JSON.stringify({data:payload})
+            })
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.error){
+                    alert('Failed', data.error, 'error')
+                    toggleBtn(false)
+                } else{
+                    confirm(data)
+                }
+            })
+            .catch(err=>{
+                alert('Network Error', 'Please Make sure you have an active internet connection', 'error')
+                toggleBtn(false)
+            })
+        
+        }
+        function toggleBtn(toggle){
+                const btn = form.querySelector('button')
+                btn.disabled = toggle
+                toggle ? btn.setAttribute('data-loading', '') : btn.removeAttribute('data-loading', '')
+                if(btn.hasAttribute('data-loading')){
+                 btn.innerHTML = 'Register <i class="fas fa-spinner fa-spin"></i> '
+                    } else{
+                        btn.innerHTML = 'Register'
+                    }
+        }
+
+})
+    </script>
+</body>
+</html>

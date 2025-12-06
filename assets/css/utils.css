@@ -1,0 +1,115 @@
+.alert-div{
+    position: fixed;
+    right: 0px;
+    top: 0;
+    z-index: 3000;
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: end;
+}
+.alert{
+    padding: 5px;
+    background: white;
+    border-radius: 10px;
+    margin-top: 20px;
+    display: flex;
+    gap: 5px;
+    justify-content: space-around;
+    align-items: start;
+    margin-right: 10px;
+    max-width: 300px;
+    flex-grow: 1;
+    min-width: 300px;
+
+}
+.alert .content{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: 10px;
+    color: black;
+    width: 100%;
+    .text{
+        font-weight: 700;
+        font-size: 0.8em;
+    }
+}
+.icon{
+    font-size: 2em;
+}
+.icon{
+.fa-info-circle{
+    color: rgba(255, 255, 255, 0.721) !important;
+}
+.fa-warning{
+    color: rgb(0, 0, 0);
+}
+.fa-check-circle{
+    color: rgb(255, 255, 255);
+}
+}
+.move-right{
+transform: translateX(100%);
+transition: all 1s ease-in-out;
+}
+.icon{
+flex-grow: 1;
+height: -webkit-fill-available;
+display: flex;
+justify-content: space-around;
+align-items: center;
+padding: 5px;
+border-top-left-radius: 10px;
+border-bottom-left-radius: 10px;
+
+}
+.m-info{
+    font-size: small;
+}
+.icon.error{
+background: red;
+}
+.icon.info{
+background: rgb(0, 157, 255);
+}
+.icon.success{
+background: rgb(0, 255, 72);
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px aqua inset !important;
+    box-shadow: 0 0 0 1000px rgb(0, 0, 0) inset !important;
+    -webkit-text-fill-color: white !important;
+    transition: background-color 9999s ease-in-out 0s !important;
+  }
+  [t] {
+    position: relative; 
+}
+
+[t]::after {
+    content: attr(t);
+    position: absolute;
+    bottom: 100%;  /* shows above parent, use top:100% if you want below */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgb(85, 84, 84);
+    color: white;
+    padding: 5px 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+    border-radius: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;  /* hidden by default */
+    transition: opacity 0.2s;
+    z-index: 1000;
+    display: block;  /* ensure it exists */
+}
+
+[t]:hover::after {
+    opacity: 1;
+}
+
