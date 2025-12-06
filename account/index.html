@@ -38,7 +38,7 @@
 <meta name="robots" content="index, follow">
   <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
   <link rel="icon" href="/assets/logo.png" type="image/x-icon">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"> -->
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/utils.css">
   <script src="/assets/scripts/utils.js"></script>
@@ -531,7 +531,136 @@
         </div>
       </div>
     </div>
+    <style>
+      .confirm-modal{
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        background: #00000051 !important;
+        position: fixed;
+        top: 0;
+        z-index: 300;
+        display: none;
+        justify-content: center;
+        align-items: center;
+      }
 
+      .appear{
+        display: flex;
+      }
+      .confirm-inner{
+        width: 90%;
+        max-width: 400px;
+        background: rgba(81, 3, 130, 0.696);
+        border: 5px solid rgb(0, 0, 0);
+        outline: 2px solid magenta;
+        padding: 20px;
+        height: 90%;
+        backdrop-filter: blur(10px);
+        height: fit-content;
+        color: white;
+        position: relative;
+        &:before{
+          position: absolute;
+          top: 0;
+          content: '';
+          padding: 10px;
+          background: rgba(0, 0, 0, 0);
+          width: 5%;
+          height: 5%;
+          left: 0;
+          clip-path: polygon(0 100%,  0% 100%, 0% 0%, 100% 0%);
+
+        }
+        &:after{
+          position: absolute;
+          bottom: 0;
+          content: '';
+          padding: 10px;
+          background: rgba(0, 0, 0, 0);
+          width: 5%;
+          height: 5%;
+          right: -0.3px;
+          clip-path: polygon(100% 0%,  0% 100%, 100% 100%, 100% 0%);
+
+        }
+      }
+
+      .title{
+        font-weight: 700;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        color: white;
+        font-size: large;
+      }
+      .c-content input{
+        padding: 10px 20px;
+        width: 100%;
+        flex-grow: 1;
+        font-size: small;
+        border: 2px solid magenta;
+        background: #000;
+        outline: none;
+        color: white;
+        &::placeholder{
+          color: #9999996b;
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+
+      }
+      .c-content{
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        color: black;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .actions{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+      .c-content button{
+        padding: 10px;
+        border: 2px solid rgb(153, 0, 255);
+        flex-grow: 1;
+        max-width: 100px;
+        text-transform: uppercase;
+        &:nth-of-type(1){
+          background: red;
+          border: 0;
+        }
+        &:nth-of-type(2){
+          background: rgb(0, 255, 47);
+          border: 0;
+        }
+      }
+      .text{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+
+      }
+      .text label{
+        color: white;
+      }
+    </style>
+<div class="confirm-modal">
+  <div class="confirm-inner">
+    <div class="c-content">
+    <div class="title"></div>
+    <div class="text">
+    </div>
+    <div class="actions">
+      <button type="button" data-id="cancel">Cancel</button>
+      <button type="button" data-id="continue">Ok</button>
+    </div>
+    </div>
+  </div>
+</div>
 
   </main>
 
@@ -541,6 +670,63 @@
     const btn = document.querySelector('#mobile-menu-account-btn')
     const overlay = document.querySelector('.overlay')
     const cbtn = document.querySelector('.closeMenu')
+    window.confirm = confirm
+
+    function confirm(title, text, input, proceed, waitVal){
+      console.log(title, text, input, proceed, waitVal)
+      const confirmModal = document.querySelector('.confirm-modal')
+    
+      if(!confirmModal) return
+    
+      confirmModal.classList.add('appear')
+    
+      const inner = confirmModal.querySelector('.confirm-inner')
+    
+      // Title
+      inner.querySelector('.title').textContent =
+        title || 'Are you sure you want to continue with this action?'
+    
+      // Text/message
+      inner.querySelector('.text').innerHTML = text || ''
+    
+      // Input visibility
+      const inputField = inner.querySelector('input')
+      if(input){
+        if(inputField) inputField.classList.add('seen')
+      } else {
+        if(inputField) inputField.classList.remove('seen')
+      }
+    
+      // Cancel button
+      const cancelBtn = inner.querySelector('[data-id="cancel"]')
+      cancelBtn.onclick = () => {
+        confirmModal.classList.remove('appear')
+      }
+    
+      // Continue button
+      const continueBtn = inner.querySelector('[data-id="continue"]')
+      continueBtn.onclick = () => {
+        if(typeof proceed === "function"){
+          console.log('Value: ' + inputField.value.trim() + 'and wait == '  + waitVal)
+          if(inputField.value.toUpperCase().trim() !== waitVal){
+            alert('Error', 'Please type the required text: ' + waitVal, 'error')
+            return
+          }
+          proceed(input ? inputField?.value : null)
+        }
+        confirmModal.classList.remove('appear')
+      }
+    }
+    
+       
+    
+    // Helper (optional)
+    function exec(fn){
+      console.log("executing fn")
+      fn()
+    }
+    
+
     if (nav && btn) {
       btn.addEventListener('click', () => {
         nav.classList.toggle('collapsed')
@@ -641,6 +827,20 @@
                     const link = `${window.origin}/submit/?${f.name_str}&id=${f.id}`
                     navigator.clipboard.writeText(link)
                     alert('Link copied', link, 'success')
+                   })
+                   div.querySelector('.database').addEventListener('click', ()=>{
+                    const link = `${window.origin}/database/?id=${f.id}`
+                    window.open(link, '_blank', 'DB')
+                   })
+                   div.querySelector('.delete').addEventListener('click', ()=>{
+                    confirm(
+                      "Are you sure you want to delete this form?",
+                      `<label for="del-pass"> Type <b>'DELETE/${f.name_str}'</b> here to proceed </label><input type="password" id="del-pass" placeholder="Type 'DELETE/${f.name_str}' here to proceed">`, 'danger',
+                      (value)=>{
+                      alert('deleting form' + f.id)
+                    }),
+                    `DELETE/${f.name_str}`
+
                    })
                    div.querySelector('.database').addEventListener('click', ()=>{
                     const link = `${window.origin}/database/?id=${f.id}`

@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 function toggleBtn(id, text, toggle){
     const btn = document.querySelector(`#${id}`)
-    btn.disabled = toggle
+    if(btn) btn.disabled = toggle
     toggle ? btn.setAttribute('data-loading', '') : btn.removeAttribute('data-loading', '')
     if(btn.hasAttribute('data-loading')){
      btn.innerHTML = `${text} <i class="fas fa-spinner fa-spin"></i> `

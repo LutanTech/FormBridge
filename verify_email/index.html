@@ -128,7 +128,7 @@
                     <input type="text" index="4"  name="" id="otp-5" maxLength="1" class="otp-inputs" autocomplete="address">
                 </div>
                 <div class="btn">
-                    <button type="submit" onclick="verify()">Verify</button>
+                    <button id="verify-btn" type="submit" onclick="verify()">Verify</button>
                 </div>
                 <hr style="width: 100%; border:0.2px solid rgba(255, 255, 255, 0.11);">
                 <div class="actions">
@@ -229,7 +229,7 @@
 
 function verify(payload) {
     const inputs = document.querySelectorAll('.otp-inputs');
-    toggleBtn('Verify', true);
+    toggleBtn('verify-btn', 'Verify', true);
 
     let domOtp = '';
     inputs.forEach(inp => {
@@ -257,11 +257,11 @@ function verify(payload) {
             .then(data => {
                 if (data.error) {
                     alert('Error', data.error, 'error');
-                    toggleBtn('Verify', false);
+                    toggleBtn('verify-btn', 'Verify', false);
                 }
                 if (data.info) {
                     alert('Info', data.info);
-                    toggleBtn('Verify', false);
+                    toggleBtn('verify-btn', 'Verify', false);
                     setTimeout(() => {
                         window.location.href = "/login"
                     }, 1000);
@@ -270,16 +270,16 @@ function verify(payload) {
                     setTimeout(() => {
                         window.location.href = "/login"
                     }, 1000);
-                    toggleBtn('Verify', false);
+                    toggleBtn('verify-btn', 'Verify', false);
                 }
             })
             .catch(err => {
                 alert('Network Error', 'Failed to communicate with server', 'error');
-                toggleBtn('Verify', false);
+                toggleBtn('verify-btn', 'Verify', false);
             });
     } else {
         alert('Error', 'OTP incomplete', 'error');
-        toggleBtn('Verify', false);
+        toggleBtn('verify-btn', 'Verify', false);
     }
 }
 </script>
