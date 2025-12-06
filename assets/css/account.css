@@ -462,3 +462,133 @@ flex: 500px;
     color: white;
     margin: auto;
 }
+
+.confirm-modal{
+width: 100%;
+height: 100%;
+padding: 20px;
+background: #00000051 !important;
+position: fixed;
+top: 0;
+z-index: 300;
+display: none;
+justify-content: center;
+align-items: center;
+}
+
+.appear{
+display: flex;
+}
+.confirm-inner{
+width: 90%;
+max-width: 400px;
+background: rgba(81, 3, 130, 0.696);
+border: 5px solid rgb(0, 0, 0);
+outline: 2px solid magenta;
+padding: 20px;
+height: 90%;
+backdrop-filter: blur(10px);
+height: fit-content;
+color: white;
+position: relative;
+&:before{
+  position: absolute;
+  top: 0;
+  content: '';
+  padding: 10px;
+  background: rgba(0, 0, 0, 0);
+  width: 5%;
+  height: 5%;
+  left: 0;
+  clip-path: polygon(0 100%,  0% 100%, 0% 0%, 100% 0%);
+
+}
+&:after{
+  position: absolute;
+  bottom: 0;
+  content: '';
+  padding: 10px;
+  background: rgba(0, 0, 0, 0);
+  width: 5%;
+  height: 5%;
+  right: -0.3px;
+  clip-path: polygon(100% 0%,  0% 100%, 100% 100%, 100% 0%);
+
+}
+}
+
+.title{
+font-weight: 700;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+color: white;
+font-size: large;
+}
+.c-content input{
+padding: 10px 20px;
+width: 100%;
+flex-grow: 1;
+font-size: small;
+border: 2px solid magenta;
+background: #000;
+outline: none;
+color: white;
+&::placeholder{
+  color: #9999996b;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+
+}
+.c-content{
+display: flex;
+flex-direction: column;
+gap: 20px;
+color: black;
+justify-content: space-between;
+align-items: center;
+}
+.actions{
+display: flex;
+justify-content: space-between;
+align-items: center;
+width: 100%;
+}
+.c-content button{
+padding: 10px;
+border: 2px solid rgb(153, 0, 255);
+flex-grow: 1;
+max-width: 100px;
+text-transform: uppercase;
+&:nth-of-type(1){
+  background: red;
+  border: 0;
+}
+&:nth-of-type(2){
+  background: rgb(0, 255, 47);
+  border: 0;
+}
+}
+.text{
+display: flex;
+flex-direction: column;
+gap: 10px;
+width: 100%;
+
+}
+.text label{
+color: white;
+}
+.forms-ov{
+    display: flex;
+    z-index: 2044;
+    transform: translate(0);
+    background: #000000;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    padding: 30px;
+
+}

@@ -265,6 +265,33 @@ def get_form(id):
             return jsonify({'form':form.to_dict()}), 200
         return jsonify({'error':'Page not found'}), 404
     return jsonify({'error':'Incomplete request'}), 400
+
+@app.route('/delete_form', methods=['POST'])
+def delete_form():
+    raw = request.get_json()
+    encoded = raw.get("data")
+    data = decode(encoded)
+    
+    id = data.get('uid')
+    fid = data.get('fid')
+    token = data.get('token')
+    
+    if fid and id and token:
+            user = User.query.filter_by(id=id).first()
+            if user and validate_token(token, user.id):
+                form = Form.query.filter_by(id=fid).first()
+                if form:
+                    try:
+                        db.session.delete(form)
+                        db.session.commit()
+                        return jsonify({'msg':'Form deleted  successfully'}), 200
+                    except Exception as e:
+                        db.session.rollback()
+                        log(f'[500] Database error in /delete route: {str(e)}', 'error')
+                        return jsonify({'error':'Failed to delete : Database error'}), 500
+                return jsonify({'error':'Form not found'}), 404
+            return jsonify({'error':'Unauthorized action. Please login again'}), 401
+    return jsonify({'error':'Missing data in request'}), 404
     
 if __name__ == '__main__':
     with app.app_context():

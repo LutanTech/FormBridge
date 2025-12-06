@@ -87,12 +87,14 @@ input:-webkit-autofill {
   }
   [t] {
     position: relative; 
+    opacity: 1;
+    display: block;
 }
 
 [t]::after {
     content: attr(t);
     position: absolute;
-    bottom: 100%;  /* shows above parent, use top:100% if you want below */
+    bottom: 100%;  
     left: 50%;
     transform: translateX(-50%);
     background: rgb(85, 84, 84);
@@ -103,10 +105,10 @@ input:-webkit-autofill {
     border-radius: 2px;
     white-space: nowrap;
     pointer-events: none;
-    opacity: 0;  /* hidden by default */
+    /* opacity: 0;   */
     transition: opacity 0.2s;
     z-index: 1000;
-    display: block;  /* ensure it exists */
+    display: block;  
 }
 
 [t]:hover::after {
