@@ -1,7 +1,7 @@
 
-const baseUrl = 'http://127.0.0.1:6500'
+// const baseUrl = 'http://127.0.0.1:6500'
 // const baseUrl = "http://10.130.144.82:6500"
-// const baseUrl = 'https://formbridge.eu.pythonanywhere.com'
+const baseUrl = 'https://formbridge.eu.pythonanywhere.com'
 window.baseUrl = baseUrl
 
 function obf(text){
