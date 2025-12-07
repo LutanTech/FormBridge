@@ -185,6 +185,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     const link = `${window.origin}/database/?id=${f.id}`
                     window.open(link, '_blank', 'DB')
                    })
+                   div.querySelector('.info').addEventListener('click', ()=>{
+                    const ov = document.querySelector('.infoModal')
+                    ov.classList.toggle('flex')
+                    const user = jdf(getCookie('user'))
+                    const token = getCookie('token')
+                    if(user){
+                    const payload = {
+                        'uid':user.id,
+                        'token':token,
+                        'fid': f.id
+
+                    }
+                   setTimeout(() => {
+                    fetchFormInfo(jof(payload))
+                   }, 1000); 
+                } else{
+                        alert('Error', 'Please login to perform this action', 'error')
+                    }
+                   })
             })
 
                 } else{
@@ -193,10 +212,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
                 
             })
+            .catch(e=>{
+                wrapper.innerHTML = `<i style="color:red">Network error fetching your forms : ${e.message}. Please reload</i>`
+            })
         }
     }
     initForms()
-
+    
   })
   function checkVal(val, expected) {
     const btn = document.querySelector('[data-id="continue"]')
@@ -342,10 +364,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           })
           .catch(e => {
-            alert('Connection Error', 'Check your Network connection', 'error')
+            alert('Connection Error', e.message || 'Check your Network connection' , 'error')
             toggleBtn('create-form', 'Create', false)
           })
       }
 
     }
+    const im = document.querySelector('.infoModal')
+    const imn = im.querySelector('.infoModal .info-inner')
+    if(im){
+     im.addEventListener('click', (e)=>{
+        if(e.target !== imn && !imn.contains(e.target) && im.classList.contains('flex')){
+         im.classList.remove('flex')
+         im.classList.add('none')
+        }
+     })
+    }
+
   });

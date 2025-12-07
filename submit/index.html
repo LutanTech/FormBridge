@@ -716,7 +716,7 @@
                         return; 
                     }
                     
-                    confirmYes.onclick = () => { hideConfirm(); handleFormSubmit(submissionData); };
+                    confirmYes.onclick = () => { hideConfirm(); handleFormSubmit(jdf(submissionData)); };
                     
                     showConfirm(submissionData);
                 } else {
@@ -727,15 +727,14 @@
             async function handleFormSubmit(submissionData) {
                 showLoader("Submitting data...");
                 
-                const endpoint = 'https://jsonplaceholder.typicode.com/posts'; 
+                const endpoint = window.baseUrl; 
     
                 try {
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
+                    await new Promise(resolve => setTimeout(resolve, 10));
                     const response = await fetch(endpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(submissionData)
+                        body: JSON.stringify({data:submissionData})
                     });
     
                     if (!response.ok) {

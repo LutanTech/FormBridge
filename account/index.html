@@ -264,21 +264,57 @@
     </div>
   </div>
 </div>
+<style>
+
+</style>
 
 <div class="infoModal">
   <div class="info-inner">
-    <div class="name">LMC111</div>
-    <div class="desc">Description: LMC Misssing marks check
-    </div>
-    <div class="added"><b>Created: </b>2025-12-05T08:56:00.045661</div>
-    <div class="submissions"><b>Submissions: </b>87</div>
-    <div class="status"><b>Status: </b>Running</div>
-    <div class="deadline"><b>Deadline: </b>2025-12-05T08:56:00.045661</div>
-    <div class="dbid"><b>Database ID: </b> 76eyHusy627tyG7628ks== </div>
 
   </div>
 </div>
+<script>
+  function fetchFormInfo(payload){
+    if(payload){
+        fetch(`${baseUrl}/form_info`, {
+            headers:{
+                'Content-Type':'application/json'
+            },
+            method:'POST',
+            body:JSON.stringify({data:payload})
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.error){
+                alert('Error', data.error,'error')
+            }
+            const info = jdf(data)
+            if(info){
+                 document.querySelector('.info-inner').innerHTML = ''
+                const f = info.form
+                const div = document.createElement('div')
+                div.classList.add('div')
+                div.innerHTML = `
+                    <div class="closeInner">&times</div>
+                    <div class="name">${f.name_str}</div>
+                    <div class="desc"><b>${f.desc}
+                    </div>
+                    <div class="added"><b>Created: </b>${f.added}</div>
+                    <div class="submissions"><b>Submissions: </b>${info.submissions}</div>
+                    <div class="status"><b>Status: </b>Running</div>
+                    <div class="deadline"><b>Deadline: </b>${f.deadline}</div>
+                    <div class="dbid"><b>Database ID: </b> ${info.db_id}<i>This ID expires in 5 mins</i> </div>
+    `
+           document.querySelector('.info-inner').append(div)
+            }
+        })
+        .catch(e=>{
+            alert('Connection error', e.message, 'error')
+        })
+    }
+}
 
+</script>
   </main>
 
   <script src="/assets/scripts/account.js">

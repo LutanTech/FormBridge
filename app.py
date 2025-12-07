@@ -23,7 +23,7 @@ app.config['ADMIN_EMAIL'] = 'lutancorpinfoteam@gmail.com'
 
 ALLOWED_FRONTEND_ORIGINS = [
      "http://127.0.0.1:5500",
-    "https://jomc-news.vercel.app",
+    "https://formbridge.vercel.app",
 ]
 
 CORS(app, origins=ALLOWED_FRONTEND_ORIGINS, supports_credentials=True)
@@ -265,6 +265,71 @@ def get_form(id):
             return jsonify({'form':form.to_dict()}), 200
         return jsonify({'error':'Page not found'}), 404
     return jsonify({'error':'Incomplete request'}), 400
+
+@app.route("/form_info", methods=['POST'])
+def form_info():
+    raw = request.get_json()
+    encoded = raw.get("data")
+    data = decode(encoded)
+    
+    if data:
+        fid = data.get('fid')
+        uid = data.get('uid')
+        token = data.get('token')
+        if fid:
+            if validate_token(token, uid):
+                form = Form.query.filter_by(id=fid, user_id=uid).first()
+                if form:
+                    count = Student.query.filter_by(form_id=form.id).count()
+                    return jsonify(encode({'submissions': count,'form':form.to_dict(), 'db_id':encode({'u':uid, 'f':fid}), 'token':generate_token(uid)})), 200
+
+                return jsonify({'error':'Form not found'}), 404
+            return jsonify({'error':'Unauthorized. Please, login again'}), 401
+        return jsonify({'error':'Missing data in request. Please try again'}), 404
+    return jsonify({'error':'Missing data in request. Please try again'}), 404
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    try:
+        raw = request.get_json()
+        encoded = raw.get("data")
+        data = decode(encoded)
+
+        if not data:
+            return jsonify({"error": "Invalid or missing data"}), 400
+
+        fid = data.get('form_id')
+        form = Form.query.filter_by(id=fid).first()
+
+        if not form:
+            return jsonify({"error": "Form not found"}), 404
+
+        form_inputs = [i.name if hasattr(i, "name") else i for i in form.inputs]
+
+        user_data = data.get("user_data", {})
+
+        valid_data = {k: v for k, v in user_data.items() if k in form_inputs}
+
+        student = Student(
+            form_id=fid,
+            instructor=form.user_id,
+            name=valid_data.get("name"),
+            age=valid_data.get("age"),
+            phone=valid_data.get("phone"),
+            adm=valid_data.get("adm"),
+            email=valid_data.get("email"),
+            topic=valid_data.get("topic"),
+            assignment=valid_data.get("assignment"),
+            units=valid_data.get("units")
+        )
+
+        db.session.add(student)
+        db.session.commit()
+
+        return jsonify({"status": "ok", "student_id": student.id})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/delete_form', methods=['POST'])
 def delete_form():

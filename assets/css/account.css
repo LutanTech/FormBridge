@@ -592,3 +592,66 @@ color: white;
     padding: 30px;
 
 }
+.infoModal{
+    display: none;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.589);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    align-items: center;
+    right: 0;
+    position: fixed;
+    z-index: 20;
+
+  }
+  .info-inner{
+    padding: 20px;
+    background: rgb(111, 2, 138);
+    margin-top: 80px;
+    color: rgb(255, 255, 255); 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 95%;
+    max-width: 500px;
+    border: 2px solid  #000000;
+    outline: 2px solid magenta;
+    position: relative;
+    
+  }
+  .info-inner .name{
+    font-size: 1.2em;
+    font-weight: 700;
+  }
+  .info-inner div {
+    word-break: break-all;
+  }
+  .closeInner{
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    float: right;
+    font-size: xx-large;
+    font-family: Arial, Helvetica, sans-serif;
+    color: red;
+    cursor: pointer;
+    user-select: none;
+    &:active{
+      scale: 0.9;
+    }
+
+  }
+  .info-inner div b{
+    color: rgba(255, 255, 255, 0.39);
+  }
+  .info-inner div i{
+    color: red;
+    font-size: small;
+  }
+.none, .hidden{
+    display: none !important;
+}
+.flex{
+    display: flex !important;
+}

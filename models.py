@@ -112,6 +112,7 @@ class Form(db.Model):
     
 class Student(db.Model):
     id = db.Column(db.String(10), primary_key=True, default=lambda: generate_random_id(10))
+    form_id = db.Column(db.String(10), nullable=False)
     instructor = db.Column(db.String(10),nullable=False)
     name = db.Column(db.String(255), nullable=True)
     age = db.Column(db.String(255), nullable=True)
