@@ -6,3 +6,7 @@ Flask-Mail
 Flask-Migrate
 user-agents
 python-dateutil
+itsdangerous
+fpdf2
+python-dotenv
+

@@ -2,6 +2,7 @@ import random
 from datetime import datetime, timedelta
 import string, secrets, uuid, base64, json, hmac, hashlib, requests
 from flask_mail import Mail, Message
+from sqlalchemy import column
 
 
 def generate_account_id(length=7):
@@ -111,56 +112,193 @@ def send_otp_email(mail, user_email, otp_code, username=None):
     except Exception as e:
        print(f"[400] Email send failed: {e}")
        
-def decode_form_inputs(raw):
-    if not raw:
+       
+import json
+from fpdf import FPDF
+
+# ---- FORM INPUT DECODER ----
+def decode_form_inputs(raw_inputs):
+    """
+    raw_inputs: str (JSON string like '["-name", "adm", "phone"]')
+    Returns list of dicts with keys '-name' and 'label'
+    """
+    try:
+        inputs = json.loads(raw_inputs)
+    except Exception as e:
+        print("Failed to decode form inputs:", e)
         return []
-    
-    arr = json.loads(raw)  # first decode
 
     cleaned = []
-    for item in arr:
+    for item in inputs:
         if isinstance(item, str):
-            try:
-                cleaned.append(json.loads(item))  # second decode
-            except:
-                pass
-        elif isinstance(item, dict):
-            cleaned.append(item)
-
+            # convert "-name" -> "name" for safe attribute access
+            fname = item.lstrip("-")
+            label = fname.capitalize() if fname else None
+            if fname:
+                cleaned.append({"-name": fname, "label": label})
     return cleaned
 
 
+# ---- PDF CREATOR ----
 from fpdf import FPDF
-import json
-import os
 
+class PDF(FPDF):
+    def header(self):
+        if hasattr(self, 'header_text'):
+            self.set_font("Arial", "B", 14)
+            self.cell(0, 10, self.header_text, ln=True, align="C")
+            self.ln(4)
+
+    def footer(self):
+        if hasattr(self, 'footer_text'):
+            self.set_y(-15)
+            self.set_font("Arial", "I", 10)
+            self.cell(0, 10, self.footer_text, 0, 0, "C")
+
+from fpdf import FPDF
 def make_pdf_all(header_text, footer_text, form, submissions):
-    form_inputs = decode_form_inputs(form.inputs)
+    import json
+    from fpdf import FPDF
 
-    pdf = FPDF()
+    # Decode inputs
+    try:
+        form_inputs = json.loads(form.inputs)
+    except Exception:
+        form_inputs = []
+
+    # Prepare columns
+    columns = []
+    for inp in form_inputs:
+        if isinstance(inp, str):
+            fname = inp.replace("-", "")
+            columns.append((fname, fname.upper()))
+    columns = [("row", "#")] + columns
+
+    # Orientation
+    pdf_orientation = 'L' if len(columns) > 6 else 'P'
+    pdf = FPDF(orientation=pdf_orientation)
     pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
 
-    for sub in submissions:
-        pdf.add_page()
+    # Header
+    pdf.set_font("Times", "B", 14)
+    pdf.cell(0, 12, header_text, ln=True, align="C")
+    pdf.ln(6)
 
-        pdf.set_font("Arial", "B", 14)
-        pdf.cell(0, 10, header_text, ln=True, align="C")
+    # Page width
+    page_width = pdf.w - 2 * pdf.l_margin
 
-        pdf.ln(4)
-        pdf.set_font("Arial", "", 12)
+    # Minimal widths
+    min_col_widths = {
+        "row": 8, "adm": 40, "phone": 30, "name": 35, "age": 10, "email": 50,
+        "topic": 30, "assignment": 30, "units": 30
+    }
 
-        for inp in form_inputs:
-            fname = inp.get("-name")
-            label = inp.get("label", fname)
-            value = getattr(sub, fname, None)
+    # Compute raw widths
+    raw_widths = []
+    for fname, label in columns:
+        pdf.set_font("Times", "B", 12)
+        header_width = pdf.get_string_width(label) + 4
 
-            if value:
-                pdf.multi_cell(0, 8, f"{label}: {value}")
+        max_content_width = 0
+        for sub in submissions:
+            val = getattr(sub, fname, "")
+            if fname == "adm" and val:
+                val = str(val).upper()
+            elif fname == "name" and val:
+                val = str(val).title()
+            elif fname == "email" and val:
+                val = str(val)
+            else:
+                val = str(val)
+            pdf.set_font("Times", "", 10 if fname not in ["email","topic","assignment"] else 9)
+            max_content_width = max(max_content_width, pdf.get_string_width(val) + 4)
 
-        pdf.ln(6)
-        pdf.set_font("Arial", "I", 10)
-        pdf.cell(0, 10, footer_text, align="C")
+        min_width = min_col_widths.get(fname, 15)
+        raw_widths.append(max(min_width, header_width, max_content_width))
 
-    out = f"{form.id}_submissions.pdf"
+    # Scale to page width
+    total_raw_width = sum(raw_widths)
+    scale = page_width / total_raw_width
+    col_widths = [w * scale for w in raw_widths]
+
+    # Table header
+    pdf.set_font("Times", "B", 12)
+    pdf.set_fill_color(180, 180, 180)
+    x_start = pdf.get_x()
+    y_start = pdf.get_y()
+    for idx, (_, label) in enumerate(columns):
+        pdf.set_xy(x_start + sum(col_widths[:idx]), y_start)
+        pdf.multi_cell(col_widths[idx], 8, label, border=1, align='C', fill=True)
+    pdf.set_xy(x_start, y_start + 8)
+
+    # Table body
+    for i, sub in enumerate(submissions, 1):
+        row_values = [str(i)]
+        for fname, _ in columns[1:]:
+            val = getattr(sub, fname, "")
+            if fname == "adm" and val:
+                val = str(val).upper()
+            elif fname == "name" and val:
+                val = str(val).title()
+            elif fname == "email" and val:
+                val = str(val)
+            else:
+                val = str(val)
+            row_values.append(val)
+
+        fill = i % 2 == 1
+        if fill:
+            pdf.set_fill_color(240, 240, 240)
+
+        # Max lines per row
+        max_lines = 1
+        for idx, text in enumerate(row_values):
+            font_size = 12 if columns[idx][0] not in ["email","topic","assignment"] else 10
+            pdf.set_font("Times", "", font_size)
+            if columns[idx][0] in ["adm", "phone", "email"]:
+                lines = [text]  # no wrap
+            else:
+                lines = pdf.multi_cell(col_widths[idx], 6, text, border=0, split_only=True)
+            max_lines = max(max_lines, len(lines))
+
+        row_height = max_lines * 6
+        y_row_start = pdf.get_y()
+
+        # Draw cells
+        for idx, text in enumerate(row_values):
+            x_cell = pdf.l_margin + sum(col_widths[:idx])
+            cw = col_widths[idx]
+
+            if fill:
+                pdf.rect(x_cell, y_row_start, cw, row_height, style='F')
+            pdf.rect(x_cell, y_row_start, cw, row_height)
+
+            pdf.set_xy(x_cell + 1, y_row_start + 1)
+
+            # Email blue
+            pdf.set_text_color(0, 0, 180 if columns[idx][0]=='email' else 0)
+
+            # Font size shrink
+            font_size = 12 if columns[idx][0] not in ["email","topic","assignment"] else 10
+            pdf.set_font("Times", "", font_size)
+            if columns[idx][0] in ["adm","phone","email"]:
+                # shrink if needed
+                while pdf.get_string_width(text) > (cw-2) and font_size > 6:
+                    font_size -= 1
+                    pdf.set_font("Times", "", font_size)
+                pdf.cell(cw-2, 6, text)
+            else:
+                pdf.multi_cell(cw-2, 6, text)
+
+        pdf.set_y(y_row_start + row_height)
+
+    # Footer
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(6)
+    pdf.set_font("Times", "I", 10)
+    pdf.cell(0, 12, footer_text, align="C")
+
+    out = f"{form.name_str}_submissions.pdf"
     pdf.output(out)
     return out

@@ -153,10 +153,10 @@
             if(i){
                 const payload = {
                     'i':i,
-                    'header':'BAS 111 Submissions',
-                    'footer' :'Lutan Tech'
+                    'header':'Submissions',
+                    'footer' :'Lutan Tech Ssystems'
                 }
-                fetch(`${baseUrl}/print_all`,{
+                fetch(`${baseUrl}/print`,{
                     headers:{
                         'Content-Type':'application/json'
                     },
@@ -169,7 +169,85 @@
                 })
             }
         }
+        
       </script>
+      
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+          // CSV Export
+          document.querySelector(".csv").addEventListener("click", () => {
+            const table = document.getElementById("submissions-table");
+            if (!table){
+              alert('Error', 'Please wait for table to initialize', 'error')
+              return
+            };
+        
+            let csv = [];
+            for (let row of table.rows) {
+              let cols = [];
+              for (let cell of row.cells) {
+                let text = cell.innerText.replace(/"/g, '""');
+                cols.push('"' + text + '"');
+              }
+              csv.push(cols.join(","));
+            }
+        
+            const blob = new Blob([csv.join("\n")], { type: "text/csv" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "table.csv";
+            a.click();
+            URL.revokeObjectURL(a.href);
+          });
+          document.querySelector(".table").addEventListener("click", () => {
+            const tableEl = document.getElementById("submissions-table").cloneNode(true);
+
+// Remove buttons, inputs, icons
+tableEl.querySelectorAll('button, input, i').forEach(el => el.remove());
+
+// Remove Actions column (assuming it's the last column)
+tableEl.querySelectorAll('tr').forEach(tr => {
+  const lastCell = tr.cells[tr.cells.length - 1]; // last cell
+  if(lastCell) lastCell.remove();
+});
+
+tableEl.querySelectorAll('th.th, td.td').forEach(el => el.remove());
+const newWin = window.open("", "_blank");
+
+const style = newWin.document.createElement('style');
+style.textContent = `
+  html, body { margin:0; padding:10px; font-family: Arial, sans-serif; }
+  table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+  th, td { border: 1px solid #333; padding: 6px; word-wrap: break-word; text-align: left; }
+  th { background: #ccc; }
+  td:nth-of-type(1){
+  width:20px;}
+  th:nth-of-type(1){
+  width:20px;}
+  .age-th, .age-td{
+  width:40px
+  }
+  .email-th, .email-td{
+  min-width:150px;
+  }
+`;
+newWin.document.head.appendChild(style);
+
+// Append cleaned table
+newWin.document.body.appendChild(tableEl);
+
+newWin.focus();
+newWin.print();
+newWin.close();
+
+})
+          
+      })
+        
+        </script>
+        
+      
       <div class="db-area" style="min-height:50vh; ">
         <table id="submissions-table">
           <thead>

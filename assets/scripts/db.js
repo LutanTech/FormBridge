@@ -60,9 +60,16 @@ function renderTable(data){
     columns.forEach(col => {
         const th = document.createElement('th');
         th.textContent = col.charAt(0).toUpperCase() + col.slice(1);
+        if(th.textContent == 'Age'){
+            th.classList.add('age-th')
+        }
+        if(th.textContent == 'Email'){
+            th.classList.add('email-th')
+        }
         thead.appendChild(th);
     });
     const ac = document.createElement('th');
+    ac.classList.add('th')
     ac.textContent = 'Actions';
     thead.appendChild(ac);
 
@@ -70,15 +77,27 @@ function renderTable(data){
     data.submissions.forEach((sub, idx) => {
         const tr = document.createElement('tr');
         const rowNum = (currentPage - 1) * currentLimit + idx + 1;
-        const cells = columns.map(col => `<td>${sub[col] ?? ''}</td>`).join('');
-        const actions = `<td id="sub-actions">
+    
+        const cells = columns.map(col => {
+            let style = '';
+            let classN = '';
+            if (col === 'age') classN = 'age-td';
+            else if (col === 'adm') classN = '';
+            else if (col === 'phone') classN = '';
+            else if (col === 'email') classN = 'email-td';
+            return `<td style="${style}" class="${classN ? classN : ''}">${sub[col] ?? ''}</td>`;
+        }).join('');
+    
+        const actions = `<td class="td" id="sub-actions" style="width:120px; text-align:center;">
             <button class="delete"><i class="fas fa-trash"></i></button>
             <button class="edit"><i class="fas fa-edit"></i></button>
             <button class="view"><i class="fas fa-eye"></i></button>
         </td>`;
+    
         tr.innerHTML = `<td>${rowNum}</td>` + cells + actions;
         tbody.appendChild(tr);
     });
+    
 
     attachActions();
 }

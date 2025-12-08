@@ -23,10 +23,11 @@ app.config['ADMIN_EMAIL'] = 'lutancorpinfoteam@gmail.com'
 
 ALLOWED_FRONTEND_ORIGINS = [
      "http://127.0.0.1:5500",
-    "https://formbridge.vercel.app",
+    "https://formbridge.vercel.app"
 ]
 
-CORS(app, origins=ALLOWED_FRONTEND_ORIGINS, supports_credentials=True)
+# CORS(app, origins=ALLOWED_FRONTEND_ORIGINS, supports_credentials=True)
+CORS(app)
 models.db.init_app(app)
 db = models.db
 migrate = Migrate(app, db)
@@ -498,7 +499,7 @@ def edit_sub():
         log(f'[500] Database error in /edit_submission route: {str(e)}', 'error')
         return jsonify({'error': 'Failed to update submission'}), 500
 
-@app.route("/print_all", methods=["POST"])
+@app.route("/print", methods=["POST"])
 def print_all():
     raw = request.get_json()
     enc = raw.get("data")
@@ -519,13 +520,17 @@ def print_all():
         return jsonify({"error": "Form not found"}), 404
 
     submissions = Submission.query.filter_by(form_id=fid).all()
+    print(submissions)
 
     pdf_path = make_pdf_all(header, footer, form, submissions)
+    
 
     return jsonify({
         "msg": "PDF generated successfully",
         "file": pdf_path
     })
+
+
 
 
 
