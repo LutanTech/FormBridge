@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
               }
               wrapper.innerHTML = ''
                 const forms = data.forms
-                if(forms.length > 0){
+                if(forms && forms.length > 0){
                     forms.forEach(f=>{
                    const div = document.createElement('div')
                    div.classList.add('form')
@@ -158,8 +158,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Link copied', link, 'success')
                    })
                    div.querySelector('.database').addEventListener('click', ()=>{
-                    const link = `${window.origin}/database/?id=${f.id}`
-                    window.open(link, '_blank', 'DB')
+                    const db = {
+                      'u':user.id,
+                      'f':f.id,
+                      't':token
+                    }
+                    const link = `${window.origin}/database/?i=${jof(db)}`
+                    window.location.href= link
                    })
                    div.querySelector('.delete').addEventListener('click', ()=>{
                     confirm(
@@ -180,10 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         delete_form(jof(payload))
                       }
                     })
-                   })
-                   div.querySelector('.database').addEventListener('click', ()=>{
-                    const link = `${window.origin}/database/?id=${f.id}`
-                    window.open(link, '_blank', 'DB')
                    })
                    div.querySelector('.info').addEventListener('click', ()=>{
                     const ov = document.querySelector('.infoModal')

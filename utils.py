@@ -110,3 +110,57 @@ def send_otp_email(mail, user_email, otp_code, username=None):
 
     except Exception as e:
        print(f"[400] Email send failed: {e}")
+       
+def decode_form_inputs(raw):
+    if not raw:
+        return []
+    
+    arr = json.loads(raw)  # first decode
+
+    cleaned = []
+    for item in arr:
+        if isinstance(item, str):
+            try:
+                cleaned.append(json.loads(item))  # second decode
+            except:
+                pass
+        elif isinstance(item, dict):
+            cleaned.append(item)
+
+    return cleaned
+
+
+from fpdf import FPDF
+import json
+import os
+
+def make_pdf_all(header_text, footer_text, form, submissions):
+    form_inputs = decode_form_inputs(form.inputs)
+
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+
+    for sub in submissions:
+        pdf.add_page()
+
+        pdf.set_font("Arial", "B", 14)
+        pdf.cell(0, 10, header_text, ln=True, align="C")
+
+        pdf.ln(4)
+        pdf.set_font("Arial", "", 12)
+
+        for inp in form_inputs:
+            fname = inp.get("-name")
+            label = inp.get("label", fname)
+            value = getattr(sub, fname, None)
+
+            if value:
+                pdf.multi_cell(0, 8, f"{label}: {value}")
+
+        pdf.ln(6)
+        pdf.set_font("Arial", "I", 10)
+        pdf.cell(0, 10, footer_text, align="C")
+
+    out = f"{form.id}_submissions.pdf"
+    pdf.output(out)
+    return out

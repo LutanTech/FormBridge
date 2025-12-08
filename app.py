@@ -2,12 +2,12 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
-from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email
+from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email, make_pdf_all
 from flask_mail import Mail
 from datetime import datetime, timedelta
 from flask_migrate import Migrate
 import models
-from models import User, Log, Help, Form, Student
+from models import User, Log, Help, Form, Submission
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'not_really_a_secret'
@@ -280,7 +280,7 @@ def form_info():
             if validate_token(token, uid):
                 form = Form.query.filter_by(id=fid, user_id=uid).first()
                 if form:
-                    count = Student.query.filter_by(form_id=form.id).count()
+                    count = Submission.query.filter_by(form_id=form.id).count()
                     return jsonify(encode({'submissions': count,'form':form.to_dict(), 'db_id':encode({'u':uid, 'f':fid}), 'token':generate_token(uid)})), 200
 
                 return jsonify({'error':'Form not found'}), 404
@@ -288,48 +288,72 @@ def form_info():
         return jsonify({'error':'Missing data in request. Please try again'}), 404
     return jsonify({'error':'Missing data in request. Please try again'}), 404
 
-@app.route('/submit', methods=['POST'])
-def submit():
+@app.route("/submit", methods=["POST"])
+def submit_form():
     try:
         raw = request.get_json()
         encoded = raw.get("data")
         data = decode(encoded)
 
         if not data:
-            return jsonify({"error": "Invalid or missing data"}), 400
+            return jsonify({"ok": False, "msg": "Invalid payload"}), 400
 
-        fid = data.get('form_id')
-        form = Form.query.filter_by(id=fid).first()
+        form_id = data.get("form_id")
+        user_id = data.get("user_id")
+        user_data = data.get("user_data")
+        print(form_id, user_data)
 
+        if not form_id:
+            return jsonify({"ok": False, "msg": "Missing form or user"}), 400
+
+
+        # Fetch form
+        form = Form.query.filter_by(id=form_id).first()
         if not form:
-            return jsonify({"error": "Form not found"}), 404
+            return jsonify({"ok": False, "msg": "Form not found"}), 404
 
-        form_inputs = [i.name if hasattr(i, "name") else i for i in form.inputs]
+        if not form.is_open:
+            return jsonify({"ok": False, "msg": "Form is closed"}), 403
 
-        user_data = data.get("user_data", {})
+        # Parse inputs list
+        try:
+            fields = json.loads(form.inputs)
+        except:
+            fields = []
 
-        valid_data = {k: v for k, v in user_data.items() if k in form_inputs}
+        cleaned = {}
+        for f in fields:
+            key = f.replace("-", "")  # "-name" becomes "name"
+            if key in user_data:
+                cleaned[key] = user_data[key]
 
-        student = Student(
-            form_id=fid,
+        # Insert into submissions table
+        new_sub = Submission(
+            form_id=form.id,
             instructor=form.user_id,
-            name=valid_data.get("name"),
-            age=valid_data.get("age"),
-            phone=valid_data.get("phone"),
-            adm=valid_data.get("adm"),
-            email=valid_data.get("email"),
-            topic=valid_data.get("topic"),
-            assignment=valid_data.get("assignment"),
-            units=valid_data.get("units")
+            name=cleaned.get("name"),
+            age=cleaned.get("age"),
+            phone=cleaned.get("phone"),
+            adm=cleaned.get("adm"),
+            email=cleaned.get("email"),
+            topic=cleaned.get("topic"),
+            assignment=cleaned.get("assignment"),
+            units=cleaned.get("units")
         )
 
-        db.session.add(student)
+
+        db.session.add(new_sub)
         db.session.commit()
 
-        return jsonify({"status": "ok", "student_id": student.id})
+        return jsonify({
+            "ok": True,
+            "msg": "Submitted successfully",
+            "saved": cleaned
+        })
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        log(f"[500] Database error in /submit route:  {str(e)}")
+        return jsonify({"ok": False, "msg": "Server error"}), 500
 
 @app.route('/delete_form', methods=['POST'])
 def delete_form():
@@ -357,9 +381,156 @@ def delete_form():
                 return jsonify({'error':'Form not found'}), 404
             return jsonify({'error':'Unauthorized action. Please login again'}), 401
     return jsonify({'error':'Missing data in request'}), 404
+
+
+@app.route('/database/<data>')
+def database(data):
+    try:
+        limit = int(request.args.get('limit') or 50)
+        page = int(request.args.get('page') or 1)
+    except ValueError:
+        return jsonify({'error': 'Invalid limit or page'}), 400
+
+    data = decode(data)
+    uid = data.get('u')
+    fid = data.get('f')
+    token = data.get('t')
+
+    if not (uid and fid and token):
+        return jsonify({'error': 'Missing data in request'}), 404
+
+    user = User.query.filter_by(id=uid).first()
+    if not user or not validate_token(token, user.id):
+        return jsonify({'error': 'Unauthorized. Please login again'}), 401
+
+    form = Form.query.filter_by(id=fid, user_id=user.id).first()
+    if not form:
+        return jsonify({'error': 'Database not found'}), 404
+
+    query = Submission.query.filter_by(form_id=form.id, instructor=user.id)
+    total = query.count()
+    submissions = query.offset((page - 1) * limit).limit(limit).all()
+
+    has_next = (page * limit) < total
+
+    return jsonify({
+        'submissions': [s.to_dict() for s in submissions],
+        'code': 200,
+        'inputs': json.loads(form.inputs),
+        'db': encode(form.name_str),
+        'page': page,
+        'limit': limit,
+        'total': total,
+        'has_next': has_next
+    }), 200
+
+@app.route('/delete_submission', methods=['POST'])
+def delete_sub():
+    raw = request.get_json()
+    encoded = raw.get("data")
+    data = decode(encoded)
+    if data:
+        i = data.get('i')
+        user_data = decode(i)
+        uid = user_data.get('u')
+        t = user_data.get('t')
+        s_id = data.get('sid')
+        user = User.query.filter_by(id=uid).first()
+        if user and validate_token(t, user.id):
+            submission = Submission.query.filter_by(id=s_id, instructor=uid).first()
+            if submission:
+                try:
+                    db.session.delete(submission)
+                    db.session.commit()
+                    return jsonify({'msg':'Submission deleted successfully'}), 200
+                except Exception as e:
+                    db.session.rollback()
+                    log(f'[500] Database error in /delete submission route: {str(e)}')
+                    return jsonify({'error':'Failed to delete submission.Key error:Database'}), 500
+            return jsonify({'error':'Submission not found'}), 400
+        return jsonify({'Unauthorized. Please Login again'}), 401
+
+@app.route('/edit_submission', methods=['POST'])
+def edit_sub():
+    raw = request.get_json()
+    encoded = raw.get("data")
+    data = decode(encoded)
+
+    if not data:
+        return jsonify({'error': 'Invalid payload'}), 400
     
+    print(data)
+
+    i = data.get('i')
+    user_data = decode(i) if i else {}
+
+    uid = user_data.get('u')
+    t = user_data.get('t')
+    s_id = data.get('sid')
+    fields = data.get('updated')
+    print(uid, t, s_id)
+
+    if not uid or not t or not s_id:
+        return jsonify({'error': 'Missing parameters'}), 400
+
+    user = User.query.filter_by(id=uid).first()
+
+    if not (user and validate_token(t, user.id)):
+        return jsonify({'error': 'Unauthorized. Please login again'}), 401
+
+    submission = Submission.query.filter_by(id=s_id, instructor=uid).first()
+
+    if not submission:
+        return jsonify({'error': 'Submission not found'}), 400
+
+    protected = {'id', 'form_id', 'instructor', 'at'}
+
+    try:
+        for key, value in fields.items():
+            if hasattr(submission, key) and key not in protected:
+                setattr(submission, key, value)
+
+        db.session.commit()
+        return jsonify({'msg': 'Submission updated successfully'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        log(f'[500] Database error in /edit_submission route: {str(e)}', 'error')
+        return jsonify({'error': 'Failed to update submission'}), 500
+
+@app.route("/print_all", methods=["POST"])
+def print_all():
+    raw = request.get_json()
+    enc = raw.get("data")
+    data = decode(enc)
+
+    if not data:
+        return jsonify({"error": "Invalid payload"}), 400
+    
+    i = decode(data.get('i'))
+    print(i)
+  
+    fid = i.get("f")
+    header = data.get("header", "")
+    footer = data.get("footer", "")
+
+    form = Form.query.filter_by(id=fid).first()
+    if not form:
+        return jsonify({"error": "Form not found"}), 404
+
+    submissions = Submission.query.filter_by(form_id=fid).all()
+
+    pdf_path = make_pdf_all(header, footer, form, submissions)
+
+    return jsonify({
+        "msg": "PDF generated successfully",
+        "file": pdf_path
+    })
+
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True, port=6500, host="0.0.0.0")
+    app.run(debug=True, port=6050, host="0.0.0.0")
 

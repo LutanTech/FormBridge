@@ -620,12 +620,13 @@ color: white;
     position: relative;
     
   }
-  .info-inner .name{
+  .info-inner  div .name{
     font-size: 1.2em;
     font-weight: 700;
   }
-  .info-inner div {
+  .info-inner div div {
     word-break: break-all;
+    font-weight: normal;
   }
   .closeInner{
     position: absolute;
@@ -640,12 +641,11 @@ color: white;
     &:active{
       scale: 0.9;
     }
-
   }
-  .info-inner div b{
+  .info-inner div  div b{
     color: rgba(255, 255, 255, 0.39);
   }
-  .info-inner div i{
+  .info-inner div div i{
     color: red;
     font-size: small;
   }

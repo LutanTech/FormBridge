@@ -108,22 +108,39 @@ class Form(db.Model):
             'assignment': self.assignment,
             'units': self.units
         }
+        
 
     
-class Student(db.Model):
+class Submission(db.Model):
     id = db.Column(db.String(10), primary_key=True, default=lambda: generate_random_id(10))
     form_id = db.Column(db.String(10), nullable=False)
     instructor = db.Column(db.String(10),nullable=False)
     name = db.Column(db.String(255), nullable=True)
     age = db.Column(db.String(255), nullable=True)
     phone = db.Column(db.String(255), nullable=True)
-    adm = db.Column(db.String(255), nullable=True, unique=True)
+    adm = db.Column(db.String(255), nullable=True)
     email = db.Column(db.String(255), nullable=True)
     topic = db.Column(db.String(255), nullable=True)
     assignment = db.Column(db.String(255), nullable=True)
     units = db.Column(db.String(255), nullable=True)
     at = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=3))
     
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "form_id": self.form_id,
+            "instructor": self.instructor,
+            "name": self.name,
+            "age": self.age,
+            "phone": self.phone,
+            "adm": self.adm,
+            "email": self.email,
+            "topic": self.topic,
+            "assignment": self.assignment,
+            "units": self.units,
+            "at": self.at.isoformat() if self.at else None
+    }
+
     
     
     
