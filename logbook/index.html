@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormBridge - Lutan Tech</title>
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
+    <meta name="title" content="FormBridge – Smart University Form Automation">
+<meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
+<link rel="manifest" href="/manifest.json">
+
+<link rel="canonical" href="https://formbridge.vercel.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://formbridge.vercel.app/">
+<meta property="og:title" content="FormBridge – Smart University Form Automation">
+<meta property="og:description" content="Fast, secure digital form management for universities.">
+<meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://formbridge.vercel.app/">
+<meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
+<meta name="twitter:description" content="Digital form management built for universities.">
+<meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "FormBridge",
+  "alternateName": "Form Bridge Platform",
+  "url": "https://formbridge.vercel.app/",
+  "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
+  "sameAs": []
+}
+</script>
+
+<meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
+<meta name="robots" content="index, follow">
+    <link rel="icon" href="/assets/logo.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/utils.css">
+    <script src="/assets/scripts/utils.js" defer></script>
+
+</head>
+<body>
+
+    <div class="fixed-background-container">
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2" style="animation-delay: 2s;"></div>
+    </div>
+    <style>
+        .account-button{
+            background: #0000;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            border: 0;
+        }
+    </style>
+
+    <nav class="glass-nav">
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="brand-logo" onclick="window.location.href='/'">
+                    <div class="logo-icon-wrapper">
+                        <img src="/assets/images/logo-nbg.png" alt="" srcset="">
+                    </div>
+                    <span class="brand-name">FormBridge
+                </div>
+
+                <div class="desktop-menu">
+                    <!-- <button class="account-button" onclick="window.location.href='/account'">
+                        Account
+                    </button> -->
+                    <div class="menu-divider"></div>
+                    <div class="register-button-group">
+                        <!-- <button class="register-button" onclick="window.location.href='/register'">
+                            Register
+                        </button> -->
+                    </div>
+                </div>
+
+                <div class="mobile-menu-btn-wrapper">
+                    <!-- <button id="mobile-menu-btn" class="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button> -->
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden mobile-menu-panel">
+            <div class="mobile-menu-items-container">
+                <a href="/login" class="mobile-nav-link">Login</a>
+                <a href="/account" class="mobile-nav-link">Account</a>
+                <a href="/support" class="mobile-nav-link">Support</a>
+                <div class="mobile-button-group">
+                    <button class="mobile-login-button">Log In</button>
+                    <button class="mobile-register-button">
+                        Register Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+
+    <main class="main-content-area">            
+            <!-- Tailwind CSS -->
+            <script src="https://cdn.tailwindcss.com"></script>
+            <script>
+                tailwind.config = {
+                    darkMode: 'class',
+                    theme: {
+                        extend: {
+                            fontFamily: {
+                                sans: ['Inter', 'sans-serif'],
+                            },
+                            colors: {
+                                background: '#000000',
+                                surface: '#09090b', // zinc-950
+                                border: '#27272a', // zinc-800
+                                input: '#18181b', // zinc-900
+                                primary: '#ffffff',
+                            },
+                            animation: {
+                                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                            }
+                        }
+                    }
+                }
+            </script>
+        <style>
+        
+                /* Loader */
+                .loader {
+                    width: 24px;
+                    height: 24px;
+                    border: 2px solid #333;
+                    border-bottom-color: #fff;
+                    border-radius: 50%;
+                    display: inline-block;
+                    animation: rotation 1s linear infinite;
+                }
+                @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+                input[type=number]::-webkit-inner-spin-button, 
+                input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+                .ic{
+                    display: flex;
+                    position: absolute;
+                    left:10px;
+                    top:45%;
+                    border-right: 1px solid white;
+                    padding-right: 10px;
+
+
+                }
+
+                .fa-user-circle{
+                    top: 35%;
+                }
+                #admissionNumber, #name, #phoneNumber{
+                    padding-left: 50px;
+                }
+            </style>
+        </head>
+        <div class="" style="margin-top: 80px; margin-bottom:10px;background:rgba(98, 0, 137, 0.223); display:flex;justify-content:center; width:100%">
+        
+            <div class="fixed inset-0 pointer-events-none">
+                <div class="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-indigo-900/10 rounded-full blur-[120px]"></div>
+                <div class="absolute bottom-[-10%] right-[10%] w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[120px]"></div>
+            </div>
+        
+            <div class="w-full max-w-[460px] z-10 flex flex-col gap-8">
+                
+                <div class="text-center space-y-3">                   
+                    <h1 class="text-3xl font-bold tracking-tight text-white">Logbook Details Submission</h1>
+                    
+                    <div class="flex flex-col items-center gap-2">
+                        <p class="text-zinc-500 text-sm">LMC/23</p>
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-950/30 border border-orange-900/50 text-[11px] font-medium text-orange-400">
+                            <i class="fas fa-check-circle text-[10px]"></i> 
+                            Verified by Ashindu Emmanuel
+                        </div>
+                    </div>
+        
+                    <!-- Countdown -->
+                    <div id="countdown" class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface border border-border text-xs font-mono text-zinc-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Calculating time...
+                    </div>
+                </div>
+        
+                <!-- Form Card -->
+                <div id="form-card" class="glass-panel rounded-2xl p-1 shadow-2xl">
+                    <div class="bg-black/40 rounded-xl p-6 sm:p-8 border border-white/5">
+                        <form id="researchForm" class="space-y-6">
+                            
+                            <!-- Full Name -->
+                            <div class="space-y-2 relative" >
+                                <label for="name" class="block text-xs font-medium text-zinc-400 uppercase tracking-wider ml-0.5">Full Name</label>
+                                <div class="relative group">
+                                    <i class="fas fa-user-circle ic"></i>
+                                    <input type="text" id="name" name="name" required 
+                                        class="w-full bg-surface border border-border rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
+                                        placeholder="e.g. Travis Scott">
+                                </div>
+                            </div>
+        
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Admission Number -->
+                                <div class="space-y-2 relative">
+                                    <label for="admissionNumber" class="block text-xs font-medium text-zinc-400 uppercase tracking-wider ml-0.5">Adm No.</label>
+                                    <i class="fa fa-id-card ic"></i>
+                                    <input type="text" id="admissionNumber" name="admissionNumber" required 
+                                        class="w-full bg-surface border border-border rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-700 uppercase focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
+                                        placeholder="LMC/0000/23" maxlength="13">
+                                </div>
+        
+                                <!-- Phone Number -->
+                                <div class="space-y-2 relative">
+                                    <label for="phoneNumber" class="block text-xs font-medium text-zinc-400 uppercase tracking-wider ml-0.5">Phone</label>
+                                    <i class="fa fa-phone ic"></i>
+                                    <input type="tel" id="phoneNumber" name="phoneNumber" required 
+                                        class="w-full bg-surface border border-border rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
+                                        placeholder="07XXXXXXXX" maxlength="13">
+                                </div>
+                            </div>
+        
+                            <!-- Submit Button -->
+                            <button type="submit" 
+                                class="w-full bg-white text-black font-semibold py-3.5 px-4 rounded-lg hover:bg-zinc-200 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                                <span>Submit Details</span>
+                                <i class="fas fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                            </button>
+        
+                            <p class="text-center text-[10px] text-zinc-600 flex items-center justify-center gap-1.5">
+                                <i class="fas fa-lock text-[10px]"></i> 
+                                Progress saved automatically
+                            </p>
+                        </form>
+                    </div>
+                </div>
+        
+                <!-- Footer -->
+                <!-- <div class="text-center space-y-6">
+                    <div class="flex items-center justify-center gap-6 text-xs text-zinc-500">
+                        <a href="tel:0711808286" class="hover:text-white transition-colors duration-200 flex items-center gap-2">
+                            <i class="fas fa-phone-alt"></i> Support
+                        </a>
+                        <span class="w-1 h-1 rounded-full bg-zinc-800"></span>
+                        <a href="https://wa.me/send?phone=254711808286&text=Hello, Lutan Tech" target="_blank" class="hover:text-white transition-colors duration-200 flex items-center gap-2">
+                            <i class="fab fa-whatsapp"></i> Whatsapp
+                        </a>
+                    </div>
+                </div>
+         -->
+            </div>
+        
+            <!-- Confirm Modal -->
+            <div id="confirmDiv" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+                <div class="bg-surface border border-border rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300">
+                    <div class="p-5 border-b border-border">
+                        <h3 class="font-semibold text-white flex items-center gap-2">
+                            Review Details
+                        </h3>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <span class="text-zinc-500">Name</span>
+                                <span id="confName" class="font-medium text-zinc-200 text-right"></span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <span class="text-zinc-500">Admission</span>
+                                <span id="confAdm" class="font-medium text-zinc-200 uppercase"></span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <span class="text-zinc-500">Phone</span>
+                                <span id="confPhone" class="font-medium text-zinc-200"></span>
+                            </div>
+                        </div>
+        
+                        <div class="grid grid-cols-2 gap-3 mt-6">
+                            <button id="confirmNo" class="py-2.5 px-4 bg-zinc-900 text-zinc-400 font-medium rounded-lg border border-zinc-800 hover:bg-zinc-800 hover:text-white transition-colors text-xs">
+                                Edit
+                            </button>
+                            <button id="confirmYes" class="py-2.5 px-4 bg-white text-black font-semibold rounded-lg hover:bg-zinc-200 transition-colors text-xs shadow-lg shadow-white/5">
+                                Confirm & Submit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Loader -->
+            <div id="loader" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden z-[60] flex flex-col items-center justify-center">
+                <span class="loader mb-4"></span>
+                <p class="text-zinc-400 text-sm font-medium tracking-wide animate-pulse">Processing...</p>
+            </div>
+        
+            <!-- Status Modal -->
+            <div id="statusMessage" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-[70] flex flex-col items-center justify-center p-4">
+                <div class="bg-surface border border-border p-6 rounded-xl shadow-2xl w-full max-w-sm text-center relative">
+                    <div class="mb-4 text-white text-3xl">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h3 id="statusTitle" class="text-lg font-bold mb-2 text-white"></h3>
+                    <div id="statusText" class="text-zinc-400 text-sm mb-6 leading-relaxed"></div>
+                    <button id="closeStatus" class="w-full py-2.5 px-4 bg-white text-black font-medium rounded-lg hover:bg-zinc-200 transition text-sm">
+                        Close
+                    </button>
+                </div>
+            </div>
+            </div>
+            
+        
+            <script>
+                const form = document.getElementById('researchForm');
+                const nameInput = document.getElementById('name');
+                const admissionInput = document.getElementById('admissionNumber');
+                const phoneInput = document.getElementById('phoneNumber');
+                
+                const confirmDiv = document.getElementById('confirmDiv');
+                const confName = document.getElementById('confName');
+                const confAdm = document.getElementById('confAdm');
+                const confPhone = document.getElementById('confPhone');
+                const confirmYes = document.getElementById('confirmYes');
+                const confirmNo = document.getElementById('confirmNo');
+                
+                const statusMessageEl = document.getElementById('statusMessage');
+                const statusTitleEl = document.getElementById('statusTitle');
+                const statusTextEl = document.getElementById('statusText');
+                const closeStatusButton = document.getElementById('closeStatus');
+                const loader = document.getElementById('loader');
+        
+                function showConfirm() {
+                    confName.textContent = nameInput.value;
+                    confAdm.textContent = admissionInput.value;
+                    confPhone.textContent = phoneInput.value;
+                    confirmDiv.classList.remove('hidden');
+                    confirmDiv.classList.add('flex');
+                    // Trigger animation
+                    setTimeout(() => {
+                        confirmDiv.classList.remove('opacity-0');
+                        confirmDiv.querySelector('div').classList.remove('scale-95');
+                        confirmDiv.querySelector('div').classList.add('scale-100');
+                    }, 10);
+                }
+        
+                function hideConfirm() {
+                    confirmDiv.classList.add('opacity-0');
+                    confirmDiv.querySelector('div').classList.remove('scale-100');
+                    confirmDiv.querySelector('div').classList.add('scale-95');
+                    setTimeout(() => {
+                        confirmDiv.classList.add('hidden');
+                        confirmDiv.classList.remove('flex');
+                    }, 300);
+                }
+        
+                function showStatusMessage(title, message) {
+                    statusTitleEl.textContent = title;
+                    statusTextEl.innerHTML = message;
+                    statusMessageEl.classList.remove('hidden');
+                    statusMessageEl.classList.add('flex');
+                }
+        
+                function hideStatusMessage() {
+                    statusMessageEl.classList.add('hidden');
+                    statusMessageEl.classList.remove('flex');
+                }
+        
+                function saveDraft() {
+                    const draft = {
+                        name: nameInput.value.toUpperCase(),
+                        admissionNumber: admissionInput.value,
+                        phoneNumber: phoneInput.value,
+                        timestamp: new Date().toISOString()
+                    };
+                    localStorage.setItem('researchDraft', JSON.stringify(draft));
+                }
+        
+                function initForm() {
+                    const storedDraft = localStorage.getItem('researchDraft');
+                    if (storedDraft) {
+                        const draft = JSON.parse(storedDraft);
+                        nameInput.value = draft.name || '';
+                        admissionInput.value = draft.admissionNumber || '';
+                        phoneInput.value = draft.phoneNumber || '';
+                    }
+                }
+        
+                function submitForm() {
+                    const admissionInputVal = admissionInput.value.trim().toUpperCase();
+                    
+                    const data = {
+                        name: nameInput.value.toUpperCase(),
+                        admissionNumber: admissionInputVal,
+                        phoneNumber: phoneInput.value
+                    };
+                    
+                    const BASE_URL = 'https://submissionsmu.pythonanywhere.com';
+                    
+                    loader.classList.remove('hidden');
+                    loader.classList.add('flex');
+                    
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', `${BASE_URL}/submission/SAS`);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    
+                    xhr.onload = function () {
+                        loader.classList.add('hidden');
+                        loader.classList.remove('flex');
+                        let result = {};
+                        try { result = JSON.parse(xhr.responseText); } catch(e){}
+                        
+                        if (xhr.status >= 200 && xhr.status < 300 && result.reference_id) {
+                            form.reset();
+                            localStorage.removeItem('researchDraft');
+                            showStatusMessage(
+                                'Submission Successful',
+                                `Your details have been recorded.<br><div class="mt-4 p-3 bg-zinc-900 border border-zinc-800 rounded text-zinc-300 font-mono text-xs select-all">Ref ID: <span class="text-white font-bold">${result.reference_id}</span></div><div class="mt-2 text-[10px] text-zinc-500">Please screenshot this reference.</div>`
+                            );
+                        } else {
+                            showStatusMessage('Submission Failed', result.error || 'An unknown error occurred.');
+                        }
+                    };
+                    
+                    xhr.onerror = function () {
+                        loader.classList.add('hidden');
+                        loader.classList.remove('flex');
+                        showStatusMessage('Connection Error', 'Failed to reach the server. Please check your internet connection.');
+                    };
+                    
+                    xhr.send(JSON.stringify(data));
+                }
+        
+                form.addEventListener('submit', e => { e.preventDefault(); showConfirm(); });
+                confirmYes.addEventListener('click', () => { hideConfirm(); submitForm(); });
+                confirmNo.addEventListener('click', hideConfirm);
+                closeStatusButton.addEventListener('click', hideStatusMessage);
+                [nameInput, admissionInput, phoneInput].forEach(i => i.addEventListener('input', saveDraft));
+                window.addEventListener('load', initForm);
+        
+                function updateCountdown() {
+                    const countdownEl = document.getElementById('countdown');
+                    const now = new Date();
+                    var target = new Date(2025, 11, 15, 14, 0, 0, 0);
+                    
+                    if(now > target) {
+                        document.querySelector('#form-card').innerHTML = `
+                        <div class="glass-panel rounded-2xl p-1 shadow-2xl">
+                            <div class="bg-black/40 rounded-xl p-10 text-center border border-white/5">
+                                <div class="text-red-500 text-4xl mb-4"><i class="fas fa-clock"></i></div>
+                                <h2 class="text-xl font-bold text-white mb-2">Submission Closed</h2>
+                                <p class="text-zinc-500 text-sm mb-6">The deadline for submissions has passed.</p>
+                                <div class="p-4 bg-orange-950/20 rounded-lg border border-orange-900/30">
+                                    <p class="text-xs text-orange-400 font-semibold mb-1">Contact Class Rep</p>
+                                    <a href="tel:254706702299" class="text-white font-bold text-lg hover:underline">0706 702 299</a>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                        countdownEl.className = 'mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-red-950/30 border border-red-900/50 text-xs font-mono text-red-400';
+                        countdownEl.textContent = "Deadline Passed";
+                        return;
+                    }
+                    
+                    const diff = target - now;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    countdownEl.innerHTML = `<i class="far fa-clock mr-1 text-[10px]"></i> Deadline in: ${hours}h ${minutes}m ${seconds}s`;
+                }
+                
+                setInterval(updateCountdown, 1000);
+                updateCountdown();
+            </script>
+        </main>
+    <footer class="page-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand-section">
+                    <div class="footer-brand-info">
+                        <i class="fas fa-university footer-brand-icon"></i>
+                        <span class="footer-brand-text">Form<span class="footer-brand-highlight">Bridge</span></span>
+                    </div>
+                    <p class="footer-description">
+                        Empowering University students and administration with seamless digital tools. <i style="color:#0f0">* Full site is still under development</i>
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="footer-column-heading">Quick Links</h4>
+                    <ul class="footer-list">
+                        <li><a href="/" class="footer-list-link">Home</a></li>
+                        <li><a href="/register" class="footer-list-link">Register</a></li>
+                        <li><a href="/support" class="footer-list-link">Support</a></li>
+                        <li><a href="/login" class="footer-list-link">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="footer-column-heading">Legal</h4>
+                    <ul class="footer-list">
+                        <li><a href="/privacy_policy" class="footer-list-link">Privacy Policy</a></li>
+                        <li><a href="/terms" class="footer-list-link">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 FormBridge. All rights reserved.</p>
+                <p>Developed by <a href="http://lutan-tech.is-great.org" target="_blank" class="lutan-tech-link">Lutan Tech</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+<script>
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("/sw.js");
+    }
+    </script>
+</html>
