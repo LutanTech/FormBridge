@@ -110,8 +110,9 @@
         <style>
             body { font-family: 'Inter', sans-serif; }
             .loader {
-                width: 50px;
-                aspect-ratio: 1;
+                max-width: 50px;
+                max-height:50px;
+                flex-grow: 0;
                 background: #0000;
                 border: 4px solid #e2e8f05d;
                 border-right: 4px solid #f97316;
@@ -222,7 +223,7 @@
                 btn.disabled = true;
     
                 if (adm || phone) {
-                    fetch(`${BASE_URL}/view?adm=${adm}&phone=${phone}`)
+                    fetch(`${BASE_URL}/view/att?adm=${adm}&phone=${phone}`)
                         .then(res => res.json())
                         .then(data => {
                             if (data.error) {
