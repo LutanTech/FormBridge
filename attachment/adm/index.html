@@ -55,9 +55,9 @@
                     <button id="downloadPDF" class="py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition text-sm shadow-md">
                         <i class="fas fa-file-pdf mr-2"></i> Download  PDF
                     </button>
-                    <button id="printTable" class="py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition text-sm shadow-md">
+                    <!-- <button id="printTable" class="py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition text-sm shadow-md">
                         <i class="fas fa-print mr-2"></i> Print Table
-                    </button>
+                    </button> -->
                 </div>
             </div>
 
@@ -396,7 +396,7 @@
             courseFilterBtn.addEventListener('click',()=>handleDownload('pdf', 'course'));
             downloadCSVButton.addEventListener('click',()=>handleDownload('csv'));
             downloadPDFButton.addEventListener('click',()=>handleDownload('pdf'));
-            printTableButton.addEventListener('click',()=>window.print());
+            // printTableButton.addEventListener('click',()=>window.print()); 
             closeStatusButton.addEventListener('click',hideStatusMessage);
             
             // ------------------------- EDIT -------------------------
