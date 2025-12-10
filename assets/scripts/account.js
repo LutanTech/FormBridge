@@ -71,6 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const token = jdf(getCookie('tokn'))
       if (user.username) {
         // pingAccount(user.username, token)
+      } else{
+        window.location.href = '/login'
       }
       document.querySelector('.username').textContent = user.username
 
