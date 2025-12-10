@@ -256,6 +256,13 @@
                                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2">
                                                 <b class="text-sm text-slate-700">Phone:</b> <span class="text-base font-medium text-slate-800">${sub.phone_number}</span>
                                             </div>
+                                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2">
+                                                <b class="text-sm text-slate-700">Email:</b> <span class="text-base font-medium text-slate-800">${sub.email}</span>
+                                            </div>
+                                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2">
+                                                <b class="text-sm text-slate-700">Fields:</b> <span class="text-base font-medium text-slate-800">${sub.hospital ? 'Hospital,' : ''}${sub.remand ? 'Remand,' : ''}${sub.rehab ? 'Rehab' : ''}</span>
+                                            </div>
+                                             
                                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2  rounded-lg">
                                                 <b class="text-sm text-slate-700">Submitted On:</b> <span class="text-sm text-slate-500">${sub.submitted_at}</span>
                                             </div>
