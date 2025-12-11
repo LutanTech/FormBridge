@@ -331,7 +331,11 @@
                     alert('Failed', data.error, 'error')
                     toggleBtn(false)
                 } else{
-                    confirm(data)
+                    alert('Success',`Account created!. Please check your email for the OTP`, 'success' )
+                    toggleBtn(false)
+                    setTimeout(()=>{
+                    window.location.href = "/verify_email"
+                    }, 2000)
                 }
             })
             .catch(err=>{

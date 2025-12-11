@@ -147,28 +147,36 @@
         </div>
       </div>
       <script>
-        function print(){
-            const params = new URLSearchParams(window.location.search)
-            const i = params.get('i')
-            if(i){
-                const payload = {
-                    'i':i,
-                    'header':'Submissions',
-                    'footer' :'Lutan Tech Ssystems'
-                }
-                fetch(`${baseUrl}/print`,{
-                    headers:{
-                        'Content-Type':'application/json'
-                    },
-                    method : 'POST',
-                    body: JSON.stringify({data:jof(payload)})
-                })
-                .then(res=>res.json())
-                .then(data=>{
-                    console.table(data)
-                })
-            }
-        }
+        function print() {
+          const params = new URLSearchParams(window.location.search)
+          const i = params.get('i')
+      
+          if (i) {
+              const payload = {
+                  'i': i,
+                  'header': 'Submissions',
+                  'footer': 'Lutan Tech Ssystems'
+              }
+      
+              fetch(`${baseUrl}/print`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ data: jof(payload) })
+              })
+              .then(res => res.blob())
+              .then(blob => {
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = "submissions.pdf" 
+                  a.click()
+                  URL.revokeObjectURL(url)
+              })
+          }
+      }
+      
         
       </script>
       

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -247,6 +247,7 @@ def create_new_form():
 @app.route('/get_forms/<id>/<token>')
 def forms(id, token):
     if id and token:
+        print(id, token)
         user = User.query.filter_by(id=id).first()
         if user:
             if validate_token(token, user.id):
@@ -524,14 +525,7 @@ def print_all():
 
     pdf_path = make_pdf_all(header, footer, form, submissions)
 
-
-    return jsonify({
-        "msg": "PDF generated successfully",
-        "file": pdf_path
-    })
-
-
-
+    return send_file(pdf_path, as_attachment=True)
 
 
 if __name__ == '__main__':
