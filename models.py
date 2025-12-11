@@ -19,6 +19,7 @@ class User(db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     level = db.Column(db.String(10), default='1')
     otp = db.Column(db.String(5), default=generate_otp)
+    is_deleted = db.Column(db.Boolean, default=False)
 
     def set_password(self, raw_password):
         self.password = generate_password_hash(raw_password)
@@ -86,6 +87,7 @@ class Form(db.Model):
     topic = db.Column(db.Boolean, default=False)
     assignment = db.Column(db.Boolean, default=False)
     units = db.Column(db.Boolean, default=False)
+    is_deleted = db.Column(db.Boolean, default=False)
 
     def to_dict(self):
         return {
@@ -106,7 +108,7 @@ class Form(db.Model):
             'email': self.email,
             'topic': self.topic,
             'assignment': self.assignment,
-            'units': self.units
+            'units': self.units,
         }
         
 

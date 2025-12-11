@@ -301,9 +301,7 @@ def submit_form():
             return jsonify({"ok": False, "msg": "Invalid payload"}), 400
 
         form_id = data.get("form_id")
-        user_id = data.get("user_id")
         user_data = data.get("user_data")
-        print(form_id, user_data)
 
         if not form_id:
             return jsonify({"ok": False, "msg": "Missing form or user"}), 400
@@ -356,6 +354,41 @@ def submit_form():
     except Exception as e:
         log(f"[500] Database error in /submit route:  {str(e)}")
         return jsonify({"ok": False, "msg": "Server error"}), 500
+    
+@app.route('/toggle_db', methods=['POST'])
+def toggle():
+        raw = request.get_json()
+        encoded = raw.get("data")
+        data = decode(encoded)
+
+        if not data:
+            return jsonify({"ok": False, "msg": "Invalid payload"}), 400
+
+        form_id = data.get("f")
+        id = data.get('u')
+        token = data.get('t')
+        user = User.query.filter_by(id=id).first()
+        
+        if not user or not validate_token(token, user.id):
+            return jsonify({'error':'Unauthorized. Please ogin again'}), 401
+        
+            
+        form = Form.query.filter_by(id=form_id).first()
+        
+        if not form:
+            return jsonify({"ok": False, "msg": "Database not found"}), 404
+        
+        if user.id != form.user_id:
+            return jsonify({"ok": False, "msg": "Unauthorized"}), 401
+
+        if not form.is_open:
+            form.is_open = True
+            db.session.commit()
+            return jsonify({"ok": True, "msg": "Database opened"}), 200
+        form.is_open = False
+        db.session.commit()
+        return jsonify({"ok": True, "msg": "Database Locked"}), 200
+        
 
 @app.route('/delete_form', methods=['POST'])
 def delete_form():

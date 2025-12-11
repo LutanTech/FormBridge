@@ -417,13 +417,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="db-size"> <i class="fas fa-server"></i> 56.09kb</div>
                 <div class="db-actions">
                   <div class="open"><i class="fas fa-eye"></i></div>
-                  <div class="pause"><i class="fas fa-pause"></i></div>
+                  <div class="pause"> ${db.is_open ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play" style="color:red;"></i>' } </div>
                   <div class="download"><i class="fas fa-cloud-download"></i></div>
                   <div class="clear"><i class="fas fa-trash"></i></div>
                   <div class="refresh"> <i class="fas fa-refresh"></i> </div>
                 </div>
           `
           parent.appendChild(div)
+  // 1
+          const p = div.querySelector('.pause')
+          p.addEventListener('click', ()=>{
+            if(p){
+           const toggleData = {
+              'u':user.id,
+              'f':db.id,
+              't':token
+           }
+              toggleStatus(jof(toggleData))
+            }
+          })
           const rd = div.querySelector('.refresh')
           div.querySelector('.refresh').addEventListener('click', ()=>{
             console.log(rd.innerHTML)
@@ -439,6 +451,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 rd.innerHTML = '<i class="fas fa-refresh"></i>'
             }, 5000);
           })
+
+// 2
+
           div.querySelector('.open').addEventListener('click', ()=>{
             const db_data = {
               'u':user.id,
@@ -494,6 +509,29 @@ document.addEventListener('DOMContentLoaded', () => {
           }
       
         }
+      }
+      function toggleStatus(payload){
+          if(payload){
+            fetch(`${baseUrl}/toggle_db`, {
+              headers:{
+                'Content-Type':'application/json'
+              }, 
+              method:'POST',
+              body:JSON.stringify({data:payload})
+            })
+            .then(res=>res.json())
+            .then(data=>{
+              if(data.error){
+                alert('Error', data.error, 'error')
+                return
+              }
+              alert('Success', data.msg, 'success')
+              initDbs()
+            })
+            .catch(e=>{
+              alert('Connection error', e.message, 'error')
+            })
+          }
       }
 
     }
