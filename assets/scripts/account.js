@@ -530,7 +530,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return
               }
               alert('Success', data.msg, 'success')
-              initForms().then(initDbs(window.forms))
+              initForms()
+              setTimeout(() => {
+                initDbs(window.forms)
+              }, 3000);
               
             })
             .catch(e=>{
