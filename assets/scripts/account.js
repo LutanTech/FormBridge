@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
               }
               wrapper.innerHTML = ''
                 const forms = data.forms
+                window.forms = forms
                 if(forms && forms.length > 0){
                   initDbs(forms)
                     forms.forEach(f=>{
@@ -256,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return
         }
         alert('Success', data.msg, 'success')
+        initForms()
       })
       .catch(e=>{
         alert('Connection error', e.message, 'error')
@@ -399,6 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.initDbs = initDbs
     
     function initDbs(data){
+      
       const user = jdf(getCookie('user'))
       token = getCookie('token')
       if(data){
@@ -511,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
         }
       }
-      function toggleStatus(payload){
+     async function toggleStatus(payload){
           if(payload){
             fetch(`${baseUrl}/toggle_db`, {
               headers:{
@@ -527,7 +530,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return
               }
               alert('Success', data.msg, 'success')
-              initDbs()
+              initForms().then(initDbs(window.forms))
+              
             })
             .catch(e=>{
               alert('Connection error', e.message, 'error')
