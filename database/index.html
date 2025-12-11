@@ -150,6 +150,9 @@
         function print() {
           const params = new URLSearchParams(window.location.search)
           const i = params.get('i')
+          const btn = document.querySelector('.print')
+          let initial = ` <i class="fas fa-file-pdf"></i> PDF`
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'
       
           if (i) {
               const payload = {
@@ -173,6 +176,7 @@
                   a.download = "submissions.pdf" 
                   a.click()
                   URL.revokeObjectURL(url)
+                  btn.innerHTML = initial
               })
           }
       }
