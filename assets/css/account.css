@@ -105,13 +105,13 @@ gap: 10px;
 justify-content: center;
 }
 .card{
-border-radius: 20px;
+border-radius: 2px;
 box-shadow: 1px 3px 5px  rgba(128, 128, 128, 0.289);
 padding: 10px;
 max-width: 300px;
 flex-grow: 1;
 flex-shrink: 0;
-flex:1 1 200px;
+flex:1 1 300px;
 justify-content: center;
 align-items: center;
 flex-direction: column;
@@ -138,6 +138,14 @@ font-size: 1.2em;
 opacity: 0.7;
 font-size: small;
 font-style: italic;
+}
+.new{
+    background: rgba(0, 255, 60, 0.907);
+    color: black;
+    .card-icon{
+        background: rgb(0, 119, 255);
+        color: white;
+    }
 }
 .forms{
 background: rgb(173, 216, 230);
@@ -580,7 +588,6 @@ color: white;
 }
 .forms-ov{
     display: flex;
-    z-index: 2044;
     transform: translate(0);
     background: #000000;
     position: absolute;
@@ -655,3 +662,136 @@ color: white;
 .flex{
     display: flex !important;
 }
+
+/* DATABASES */
+.databases {
+    background: rgb(0, 0, 0);
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    z-index: 2000;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    hr {
+      border: 0.2px solid #eeeeee44;
+      margin: 10px 0;
+    }
+  }
+
+  .database-inner {
+    margin-top: 20px;
+  }
+
+  .dbs {
+    display: flex;
+    padding: 10px;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .db {
+    flex: 1 1 200px;
+    background: rgba(0, 6, 128, 0.121);
+    padding: 10px;
+    border: 1px solid rgba(214, 214, 214, 0.27);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    min-width: 300px;
+    overflow: hidden;
+    
+  }
+  @media (min-width:500px) {
+    .db{
+      max-width: 400px !important;
+    }          
+  }
+
+  .db-img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    opacity: 0.77;
+    margin-bottom: 10px;
+  }
+
+  .db-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    border-radius: 10px;
+    box-shadow: 0px -5px 3px rgba(255, 255, 255, 0.108), 0px 10px 10px rgb(68, 67, 67) ;
+    overflow: hidden !important;
+    height: max-content;
+
+    div {
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+      padding: 5px;
+      width: 30px;
+      height: 30px;
+      overflow: hidden !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0000;
+      border-radius: 50%;
+
+      &:hover {
+        scale: 1;
+        background: #eee;
+        color: black !important;
+
+      }
+
+      &:active {
+        scale: 0.6;
+      }
+    }
+
+    div:nth-child(1) {
+      color: #0f0;
+    }
+
+    div:nth-child(2) {
+      color: rgb(255, 187, 0);
+    }
+
+    div:nth-child(3) {
+      color: rgb(0, 208, 255);
+    }
+
+    div:nth-child(4) {
+      color: rgb(255, 0, 0);
+    }
+
+    div:nth-child(5) {
+      color: rgb(122, 34, 245);
+    }
+  }
+
+  .db-desc {
+    color: grey;
+    font-size: small;
+  }
+  .db-name{
+    position: absolute;
+    font-size: 2em;
+    text-align: center;
+    width: 96%;
+    padding: 0;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    i{
+      color: orange;
+      font-size: 1.2em;
+    }
+
+  }

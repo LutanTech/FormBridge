@@ -6,36 +6,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FormBridge || Account</title>
   <meta name="title" content="FormBridge – Smart University Form Automation">
-<meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
+  <meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
 
-<link rel="canonical" href="https://formbridge.vercel.app/">
+  <link rel="canonical" href="https://formbridge.vercel.app/">
 
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://formbridge.vercel.app/">
-<meta property="og:title" content="FormBridge – Smart University Form Automation">
-<meta property="og:description" content="Fast, secure digital form management for universities.">
-<meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://formbridge.vercel.app/">
+  <meta property="og:title" content="FormBridge – Smart University Form Automation">
+  <meta property="og:description" content="Fast, secure digital form management for universities.">
+  <meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://formbridge.vercel.app/">
-<meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
-<meta name="twitter:description" content="Digital form management built for universities.">
-<meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://formbridge.vercel.app/">
+  <meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
+  <meta name="twitter:description" content="Digital form management built for universities.">
+  <meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "FormBridge",
-  "alternateName": "Form Bridge Platform",
-  "url": "https://formbridge.vercel.app/",
-  "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
-  "sameAs": []
-}
-</script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "FormBridge",
+    "alternateName": "Form Bridge Platform",
+    "url": "https://formbridge.vercel.app/",
+    "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
+    "sameAs": []
+  }
 
-<meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
-<meta name="robots" content="index, follow">
+  </script>
+
+  <meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
+  <meta name="robots" content="index, follow">
   <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
   <link rel="icon" href="/assets/logo.png" type="image/x-icon">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -139,6 +140,13 @@
           <div class="joined"></div>
         </div>
         <div class="cards">
+          <div class="card new" data-id="new">
+            <div class="card-icon">
+              <i class="fas fa-plus"></i>
+            </div>
+            <div class="card-title">New Form</div>
+            <div class="card-desc">Create a new Form</div>
+          </div>
           <div class="card forms" data-id="forms">
             <div class="card-icon">
               <i class="fas fa-message"></i>
@@ -146,6 +154,7 @@
             <div class="card-title">Forms</div>
             <div class="card-desc">View and Manage Forms</div>
           </div>
+
           <div class="card data" data-id="data">
             <div class="card-icon">
               <i class="fas fa-globe"></i>
@@ -175,6 +184,8 @@
       <div class="overlay vissible">
 
         <div class="back-btn" title="Back"> &larr;</div>
+
+        <!-- Div 1 -->
 
         <div class="newForm">
           <div class="inner">
@@ -244,57 +255,76 @@
 
           </script>
         </div>
+
+        <!-- Div 2 -->
+
         <div class="forms-ov">
           <div class="forms-wrapper">
 
           </div>
         </div>
+
+        <!-- DIv #3 Databases -->
+
+        <div class="databases">
+          <div class="database-inner">
+            <h3>Your Databases</h3>
+            <hr>
+            <div class="dbs">
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-<div class="confirm-modal">
-  <div class="confirm-inner">
-    <div class="c-content">
-    <div class="title"></div>
-    <div class="text">
+    <div class="confirm-modal">
+      <div class="confirm-inner">
+        <div class="c-content">
+          <div class="title"></div>
+          <div class="text">
+          </div>
+          <div class="actions">
+            <button type="button" data-id="cancel">Cancel</button>
+            <button type="button" data-id="continue" disabled>Ok</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="actions">
-      <button type="button" data-id="cancel">Cancel</button>
-      <button type="button" data-id="continue" disabled>Ok</button>
+    <style>
+
+    </style>
+
+    <div class="infoModal">
+      <div class="info-inner">
+
+      </div>
     </div>
-    </div>
-  </div>
-</div>
-<style>
 
-</style>
 
-<div class="infoModal">
-  <div class="info-inner">
-
-  </div>
-</div>
-<script>
-  function fetchFormInfo(payload){
-    if(payload){
+    <script>
+    function fetchFormInfo(payload) {
+      if (payload) {
         fetch(`${baseUrl}/form_info`, {
-            headers:{
-                'Content-Type':'application/json'
+            headers: {
+              'Content-Type': 'application/json'
             },
-            method:'POST',
-            body:JSON.stringify({data:payload})
-        })
-        .then(res=>res.json())
-        .then(data=>{
-            if(data.error){
-                alert('Error', data.error,'error')
+            method: 'POST',
+            body: JSON.stringify({
+              data: payload
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.error) {
+              alert('Error', data.error, 'error')
             }
             const info = jdf(data)
-            if(info){
-                 document.querySelector('.info-inner').innerHTML = ''
-                const f = info.form
-                const div = document.createElement('div')
-                div.classList.add('div')
-                div.innerHTML = `
+            if (info) {
+              document.querySelector('.info-inner').innerHTML = ''
+              const f = info.form
+              const div = document.createElement('div')
+              div.classList.add('div')
+              div.innerHTML = `
                     <div class="closeInner">&times</div>
                     <div class="name">${f.name_str}</div>
                     <div class="desc"><b>${f.desc}
@@ -305,16 +335,16 @@
                     <div class="deadline"><b>Deadline: </b>${f.deadline}</div>
                     <div class="dbid"><b>Database ID: </b> ${info.db_id}<i>This ID expires in 5 mins</i> </div>
     `
-           document.querySelector('.info-inner').append(div)
+              document.querySelector('.info-inner').append(div)
             }
-        })
-        .catch(e=>{
+          })
+          .catch(e => {
             alert('Connection error', e.message, 'error')
-        })
+          })
+      }
     }
-}
 
-</script>
+    </script>
   </main>
 
   <script src="/assets/scripts/account.js">

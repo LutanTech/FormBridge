@@ -103,7 +103,7 @@ def register():
 
         if exists:
             return jsonify({'error': 'Username already in use. Please choose another one'}), 400
-        
+
         if e_exists:
             return jsonify({'error': 'Email already exists. Please login'}), 400
 
@@ -113,13 +113,13 @@ def register():
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
-        try:        
+        try:
            send_otp_email(mail, new_user.email, generate_otp(5))
            log(f'[200] New User joined : {new_user.username}', 'success')
-           return jsonify({'msg': 'Registered successfully. Check your email for OTP'}), 200 
+           return jsonify({'msg': 'Registered successfully. Check your email for OTP'}), 200
         except Exception as e:
             log(f'Failed to send OTP to {new_user.email}: {str(e)}', 'error')
-            return jsonify({'error':'Failed to send otp. Please retry again'}), 400      
+            return jsonify({'error':'Failed to send otp. Please retry again'}), 400
     except Exception as e:
         db.session.rollback()
         log(f'[500] Database error in /register route: {str(e)}', 'error')
@@ -175,8 +175,8 @@ def verify():
     if user:
         if user.otp == '':
             return jsonify({'info':'Already Verified. Please Log in'}), 302
-        
-        if otp == user.otp: 
+
+        if otp == user.otp:
             try:
                 user.otp = ''
                 db.session.commit()
@@ -195,12 +195,12 @@ def create_new_form():
     raw = request.get_json()
     encoded = raw.get("data")
 
-    
+
 
     data = (encoded)
     if data:
         name = data.get('name')
-        deadline_str = data.get('deadline') 
+        deadline_str = data.get('deadline')
         deadline = datetime.fromisoformat(deadline_str)
         desc = data.get('desc')
         ins = data.get('ins')
@@ -239,9 +239,9 @@ def create_new_form():
                 db.session.rollback()
                 log(f'[500] Database error in /new_form route : {str(e)}', 'error')
                 return jsonify({'error': 'An unexpected error occured on our end'}), 500
-        
+
         return jsonify({'error': 'Invalid data received. Please Login again'}), 400
-    
+
     return jsonify({'error': 'Missing data in request. Please Try again'}), 400
 
 @app.route('/get_forms/<id>/<token>')
@@ -272,7 +272,7 @@ def form_info():
     raw = request.get_json()
     encoded = raw.get("data")
     data = decode(encoded)
-    
+
     if data:
         fid = data.get('fid')
         uid = data.get('uid')
@@ -361,11 +361,11 @@ def delete_form():
     raw = request.get_json()
     encoded = raw.get("data")
     data = decode(encoded)
-    
+
     id = data.get('uid')
     fid = data.get('fid')
     token = data.get('token')
-    
+
     if fid and id and token:
             user = User.query.filter_by(id=id).first()
             if user and validate_token(token, user.id):
@@ -459,7 +459,7 @@ def edit_sub():
 
     if not data:
         return jsonify({'error': 'Invalid payload'}), 400
-    
+
     print(data)
 
     i = data.get('i')
@@ -507,10 +507,10 @@ def print_all():
 
     if not data:
         return jsonify({"error": "Invalid payload"}), 400
-    
+
     i = decode(data.get('i'))
     print(i)
-  
+
     fid = i.get("f")
     header = data.get("header", "")
     footer = data.get("footer", "")
@@ -523,7 +523,7 @@ def print_all():
     print(submissions)
 
     pdf_path = make_pdf_all(header, footer, form, submissions)
-    
+
 
     return jsonify({
         "msg": "PDF generated successfully",
@@ -537,5 +537,6 @@ def print_all():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+    print('app.run(debug=True, port=6050, host="0.0.0.0")')
     app.run(debug=True, port=6050, host="0.0.0.0")
 

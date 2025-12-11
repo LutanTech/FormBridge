@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function confirm(title, text, input, waitVal, proceed){
-      console.log(title, text, input, proceed, waitVal)
       const confirmModal = document.querySelector('.confirm-modal')
     
       if(!confirmModal) return
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const continueBtn = inner.querySelector('[data-id="continue"]')
       continueBtn.onclick = () => {
         if(typeof proceed === "function"){
-          if(inputField.value.toUpperCase().trim() !== waitVal){
+          if(inputField.value.toUpperCase().trim() !== waitVal && waitVal){
             alert('Error', 'Please type the required text: ' + waitVal, 'error')
             return
           }
@@ -78,14 +77,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
     initAccount()
+    function ZMinus(div){
 
+    overlay.querySelector(div).setAttribute('style', 'z-index:-1')
+  }
+  function ZAdd(div){
+    overlay.querySelector(div).setAttribute('style', 'z-index:4')
+  }
     const cards = document.querySelectorAll('.card')
     cards.forEach(c => {
       c.addEventListener('click', () => {
         const attr = c.getAttribute('data-id')
         overlay.classList.toggle('vissible')
-        if(c.attr == 'forms'){
-            overlay.querySelector('.forms-ov').setAttribute('style','z-index:4000')
+        if(attr == 'forms'){
+          ZMinus('.newForm')
+          ZAdd('.forms-ov')
+        }
+        if(attr == 'new'){
+          ZAdd('.newForm')
+          ZMinus('.forms-ov')
         }
       })
     })
@@ -96,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.classList.toggle('vissible')
       })
     }
+    window.initForms = initForms
 
     function initForms(){
         const user = jdf(getCookie('user'))
@@ -115,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
               wrapper.innerHTML = ''
                 const forms = data.forms
                 if(forms && forms.length > 0){
+                  initDbs(forms)
                     forms.forEach(f=>{
                    const div = document.createElement('div')
                    div.classList.add('form')
@@ -226,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkVal(val, expected) {
     const btn = document.querySelector('[data-id="continue"]')
     if (!btn) return
-    btn.disabled = (val !== expected)
+    btn.disabled = (val !== expected ? expected : 'false')
   }
   function delete_form(payload){
     if(payload){
@@ -363,6 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (data.msg) {
               alert('Success', 'Form Added Successfully', 'success')
+              initForms()
               toggleBtn('create-form', 'Create', false)
             }
           })
@@ -383,5 +396,105 @@ document.addEventListener('DOMContentLoaded', () => {
         }
      })
     }
+    window.initDbs = initDbs
+    
+    function initDbs(data){
+      const user = jdf(getCookie('user'))
+      token = getCookie('token')
+      if(data){
+        const dbs = data
+        dbs.forEach(db=>{
+          const div = document.createElement('div')
+          const parent = document.querySelector('.dbs')
+          div.classList.add('db')
+          div.innerHTML =  `
+                <div class="db-pic">
+                  <img src="/assets/images/db2.png" alt="" class="db-img">
+                </div>
+                <div class="db-name"><i class="fas fa-database"></i> ${db.name_str}</div>
+                <hr>
+                <div class="db-desc"><i class="fas fa-info-circle"></i> ${db.desc ? db.desc :'No description added'} </div>
+                <div class="db-size"> <i class="fas fa-server"></i> 56.09kb</div>
+                <div class="db-actions">
+                  <div class="open"><i class="fas fa-eye"></i></div>
+                  <div class="pause"><i class="fas fa-pause"></i></div>
+                  <div class="download"><i class="fas fa-cloud-download"></i></div>
+                  <div class="clear"><i class="fas fa-trash"></i></div>
+                  <div class="refresh"> <i class="fas fa-refresh"></i> </div>
+                </div>
+          `
+          parent.appendChild(div)
+          const rd = div.querySelector('.refresh')
+          div.querySelector('.refresh').addEventListener('click', ()=>{
+            console.log(rd.innerHTML)
+            if(rd.innerHTML != '<i class="fas fa-spinner fa-spin"></i>'){
+                 rd.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'
+            }  else{
+              return
+            }
+            setTimeout(() => {
+              rd.innerHTML = '<i class="fas fa-check-circle" style="color:#0f0; scale:1.5"></i>'
+            }, 4000);
+            setTimeout(() => {
+                rd.innerHTML = '<i class="fas fa-refresh"></i>'
+            }, 5000);
+          })
+          div.querySelector('.open').addEventListener('click', ()=>{
+            const db_data = {
+              'u':user.id,
+              'f':db.id,
+              't':token
+            }
+            const link = `${window.origin}/database/?i=${jof(db_data)}`
+            window.location.href= link
+          })
+           div.querySelector('.clear').addEventListener('click', ()=>{
+            confirm(
+              "Are you sure you want to delete all data in this Database?",
+              `<label for="del-pass"> Type <b>'DELETE/${db.name_str}/your_passsword'</b> here to proceed </label><input style="text-transform:uppercase" oninput="checkVal(this.value.trim().toUpperCase(),'' )" type="text" autocomplete="off" id="del-pass" placeholder="Type 'DELETE/${db.name_str}' here to proceed">`, 'danger',
+            ``,
+              (value)=>{
+              alert('Info', 'Deleting all data in database' + db.id, 'info')
+              const user = jdf(getCookie('user'))
+              const token = getCookie('token')
+              if(user && token && user.id){
+                const payload = {
+                  'uid':user.id,
+                  'token':token,
+                  'fid':db.id
+                }
+                console.table(jof(payload))
+                delete_db(jof(payload))
+              }
+            })
+            
+           })
 
+        })
+        function delete_db(payload){
+          if(payload){
+            fetch(`${baseUrl}/delete_db_data`, {
+              headers:{
+                'Content-Type':'application/json'
+              }, 
+              method:'POST',
+              body:JSON.stringify({data:payload})
+            })
+            .then(res=>res.json())
+            .then(data=>{
+              if(data.error){
+                alert('Error', data.error, 'error')
+                return
+              }
+              alert('Success', data.msg, 'success')
+            })
+            .catch(e=>{
+              alert('Connection error', e.message, 'error')
+            })
+          }
+      
+        }
+      }
+
+    }
   });
