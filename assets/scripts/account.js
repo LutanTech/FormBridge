@@ -428,6 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const p = div.querySelector('.pause')
           p.addEventListener('click', ()=>{
             if(p){
+              p.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'
            const toggleData = {
               'u':user.id,
               'f':db.id,
