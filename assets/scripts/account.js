@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <div class="pause"> ${db.is_open ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play" style="color:red;"></i>' } </div>
                   <div class="download"><i class="fas fa-cloud-download"></i></div>
                   <div class="clear"><i class="fas fa-trash"></i></div>
-                  <div class="refresh"> <i class="fas fa-refresh"></i> </div>
+                  <div class="refresh" loading> <i class="fas fa-refresh"></i> </div>
                 </div>
           `
           parent.appendChild(div)
@@ -443,20 +443,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           })
           const rd = div.querySelector('.refresh')
-          div.querySelector('.refresh').addEventListener('click', ()=>{
-            console.log(rd.innerHTML)
-            if(rd.innerHTML != '<i class="fas fa-spinner fa-spin"></i>'){
-                 rd.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'
-            }  else{
-              return
-            }
+          div.querySelector('.refresh').addEventListener('click', (e)=>{
+            rd.toggleAttribute('loading')
+            if(!rd.hasAttribute('loading')){
+            rd.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'
             setTimeout(() => {
-              rd.innerHTML = '<i class="fas fa-check-circle" style="color:#0f0; scale:1.5"></i>'
-            }, 4000);
-            setTimeout(() => {
-                rd.innerHTML = '<i class="fas fa-refresh"></i>'
-            }, 5000);
+              
+            fetch(`${baseUrl}/refresh/db`)
+            .then(res=>res.json())
+            .then(data=>{
+              if(data.error){
+              rd.innerHTML = '<i class="fas fa-refresh"></i>'
+              }
+            if (data.msg){
+            rd.innerHTML = '<i class="fas fa-check-circle" style="color:#0f0; scale:1.5"></i>'
+          setTimeout(() => {
+            rd.innerHTML = '<i class="fas fa-refresh"></i>'
+
+          }, 3000);   }
+        })
+            .catch(e=>{
+              alert(e.messsage, 'error');
+              rd.innerHTML = '<i class="fas fa-refresh"></i>'
+
+            })
+          }, 1000);
+
+          } else{
+            return 
+          }
           })
+        
+        
+        
 
 // 2
 
@@ -468,9 +487,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const link = `${window.origin}/database/?i=${jof(db_data)}`
             window.location.href= link
-          })
-          div.querySelector('.refresh').addEventListener('click', ()=>{
-            fetch(`${baseUrl}/refresh/db`)
           })
            div.querySelector('.clear').addEventListener('click', ()=>{
             confirm(

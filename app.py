@@ -563,11 +563,11 @@ def print_all():
 @app.route('/refresh/db')
 def refresh():
     try:
-        newTest = Submission(form=Form)
+        newTest = Form(user_id='Test')
         db.session.add(newTest)
         return jsonify('success', 'Refreshed database')
     except Exception as e:
-        log('[500] error in /refresh/db route', 'error')
+        log(f'[500] error in /refresh/db route: {e}', 'error')
         return jsonify({'error':f'database error : {str(e)}'}), 500
         
     return
