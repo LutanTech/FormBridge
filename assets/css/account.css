@@ -673,11 +673,27 @@ color: white;
     position: absolute;
     top: 0;
     right: 0;
+    &::-webkit-scrollbar{
+        background: #0000;
+        width: 4px;
+        
+    }
+    &::-webkit-scrollbar-thumb{
+        background: magenta;
+    }
 
     hr {
       border: 0.2px solid #eeeeee44;
       margin: 10px 0;
     }
+  }
+  @media (max-width:768px) {
+    .dbs{
+        justify-content: center;
+        align-items: center;
+
+    }
+    
   }
 
   .database-inner {

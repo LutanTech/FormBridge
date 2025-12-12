@@ -74,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/login'
       }
       document.querySelector('.username').textContent = user.username
+      const lg = document.querySelector('.login')
+      lg.outerHTML = ''
 
     }
     initAccount()
@@ -467,6 +469,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const link = `${window.origin}/database/?i=${jof(db_data)}`
             window.location.href= link
           })
+          div.querySelector('.refresh').addEventListener('click', ()=>{
+            fetch(`${baseUrl}/refresh/db`)
+          })
            div.querySelector('.clear').addEventListener('click', ()=>{
             confirm(
               "Are you sure you want to delete all data in this Database?",
@@ -530,7 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return
               }
               alert('Success', data.msg, 'success')
-              initForms()
               setTimeout(() => {
                 initDbs(window.forms)
               }, 3000);

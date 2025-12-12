@@ -560,6 +560,17 @@ def print_all():
 
     return send_file(pdf_path, as_attachment=True)
 
+@app.route('/refresh/db')
+def refresh():
+    try:
+        newTest = Submission(form=Form)
+        db.session.add(newTest)
+        return jsonify('success', 'Refreshed database')
+    except Exception as e:
+        log('[500] error in /refresh/db route', 'error')
+        return jsonify({'error':f'database error : {str(e)}'}), 500
+        
+    return
 
 if __name__ == '__main__':
     with app.app_context():
