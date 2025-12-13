@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS Submissions Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
+    <link rel="icon" href="/assets/logo.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .loader { width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: #4F46E5; border-radius: 50%; display: inline-block; box-sizing: border-box; animation: rotation 1s linear infinite; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .flex-force { display: flex !important; }
+
+        @media print {
+            body { background-color: white !important; }
+            body > *:not(#mainWrapper) { display: none !important; }
+            #mainWrapper { max-width: none !important; margin: 0; padding: 0; width: 100% !important; }
+            #adminPanel .no-print { display: none !important; }
+            #adminTable { box-shadow: none !important; border: 1px solid #ccc; width: 100%; }
+            #adminTable thead th { background-color: #eee !important; -webkit-print-color-adjust: exact; }
+            .print-area { padding: 0 !important; }
+        }
+    </style>
+</head>
+<body data-pass="secure" class="bg-slate-50 min-h-screen flex flex-col items-center p-4">
+
+    <div class="w-full max-w-5xl z-10 pt-8 transition-all duration-300" id="mainWrapper">
+        <h1 class="text-3xl font-bold text-slate-800 mb-6 text-center">Logbooks Admin Dashboard</h1>
+
+        <div id="adminPanel" class="w-full pt-4 pb-12">
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6 no-print">
+                <div class="mb-4">
+                    <label for="adminFilter" class="block text-sm font-medium text-slate-700 mb-1">Filter Records (Name, Adm No., or Phone)</label>
+                    <input type="text" id="adminFilter" placeholder="Start typing to filter table data locally or enter prefix for PDF..."
+                        class="w-full py-2.5 px-4 bg-slate-50 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none">
+                </div>
+                <div class="mb-4 flex flex-wrap wrap" style="gap: 10px;">
+                    <label for="courseFilter" class="w-full block text-sm font-medium text-slate-700 mb-1">Download PDF Based on Course</label>
+                    <input style="flex-grow: 1;" type="text" id="courseFilter" placeholder="Enter prefix Eg. LMC, BA, BAE, ED..."
+                        class="w-50 py-2.5 px-4 bg-slate-50 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm outline-none">
+                        <button id="courseFilterBtn" style="    background: #0f0a0a;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;"> Download</button>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button id="downloadCSV" class="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition text-sm shadow-md">
+                        <i class="fas fa-file-csv mr-2"></i> Download CSV
+                    </button>
+                    <button id="downloadPDF" class="py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition text-sm shadow-md">
+                        <i class="fas fa-file-pdf mr-2"></i> Download  PDF
+                    </button>
+                    <button id="printTable" class="py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition text-sm shadow-md">
+                        <i class="fas fa-print mr-2"></i> Print Table
+                    </button>
+                </div>
+            </div>
+
+            <div id="adminTableContainer" class="mt-6 overflow-x-auto print-area">
+                <table id="adminTable" class="min-w-full bg-white rounded-xl shadow-lg border border-slate-200 divide-y divide-slate-200">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider rounded-tl-xl">Ref ID</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Full Name</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Adm No.</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Phone</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Gender</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider rounded-tr-xl">Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody" class="bg-white divide-y divide-slate-100">
+                        <tr id="loadingRow"><td colspan="5" class="py-10 text-center text-indigo-500 text-sm"><span class="loader align-middle mr-2"></span> Loading data...</td></tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <style>
+                :disabled{
+                    pointer-events: none;
+                    background: grey !important;
+                }
+                .nav-btns{
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-between;
+                }
+                .btn{
+                    display: flex;
+                    padding: 10px 20px;
+                    border-radius: 40px;
+                    cursor: pointer;
+                    margin: 10px;
+                    color: white;
+                    &:hover{
+                        background: #000 !important;
+                        color: white;
+                    }
+                    &:active{
+                        background: #000 !important;
+                        color: white;
+                        scale: 0.98;
+                    }
+                }
+                .prev-btn{
+                    background: green;
+                    
+                }
+                .next-btn{
+                    background: rgb(0, 115, 255);
+                }
+                .per_p{
+                    font-size: x-small;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            </style>
+            <div class="nav-btns">
+                <button class="btn prev-btn" disabled>Prev</button>
+                <div class="per_p"></div>
+                <button class="btn next-btn" disabled> Next</button>
+            </div>
+
+            <div id="noDataMessage" class="mt-4 p-4 bg-orange-100 text-orange-800 rounded-lg hidden">
+                <i class="fas fa-exclamation-triangle mr-2"></i> No submissions match the current filter or none have been submitted yet.
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[60] flex-col items-center justify-center">
+        <span class="loader mb-4"></span>
+        <p class="text-white font-medium tracking-wide animate-pulse" id="loaderText">Processing...</p>
+    </div>
+
+    <!-- Status Message -->
+    <div id="statusMessage" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[700] flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm text-center relative overflow-hidden">
+            <div class="mb-4 text-indigo-600 text-4xl">
+                <i id="statusIcon" class="fas fa-info-circle"></i>
+            </div>
+            <h3 id="statusTitle" class="text-xl font-bold mb-2 text-slate-800"></h3>
+            <p id="statusText" class="text-slate-600 text-sm mb-6 leading-relaxed"></p>
+            <button id="closeStatus" class="w-full py-2.5 px-4 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition shadow-lg">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[80] flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md relative">
+            <h3 class="text-xl font-bold mb-4 text-slate-800">Edit Submission</h3>
+            <form id="editForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                    <input type="text" name="name" id="editName" class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Adm No.</label>
+                    <input type="text" name="admission_number" id="editAdm" class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+                    <input type="text" name="phone_number" id="editPhone" class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">OTP</label>
+                    <input type="text" name="otp" id="otp" class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div class="flex justify-end gap-2 mt-2">
+                    <button type="button" id="cancelEdit" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+            const API_BASE_URL = 'https://submissionsmu.pythonanywhere.com';
+            const loader = document.getElementById('loader');
+            const loaderText = document.getElementById('loaderText');
+            const statusMessageEl = document.getElementById('statusMessage');
+            const statusIconEl = document.getElementById('statusIcon');
+            const statusTitleEl = document.getElementById('statusTitle');
+            const statusTextEl = document.getElementById('statusText');
+            const closeStatusButton = document.getElementById('closeStatus');
+            
+            const adminTableBody = document.getElementById('adminTableBody');
+            const adminFilterInput = document.getElementById('adminFilter');
+            const courseFilterInput = document.getElementById('courseFilter');
+            const courseFilterBtn = document.getElementById('courseFilterBtn');
+            const downloadCSVButton = document.getElementById('downloadCSV');
+            const downloadPDFButton = document.getElementById('downloadPDF');
+            const printTableButton = document.getElementById('printTable');
+            const noDataMessage = document.getElementById('noDataMessage');
+
+            
+            const prev = document.querySelector('.prev-btn');
+            const next = document.querySelector('.next-btn');
+            
+            let currentPage = 1;
+            let totalPages = 1;
+            let currentFilter = '';
+            let currentPageData = [];
+
+            // ------------------------- UTILS -------------------------
+            function showLoader(text = "Processing...") {
+                loaderText.textContent = text;
+                loader.classList.remove('hidden');
+                loader.classList.add('flex-force');
+            }
+            function hideLoader() {
+                loader.classList.add('hidden');
+                loader.classList.remove('flex-force');
+            }
+            function showStatusMessage(title, message, isSuccess = true) {
+                statusTitleEl.textContent = title;
+                statusTextEl.innerHTML = message;
+                statusIconEl.className = isSuccess
+                    ? 'fas fa-check-circle text-emerald-600'
+                    : 'fas fa-times-circle text-red-600';
+                statusMessageEl.classList.remove('hidden');
+                statusMessageEl.classList.add('flex-force');
+            }
+            function hideStatusMessage() {
+                statusMessageEl.classList.add('hidden');
+                statusMessageEl.classList.remove('flex-force');
+            }
+            
+            // ------------------------- FETCH PAGINATION -------------------------
+            async function fetchPage(page = 1, filter = '') {
+                showLoader(`Loading page ${page}...`);
+                try {
+                    adminTableBody.innerHTML = `<tr><td colspan="5" class="py-10 text-center text-indigo-500 text-sm"><span class="loader align-middle mr-2"></span> Loading data...</td></tr>`;
+                    noDataMessage.classList.add('hidden');
+            
+                    let url = `${API_BASE_URL}/all-sas-submissions?page=${page}&per_page=200`;
+                    if(filter) url += `&filter=${encodeURIComponent(filter)}`;
+            
+                    const response = await fetch(url);
+                    if(!response.ok) throw new Error(`HTTP error ${response.status}`);
+
+            
+                    const result = await response.json();
+                    const submissions = result.data || [];
+                    currentPage = result.page || 1;
+                    totalPages = result.pages || 1;
+                    
+
+                    
+                    document.querySelector('.per_p').innerHTML = `
+                    Showing  ${result.data.length}  of ${result.total} entries <br>  Page ${currentPage} of ${totalPages} pages
+                    `
+            
+                    if(submissions.length === 0){
+                        adminTableBody.innerHTML = '';
+                        noDataMessage.classList.remove('hidden');
+                        noDataMessage.textContent = 'No submissions found yet.';
+                    } else {
+                        currentPageData = submissions;
+                        renderAdminTable(currentPageData);
+
+                    }
+            
+                } catch(err) {
+                    console.error(err);
+                    adminTableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-red-500 text-sm"><i class="fas fa-exclamation-circle mr-1"></i> Failed to load data from backend.</td></tr>`;
+                } finally {
+                    hideLoader();
+                    updatePaginationButtons();
+                }
+            }
+            
+            // ------------------------- TABLE -------------------------
+            let currentEditRef = null;
+            const editModal = document.getElementById('editModal');
+            const cancelEditBtn = document.getElementById('cancelEdit');
+            const editForm = document.getElementById('editForm');
+            const editName = document.getElementById('editName');
+            const editAdm = document.getElementById('editAdm');
+            const editPhone = document.getElementById('editPhone');
+            
+            function renderAdminTable(data) {
+                adminTableBody.innerHTML = '';
+                const filterText = adminFilterInput.value.toLowerCase().trim();
+            
+                const filteredData = data.filter(sub => {
+                    const filterString = `${sub.name.toLowerCase()} ${sub.admission_number.toLowerCase()} ${sub.phone_number.toLowerCase()}`;
+                    return filterString.includes(filterText);
+                });
+            
+                if(filteredData.length === 0){
+                    noDataMessage.classList.remove('hidden');
+                    noDataMessage.textContent = 'No submissions match the current filter.';
+                    return;
+                }
+                noDataMessage.classList.add('hidden');
+            
+                filteredData.forEach(sub => {
+                    const date = new Date(sub.submitted_at);
+                    const dateString = date.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' });
+            
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-ref', sub.reference_id);
+                    row.className = 'hover:bg-slate-50 transition duration-150 cursor-pointer';
+            
+                    row.innerHTML = `
+                        <td class="px-4 py-3 text-xs font-mono text-slate-800 whitespace-nowrap">${sub.reference_id}</td>
+                        <td class="px-4 py-3 text-sm font-medium text-slate-700 whitespace-nowrap">${sub.name}</td>
+                        <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap uppercase" data-adm-no="${sub.admission_number}">${sub.admission_number}</td>
+                        <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">${sub.phone_number}</td>
+                        <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">${sub.gender == 'male' ? 'M':'F' }</td>
+                        <td class="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">${dateString}</td>
+                    `;
+                    adminTableBody.appendChild(row);
+            
+                    // Context menu (delete)
+                    row.addEventListener('contextmenu', async e => {
+                        e.preventDefault();
+                        const ref = row.getAttribute('data-ref');
+                        if(confirm(`Delete submission ${ref}?`)){
+                            await deleteSubmission(ref);
+                        }
+                    });
+            
+                    // Double click to edit
+                    row.addEventListener('dblclick', () => {
+                        currentEditRef = sub.reference_id;
+                        editName.value = sub.name;
+                        editAdm.value = sub.admission_number;
+                        editPhone.value = sub.phone_number;
+                        editModal.classList.remove('hidden');
+                        editModal.classList.add('flex-force');
+                    });
+                });
+            }
+            
+            // ------------------------- PAGINATION -------------------------
+            function updatePaginationButtons() {
+                prev.disabled = currentPage === 1;
+                next.disabled = currentPage === totalPages;
+                prev.classList.toggle('opacity-40', currentPage === 1);
+                next.classList.toggle('opacity-40', currentPage === totalPages);
+            }
+            
+            prev.addEventListener('click', () => { if(currentPage>1) fetchPage(currentPage-1,currentFilter); });
+            next.addEventListener('click', () => { if(currentPage<totalPages) fetchPage(currentPage+1,currentFilter); });
+            
+            // ------------------------- FILTER -------------------------
+            adminFilterInput.addEventListener('input', () => {
+                const text = adminFilterInput.value.trim().toLowerCase();
+                renderAdminTable(currentPageData, text);
+            });
+            
+            
+            // ------------------------- DOWNLOAD -------------------------
+            async function handleDownload(type, button){
+                const filterPrefix = courseFilterInput.value.trim().toUpperCase();
+                if(type==='pdf'){
+                    if(!filterPrefix && button){ showStatusMessage('Error','Please add a prefix like BA, LMC, BAE, ED, EDF...',false); return; }
+                    window.open(`${API_BASE_URL}/download-sas-pdf?prefix=${encodeURIComponent(filterPrefix)}`,'_blank');
+                } else if(type==='csv'){
+                    const rows = Array.from(adminTableBody.querySelectorAll('tr'));
+                    if(rows.length===0){ showStatusMessage('Download Failed','No visible data to download.',false); return; }
+            
+                    let csv = "Ref ID,Full Name,Adm No.,Phone,Submitted On\n";
+                    rows.forEach(row=>{
+                        const cells = Array.from(row.querySelectorAll('td'));
+                        csv += cells.map(c=>`"${c.textContent.trim()}"`).join(',')+'\n';
+                    });
+            
+                    const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `SAS_Submissions_${new Date().toISOString().slice(0,10)}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            }
+            
+            courseFilterBtn.addEventListener('click',()=>handleDownload('pdf', 'course'));
+            downloadCSVButton.addEventListener('click',()=>handleDownload('csv'));
+            downloadPDFButton.addEventListener('click',()=>handleDownload('pdf'));
+            printTableButton.addEventListener('click',()=>window.print());
+            closeStatusButton.addEventListener('click',hideStatusMessage);
+            
+            // ------------------------- EDIT -------------------------
+            cancelEditBtn.addEventListener('click', () => {
+                editModal.classList.add('hidden');
+                editModal.classList.remove('flex-force');
+            });
+            
+            editForm.addEventListener('submit', async e => {
+                e.preventDefault();
+                if(!currentEditRef) return;
+            
+                const otp = editForm.querySelector('#otp').value.trim();
+                if(!otp){ showStatusMessage('Error','Please Enter OTP',false); return; }
+            
+                showLoader("Updating submission...");
+                try{
+                    const payload = {
+                        name: editName.value.trim(),
+                        admission_number: editAdm.value.trim(),
+                        phone_number: editPhone.value.trim()
+                    };
+                    const response = await fetch(`${API_BASE_URL}/edit/sas/${currentEditRef}?otp=${otp}`,{
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if(!response.ok) throw new Error(result.error||'Failed to update');
+                    showStatusMessage('Success',result.success||'Updated successfully',true);
+                    fetchPage(currentPage,currentFilter);
+                } catch(err){
+                    showStatusMessage('Error',err.message,false);
+                } finally {
+                    hideLoader();
+                    editModal.classList.add('hidden');
+                    editModal.classList.remove('flex-force');
+                }
+            });
+            
+            // ------------------------- DELETE -------------------------
+            async function deleteSubmission(ref){
+                const otp = prompt("Enter OTP")
+                if(!otp){
+                   showStatusMessage('Error', 'OTP Required', false)
+                   return;
+                }
+                showLoader("Deleting...");
+
+                try{
+                    const response = await fetch(`${API_BASE_URL}/delete/sas/${ref}?otp=${otp}`,{ method:'DELETE' });
+                    if(!response.ok) throw new Error('Failed to delete');
+                    showStatusMessage('Deleted',`Submission ${ref} deleted successfully`,true);
+                    fetchPage(currentPage,currentFilter);
+                } catch(err){
+                    showStatusMessage('Error',err.message,false);
+                } finally{
+                    hideLoader();
+                }
+            }
+            
+            // ------------------------- INIT -------------------------
+            window.onload = ()=>fetchPage(1);
+            </script>
+            
+        
+</body>
+</html>
