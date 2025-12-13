@@ -472,9 +472,37 @@
                 function updateCountdown() {
                     const countdownEl = document.getElementById('countdown');
                     const now = new Date();
-                    var target = new Date(2025, 11, 15, 14, 0, 0, 0);
+                    var target = new Date(2025, 11, 15, 13, 0, 0, 0);
+                    var diff = target - now
+                    const msInSecond = 1000;
+                    const msInMinute = 60 * msInSecond;
+                    const msInHour = 60 * msInMinute;
+                    const msInDay = 24 * msInHour;
+                    const msInMonth = 30 * msInDay; // approximate month as 30 days
+                    const msInYear = 365 * msInDay; // approximate year as 365 days
+                  
+                    const years = Math.floor(diff / msInYear);
+                    diff -= years * msInYear;
+                  
+                    const months = Math.floor(diff / msInMonth);
+                    diff -= months * msInMonth;
+                  
+                    const days = Math.floor(diff / msInDay);
+                    diff -= days * msInDay;
+                  
+                    const hours = Math.floor(diff / msInHour);
+                    diff -= hours * msInHour;
+                  
+                    const minutes = Math.floor(diff / msInMinute);
+                    diff -= minutes * msInMinute;
+                  
+                    const seconds = Math.floor(diff / msInSecond);
+                  
+                    countdownEl.innerHTML = `<i class="far fa-clock mr-1 text-[10px]"></i> Deadline in: ${years}y ${months}m ${days}d ${hours}h ${minutes}m ${seconds}s`;
+                  
                     
                     if(now > target) {
+                        
                         document.querySelector('#form-card').innerHTML = `
                         <div class="glass-panel rounded-2xl p-1 shadow-2xl">
                             <div class="bg-black/40 rounded-xl p-10 text-center border border-white/5">
@@ -493,12 +521,9 @@
                         return;
                     }
                     
-                    const diff = target - now;
-                    const hours = Math.floor(diff / (1000 * 60 * 60));
-                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
                     
-                    countdownEl.innerHTML = `<i class="far fa-clock mr-1 text-[10px]"></i> Deadline in: ${hours}h ${minutes}m ${seconds}s`;
+                    
+                    countdownEl.innerHTML = `<i class="far fa-clock mr-1 text-[10px]"></i> Deadline in: ${years}y ${months}m ${days}d ${hours}h ${minutes}m ${seconds}s`;
                 }
                 
                 setInterval(updateCountdown, 1000);
