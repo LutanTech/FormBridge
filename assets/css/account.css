@@ -108,7 +108,7 @@ justify-content: center;
 border-radius: 2px;
 box-shadow: 1px 3px 5px  rgba(128, 128, 128, 0.289);
 padding: 10px;
-max-width: 300px;
+max-width: 400px;
 flex-grow: 1;
 flex-shrink: 0;
 flex:1 1 300px;
