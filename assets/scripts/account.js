@@ -84,7 +84,12 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.querySelector(div).setAttribute('style', 'z-index:-1')
   }
   function ZAdd(div){
-    overlay.querySelector(div).setAttribute('style', 'z-index:4')
+    setTimeout(() => {
+    if(div)
+    console.log(div)
+    overlay.querySelector(`${div}`).setAttribute('style', 'z-index:4')
+  }, 10);
+
   }
     const cards = document.querySelectorAll('.card')
     cards.forEach(c => {
@@ -109,8 +114,48 @@ document.addEventListener('DOMContentLoaded', () => {
           ZMinus('.databases')
 
         }
+        if(attr == 'settings'){
+          ZMinus('.newForm')
+          ZMinus('.forms-ov')
+          ZMinus('.databases')
+          ZAdd('.settings-overlay')
+          check2Fa(getCookie('user'))
+          getDevices()
+
+
+        }
       })
     })
+
+    function check2Fa(user){
+      if(user){
+        const tf = document.querySelector('.tfa-btn')
+
+        id = jdf(user).id
+        if(id){
+        tf.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking'
+        fetch(`${baseUrl}/check2fa/${user}`)
+        .then(res=>res.json())
+        .then(data=>{
+
+          if(data.success){
+            tf.disabled = true
+            tf.textContent = '2FA Authentication Active'
+            tf.addEventListener('click', (e)=>{
+              e.preventDefault()
+              e.stopImmediatePropagation()
+              e.stopPropagation()
+              return
+            })
+          } else{
+            tf.disabled = false
+            tf.innerHTML  = 'Ativate 2FA'
+          }
+        })
+      }
+    }
+
+    }
 
     const backBtn = document.querySelector('.back-btn')
     if (backBtn) {
@@ -430,14 +475,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="db-name"><i class="fas fa-database"></i> ${db.name_str}</div>
                 <hr>
-                <div class="db-desc"><i class="fas fa-info-circle"></i> ${db.desc ? db.desc :'No description added'} </div>
-                <div class="db-size"> <i class="fas fa-server"></i> ${(parseInt(db.n) / parseInt(db.c)).toFixed(2)}kb</div>
+                <div class="db-desc" t="Decription"><i class="fas fa-info-circle"></i> ${db.desc ? db.desc :'No description added'} </div>
+                <div class="db-size" t="size"> <i class="fas fa-server"></i> ${(parseInt(db.n) / parseInt(db.c)).toFixed(2)}kb</div>
                 <div class="db-actions">
                   <div class="open"><i class="fas fa-eye"></i></div>
-                  <div class="pause"> ${db.is_open ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play" style="color:red;"></i>' } </div>
-                  <div class="download"><i class="fas fa-cloud-download"></i></div>
+                  <div class="pause" t="Toggle Database"> ${db.is_open ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play" style="color:red;"></i>' } </div>
+                  <div class="download" t="Delete"><i class="fas fa-cloud-download"></i></div>
                   <div class="clear"><i class="fas fa-trash"></i></div>
-                  <div class="refresh" loading> <i class="fas fa-refresh"></i> </div>
+                  <div class="refresh" t="Refresh" loading> <i class="fas fa-refresh"></i> </div>
                 </div>
           `
           parent.appendChild(div)
@@ -577,3 +622,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
   });
+  function fetchFormInfo(payload) {
+    if (payload) {
+      fetch(`${baseUrl}/form_info`, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'POST',
+          body: JSON.stringify({
+            data: payload
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error', data.error, 'error')
+          }
+          const info = jdf(data)
+          if (info) {
+            document.querySelector('.info-inner').innerHTML = ''
+            const f = info.form
+            const div = document.createElement('div')
+            div.classList.add('div')
+            div.innerHTML = `
+                  <div class="closeInner">&times</div>
+                  <div class="name">${f.name_str}</div>
+                  <div class="desc"><b>${f.desc}
+                  </div>
+                  <div class="added"><b>Created: </b>${f.added}</div>
+                  <div class="submissions"><b>Submissions: </b>${info.submissions}</div>
+                  <div class="status"><b>Status: </b>Running</div>
+                  <div class="deadline"><b>Deadline: </b>${f.deadline}</div>
+                  <div class="dbid"><b>Database ID: </b> ${info.db_id}<i>This ID expires in 5 mins</i> </div>
+  `
+            document.querySelector('.info-inner').append(div)
+          }
+        })
+        .catch(e => {
+          alert('Connection error', e.message, 'error')
+        })
+    }
+  }
+

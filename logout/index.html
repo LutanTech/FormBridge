@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormBridge</title>
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
+    <meta name="title" content="FormBridge – Smart University Form Automation">
+<meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
+
+<link rel="canonical" href="https://formbridge.vercel.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://formbridge.vercel.app/">
+<meta property="og:title" content="FormBridge – Smart University Form Automation">
+<meta property="og:description" content="Fast, secure digital form management for universities.">
+<meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://formbridge.vercel.app/">
+<meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
+<meta name="twitter:description" content="Digital form management built for universities.">
+<meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "FormBridge",
+  "alternateName": "Form Bridge Platform",
+  "url": "https://formbridge.vercel.app/",
+  "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
+  "sameAs": []
+}
+</script>
+
+<meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
+<meta name="robots" content="index, follow">
+    <link rel="icon" href="/assets/logo.png" type="image/x-icon">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/utils.css">
+    <script src="/assets/scripts/utils.js" defer></script>
+
+</head>
+<body>
+
+    <div class="fixed-background-container">
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2" style="animation-delay: 2s;"></div>
+    </div>
+    <style>
+        .account-button{
+            background: #0000;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            border: 0;
+        }
+    </style>
+
+    <nav class="glass-nav">
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="brand-logo" onclick="window.location.href='/'">
+                    <div class="logo-icon-wrapper">
+                        <img src="/assets/images/logo-nbg.png" alt="" srcset="">
+                    </div>
+                    <span class="brand-name">FormBridge
+                </div>
+
+                <div class="desktop-menu">
+                    <button class="account-button" onclick="window.location.href='/account'">
+                        Account
+                    </button>
+                    <div class="menu-divider"></div>
+                    <div class="register-button-group">
+                        <button class="register-button" onclick="window.location.href='/register'">
+                            Register
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-menu-btn-wrapper">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden mobile-menu-panel">
+            <div class="mobile-menu-items-container">
+                <a href="/login" class="mobile-nav-link">Login</a>
+                <a href="/account" class="mobile-nav-link">Account</a>
+                <a href="/support" class="mobile-nav-link">Support</a>
+                <div class="mobile-button-group">
+                    <button class="mobile-login-button">Log In</button>
+                    <button class="mobile-register-button">
+                        Register Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <style>
+        .logging{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 40vh;
+        }
+        .log-content{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .spinner{
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0);
+            border: 4px solid #ffffff1c;
+            border-top: 4px solid rgb(204, 0, 255);
+            padding: 10px;
+            border-radius: 50%;
+            animation: rotate 1s linear infinite;
+        }
+        @keyframes rotate {
+            to{
+                rotate: 360deg;
+            }            
+        }
+        
+    </style>
+    
+
+    <main class="main-content-area" style="margin-top: 80px;">
+        <div class="logging">
+            <div class="log-content">
+                <div class="spinner"></div>
+                <h2>Logging you out</h2>
+                <progress max="100"></progress>
+                <div class="log-texts">
+                    <div class="text">Initiating Logout</div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded',()=>{
+                        const texts = ['Clearing app cache...', 'Clearing Session from Main Database...', 'Locking open database sessions...', 'Creating firewall for next login...', 'Exiting session gracefully...', '...']
+
+                        const tc = document.querySelector('.text')
+                        var i = 0
+                        tc.textContent = texts[0]
+                        setInterval(()=>{
+                            if(i <= texts.length + 1){
+                                i++
+                                tc.textContent = texts[i || 0]
+                            }
+                             else{
+                                i = 0
+                                tc.textContent = texts[i]
+                                return
+                            }
+                     
+                      },1000)
+
+                      const user = getCookie('user')
+                      const token = getCookie('token')
+
+                      fetch(`${baseUrl}/logout/${user}/${token}`)
+                      .then(res=>res.json())
+                      .then(data=>{
+                        if(data.error){
+                            alert('Error', data.error, 'error')
+                        }
+                        if (data.msg){
+                            alert('Success', data.ms, 'success')
+                        }
+                      })
+                      .catch(err=>{
+                        alert('Error', err.message, 'error')
+                      })
+                      })
+
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        </main>
+    <footer class="page-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand-section">
+                    <div class="footer-brand-info">
+                        <i class="fas fa-university footer-brand-icon"></i>
+                        <span class="footer-brand-text">Form<span class="footer-brand-highlight">Bridge</span></span>
+                    </div>
+                    <p class="footer-description">
+                        Empowering University students and administration with seamless digital tools.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="footer-column-heading">Quick Links</h4>
+                    <ul class="footer-list">
+                        <li><a href="/" class="footer-list-link">Home</a></li>
+                        <li><a href="/register" class="footer-list-link">Register</a></li>
+                        <li><a href="/support" class="footer-list-link">Support</a></li>
+                        <li><a href="/login" class="footer-list-link">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="footer-column-heading">Legal</h4>
+                    <ul class="footer-list">
+                        <li><a href="/privacy_policy" class="footer-list-link">Privacy Policy</a></li>
+                        <li><a href="/terms" class="footer-list-link">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 FormBridge. All rights reserved.</p>
+                <p>Developed by <a href="http://lutan-tech.is-great.org" target="_blank" class="lutan-tech-link">Lutan Tech</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

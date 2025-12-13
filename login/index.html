@@ -35,10 +35,9 @@
 
 <meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
 <meta name="robots" content="index, follow">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
     <link rel="icon" href="/assets/logo.png" type="image/x-icon">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"> -->
     <script src="/assets/scripts/utils.js" defer></script>
     <link rel="stylesheet" href="/assets/css/utils.css">
     <link rel="stylesheet" href="/assets/css/main.css">
@@ -103,7 +102,8 @@
             padding: 20px;
             border-radius: 20px;
             max-width: 400px;
-            margin: 50px auto;
+            min-width: 300px;
+            margin: 50px 0;
             width: 90%;
             height: fit-content;
         }
@@ -224,11 +224,203 @@
 
             }
         }
+        .otpField{
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            z-index: 200;
+            input[type="number"]{
+                padding: 10px 20px;
+                color: black;
+                appearance: textfield;
+                -moz-appearance: textfield;
+                -webkit-appearance: none;
+                outline:  2px solid magenta;
+            border: 2px solid rgb(0, 0, 0);
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+                font-size: large;
+              }
+              
+              /* Chrome, Edge, Safari */
+              input[type="number"]::-webkit-inner-spin-button,
+              input[type="number"]::-webkit-outer-spin-button{
+                -webkit-appearance: none;
+                margin: 0;
+              }
+              
+        }
+        .otp-inputs{
+            padding: 10px 0;
+            font-size: large;
+            text-align: center;
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0);
+            flex: 1 1 20px;
+            max-width:40px;
+            border: 1px solid magenta;
+            color: white !important;
+            text-transform: uppercase;
+            &:focus{
+                border: 2px solid #0f0;
+                outline: none;
+            }
+            
+        }
+        .otp-inputs:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 1000px aqua inset !important;
+            box-shadow: 0 0 0 1000px rgb(0, 0, 0) inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 9999s ease-in-out 0s !important;
+          }
+          .otpField .div{
+            display: flex;
+            flex-direction: row;
+          }
+          #tfaform{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0px 5px 10px rgba(0, 217, 255, 0.352);
+            div{
+                flex-grow: 1;
+                width: 100%;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+
+            }
+          }
+          .flex{
+            display: flex !important;
+          }
+          .none{
+            display: none !important;
+          }
     </style>
 
     <main class="flex-grow flex flex-col">
+        <div class="otpField none">
+            <form id="tfaform" action="/post">
+                <label for="tfa">Enter the 2FA code from your Authenticator app</label>
+                <hr style="width: 100%; border:1px solid #ffffff3b">
+                <div class="div">
+                    <input type="text" index="0"  name="" id="otp-1" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="1"  name="" id="otp-2" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="2"  name="" id="otp-3" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="3"  name="" id="otp-4" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="4"  name="" id="otp-5" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                    <input type="text" index="5"  name="" id="otp-6" maxLength="1" class="otp-inputs" autocomplete="-otp">
+                </div>
+                <div class="btn">
+                <button id="confirm-tfa">Continue</button>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const inputs = document.querySelectorAll('.otp-inputs');
+                    
+                        inputs.forEach((input, idx) => {
+                            input.addEventListener('input', () => {
+                                if (input.value.trim().length === 1 && idx < inputs.length - 1) {
+                                    inputs[idx + 1].focus();
+                                }
+                            });
+                    
+                            input.addEventListener('keydown', (e) => {
+                                if (e.key === 'Backspace' && !input.value && idx > 0) {
+                                    inputs[idx - 1].focus();
+                                }
+                            });
+                    
+                            input.addEventListener('focus', () => {
+                                input.select();
+                            });
+                        });
+                        const form = document.querySelector('#tfaform')
+                        form.addEventListener('submit', (e) => {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                          
+                            let domOtp = '';
+                            const tt = form.getAttribute('data-token')
+                            inputs.forEach(inp => {
+                                domOtp += inp.value.trim();
+                            });
+                        
+                            const ua = navigator.userAgent;
+                            if(!ua){
+                                alert('Error', 'Please reload the page or disable any extension', 'error')
+                                return
+                            }
+                          
+                            if (ua) {
+                              const payload = {
+                                otp: domOtp,
+                                tt:tt,
+                                ua: ua
+                              };
+                              console.log(ua)
+                          
+                              login_2fa(jof(payload));
+                            }
+                          });
+                          function login_2fa(payload){
+                            toggleBtn('confirm-tfa',true)
+                            fetch(`${baseUrl}/login/two_fa`, {
+                                headers:{
+                                    'Content-Type':'application/json'
+                                },
+                                 method:'POST',
+                                 body:JSON.stringify({data:payload})
+                            })
+                            .then(res=>res.json())
+                            .then(data=>{
+                                console.log(data)
+
+                                if(data.error){
+                                    alert('Failed', data.error, 'error')
+                                    toggleBtn('confirm-tfa',false)
+                                }
+                                if(data){
+                                    data = jdf(data)
+                                    console.log(data)
+                                    console.log(data.user ? 'true':'false' )
+                                    setTimeout(()=>{
+                                    if(data.user){
+                                        const exp = data.expiry || 1
+                                        setCookie('user', data.user , exp)
+                                        setCookie('token', data.token , exp)
+                                        setCookie('expiry', data.expiry , exp)
+                                        const user = jdf(data.user)
+                                        alert('Logged In', `Welcome ${user.username}. Redirecting...`, 'success')
+                                        toggleBtn('confirm-tfa',false)
+                                        setTimeout(()=>{window.location.href='/account'},2000 )
+                                    }
+                                }, 100)
+                                }
+                            })
+                            .catch(err=>{
+                                alert('Network Error', 'Please Make sure you have an internet connection', 'error')
+                                toggleBtn('confirm-tfa',false)
+                            })
+                        
+                        }
+                          
+                    })
+                </script>
+            </form>
+        </div>
         <div class="form-wrapper">
-            <form action="/login" method="post">
+            <form action="/login" id="form" method="post">
                 <div class="logo">
                     <img src="/assets/images/logo-nbg.png" alt="">
                 </div>
@@ -247,7 +439,7 @@
                         <i class="fas fa-lock"></i>
                         <input type="password" name="password" id="password" autocomplete="current-password" placeholder="Password">
                         <div class="eye">
-                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-eye" style="color: rgb(224, 223, 223) !important;"></i>
                         </div>
                     </div>
                 </div>
@@ -271,7 +463,7 @@
         document.addEventListener('DOMContentLoaded', ()=>{
 
         const eye = document.querySelector('.eye');
-        const form = document.querySelector('form');
+        const form = document.querySelector('#form');
         const pass = form.querySelector('#password')
 
         eye.addEventListener('click', () => {
@@ -280,28 +472,36 @@
             pass.setAttribute('type', 'password')
 
             if(eye.classList.contains('closed')){
-            eye.innerHTML = '<i class="fas fa-eye-slash"></i>'
+            eye.innerHTML = '<i style="color: rgb(224, 223, 223) !important" class="fas fa-eye-slash"></i>'
             } else{
-            eye.innerHTML = '<i class="fas fa-eye"></i>'
+            eye.innerHTML = '<i style="color: rgb(224, 223, 223) !important"  class="fas fa-eye"></i>'
             }
 
         });
-        form.addEventListener('submit', (e)=>{
-           e.preventDefault()
-           e.stopImmediatePropagation()
-
-           const username = form.querySelector('#username').value.trim()
-           const password = form.querySelector('#password').value.trim()
-
-           if(username && password){
-            const payload = {
-            username:username,
-            password:password
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+          
+            const username = form.querySelector('#username').value.trim();
+            const password = form.querySelector('#password').value.trim();
+            const ua = navigator.userAgent;
+            if(!ua){
+                alert('Error', 'Please reload the page or disable any extension', 'error')
+                return
             }
-            login(jof(payload))
-           }
-
-        })
+          
+            if (username && password) {
+              const payload = {
+                username: username,
+                password: password,
+                ua: ua
+              };
+              console.log(ua)
+          
+              login(jof(payload));
+            }
+          });
+          
         function login(payload){
             toggleBtn(true)
             fetch(`${baseUrl}/login`, {
@@ -316,7 +516,13 @@
                 if(data.error){
                     alert('Failed', data.error, 'error')
                     toggleBtn(false)
-                } else{
+                }
+                if(data){
+                    data = jdf(data)
+                    alert('Info', data.info, 'info')
+                    showOTPField(data.tt)
+                }
+                 else{
                     if(data.user){
                         const exp = data.expiry || 1
                         setCookie('user', data.user , exp)
@@ -335,8 +541,26 @@
             })
         
         }
-        function toggleBtn(toggle){
-                const btn = form.querySelector('button')
+        function showOTPField(token){
+            const p = document.querySelector('.otpField')
+            p.classList.toggle('none')
+            p.classList.toggle('flex')
+            p.querySelector('form').setAttribute('data-token', token)
+        }
+        function toggleBtn(btn, toggle){
+            if(btn && toggle){
+               var btn =  document.querySelector(`#${btn}`)
+               btn.disabled = toggle
+               toggle ? btn.setAttribute('data-loading', '') : btn.removeAttribute('data-loading', '')
+               if(btn.hasAttribute('data-loading')){
+                btn.innerHTML = 'Continue <i class="fas fa-spinner fa-spin"></i> '
+                   } else{
+                       btn.innerHTML = 'Continue'
+                   }
+             } else{
+               
+                var btn = form.querySelector('button')
+
                 btn.disabled = toggle
                 toggle ? btn.setAttribute('data-loading', '') : btn.removeAttribute('data-loading', '')
                 if(btn.hasAttribute('data-loading')){
@@ -345,6 +569,7 @@
                         btn.innerHTML = 'Login'
                     }
         }
+    }
 
 })
     </script>

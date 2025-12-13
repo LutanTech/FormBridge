@@ -302,3 +302,41 @@ def make_pdf_all(header_text, footer_text, form, submissions):
     out = f"{form.name_str}_submissions.pdf"
     pdf.output(out)
     return out
+
+import pyotp
+import qrcode
+from io import BytesIO
+
+
+def generate_2fa_secret():
+    raw_secret = pyotp.random_base32()
+    return base64.b64encode(raw_secret.encode()).decode()
+
+def get_totp(secret_b64):
+    raw_secret = base64.b64decode(secret_b64).decode()
+    return pyotp.TOTP(raw_secret)
+
+def generate_temp_token(user_id, expiry_seconds=300):  # 5 min default
+    payload = {
+        "id": user_id,
+        "exp": (datetime.utcnow() + timedelta(seconds=expiry_seconds)).timestamp()
+    }
+    payload_str = json.dumps(payload)
+    sig = hmac.new("not_really_a_secret".encode(), payload_str.encode(), hashlib.sha256).hexdigest()
+    token = base64.urlsafe_b64encode(f"{payload_str}::{sig}".encode()).decode()
+    return token
+
+def verify_temp_token(token):
+    try:
+        decoded = base64.urlsafe_b64decode(token.encode()).decode()
+        payload_str, sig = decoded.split("::")
+        expected_sig = hmac.new("not_really_a_secret".encode(), payload_str.encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(sig, expected_sig):
+            return None
+        data = json.loads(payload_str)
+        if datetime.utcnow().timestamp() > data["exp"]:
+            return None
+        return data["id"]
+    except Exception:
+        return None
+

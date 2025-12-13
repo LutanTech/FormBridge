@@ -228,6 +228,17 @@
                                         placeholder="07XXXXXXXX" maxlength="13">
                                 </div>
                             </div>
+                            <div class="space-y-2 relative">
+                                <label for="gender" class="block text-xs font-medium text-zinc-400 uppercase tracking-wider ml-0.5">Gender</label>
+                                <select  id="gender" name="gender" required 
+                                    class="w-full bg-surface border border-border rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all">
+                                    <option value=""> --Choose-- </option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="rather">Rather not say</option>
+                                
+                                </select>
+                            </div>
         
                             <!-- Submit Button -->
                             <button type="submit" 
@@ -278,9 +289,14 @@
                                 <span class="text-zinc-500">Admission</span>
                                 <span id="confAdm" class="font-medium text-zinc-200 uppercase"></span>
                             </div>
+                            
                             <div class="flex justify-between py-2 border-b border-white/5">
                                 <span class="text-zinc-500">Phone</span>
                                 <span id="confPhone" class="font-medium text-zinc-200"></span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <span class="text-zinc-500">Gender</span>
+                                <span id="confGender" class="font-medium text-zinc-200 uppercase"></span>
                             </div>
                         </div>
         
@@ -323,9 +339,11 @@
                 const nameInput = document.getElementById('name');
                 const admissionInput = document.getElementById('admissionNumber');
                 const phoneInput = document.getElementById('phoneNumber');
+                const genderInput = document.getElementById('gender');
                 
                 const confirmDiv = document.getElementById('confirmDiv');
                 const confName = document.getElementById('confName');
+                const confGender = document.getElementById('confGender');
                 const confAdm = document.getElementById('confAdm');
                 const confPhone = document.getElementById('confPhone');
                 const confirmYes = document.getElementById('confirmYes');
@@ -341,6 +359,7 @@
                     confName.textContent = nameInput.value;
                     confAdm.textContent = admissionInput.value;
                     confPhone.textContent = phoneInput.value;
+                    confGender.textContent = genderInput.value;
                     confirmDiv.classList.remove('hidden');
                     confirmDiv.classList.add('flex');
                     // Trigger animation
@@ -378,6 +397,7 @@
                         name: nameInput.value.toUpperCase(),
                         admissionNumber: admissionInput.value,
                         phoneNumber: phoneInput.value,
+                        gender: genderInput.value,
                         timestamp: new Date().toISOString()
                     };
                     localStorage.setItem('researchDraft', JSON.stringify(draft));
@@ -390,6 +410,8 @@
                         nameInput.value = draft.name || '';
                         admissionInput.value = draft.admissionNumber || '';
                         phoneInput.value = draft.phoneNumber || '';
+                       genderInput.value =  draft.gender || '';
+
                     }
                 }
         
@@ -399,7 +421,9 @@
                     const data = {
                         name: nameInput.value.toUpperCase(),
                         admissionNumber: admissionInputVal,
-                        phoneNumber: phoneInput.value
+                        phoneNumber: phoneInput.value,
+                        gender: genderInput.value,
+
                     };
                     
                     const BASE_URL = 'https://submissionsmu.pythonanywhere.com';

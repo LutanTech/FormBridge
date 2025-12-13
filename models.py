@@ -18,9 +18,12 @@ class User(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     is_verified = db.Column(db.Boolean, default=False)
     level = db.Column(db.String(10), default='1')
+    devices = db.Column(db.Integer, default=1)
     otp = db.Column(db.String(5), default=generate_otp)
     is_deleted = db.Column(db.Boolean, default=False)
-
+    two_fa = db.Column(db.Boolean, default=False)
+    twofa_secret = db.Column(db.String(32), nullable=True)
+    
     def set_password(self, raw_password):
         self.password = generate_password_hash(raw_password)
 
@@ -154,5 +157,10 @@ class Submission(db.Model):
     }
 
     
-    
+class Device(db.Model):
+    id = db.Column(db.String(6), primary_key=True, default=lambda: generate_random_id(10))
+    user_id = db.Column(db.String(10), nullable=False)
+    first_login = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=3))
+    last_login = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=3))
+    ua = db.Column(db.String(1024), nullable=True)
     

@@ -1,13 +1,17 @@
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, jsonify, request, send_file, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
-from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email, make_pdf_all
+from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email, make_pdf_all, get_totp, generate_2fa_secret, generate_temp_token, verify_temp_token
 from flask_mail import Mail
 from datetime import datetime, timedelta
 from flask_migrate import Migrate
 import models
-from models import User, Log, Help, Form, Submission
+from models import User, Log, Help, Form, Submission, Device
+import pyotp, base64
+import qrcode
+from io import BytesIO
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'not_really_a_secret'
@@ -129,35 +133,120 @@ def register():
 def login():
     raw = request.get_json()
     encoded = raw.get("data")
-
     data = decode(encoded)
 
     if not data:
         log('[400] Failed to decode in /login route', 'error')
         return jsonify({'error': 'An error occurred. Please try again'}), 400
 
+    device = data.get('ua')
+    if not device:
+        return jsonify({'error':'failed to initiate login. Please disable any extensions.'}), 401
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'error': 'Missing login credentials'}), 401
+
+    user = User.query.filter(
+        (User.username == username) | (User.email == username)
+    ).first()
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 401
+
+    if not user.check_password(password):
+        return jsonify({'error': 'Invalid password'}), 401
+
+    # If 2FA is enabled
+    if user.twofa_secret:
+        temp_token = generate_temp_token(user.id)
+        return jsonify(encode({
+            'required': True,
+            'tt': temp_token,
+            'info': 'Enter your 2FA code'
+        })), 200
+
     try:
-        username = data.get('username')
-        password = data.get('password')
-
-        if not username or not password:
-            return jsonify({'error': 'Missing login credentials'}), 401
-
-        user = User.query.filter(
-            (User.username == username) | (User.email == username)
-        ).first()
-
-        if not user:
-            return jsonify({'error': 'User not found'}), 401
-
-        if not user.check_password(password):
-            return jsonify({'error': 'Invalid password'}), 401
-
-        return jsonify({'user': encode(user.to_dict()), 'expiry': datetime.utcnow() + timedelta(hours=171), 'token':generate_token(user.id)}), 200
-
+        if check_device(device, user.id):
+            return jsonify({
+                'user': encode(user.to_dict()),
+                'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
+                'token': generate_token(user.id)
+            }), 200
+        return jsonify({'error':'Failed to login. Please try again'}), 400
+    
     except Exception as e:
-        log(f'[500] Error in /login route: {str(e)}', 'error')
-        return jsonify({'error': 'Server error during login'}), 500
+        log(f'[400] Unknown error in /check_device route : {str(e)}','error')
+        return jsonify({'error':'Please try again'}), 400
+    
+
+
+def check_device(device, user_id):
+    if device and user_id:
+        exists = Device.query.filter_by(user_id=user_id,ua=device).first()
+        all_devices = Device.query.filter_by(user_id=user_id).all()
+        if exists:
+            now = datetime.utcnow() + timedelta(hours=3)
+            exists.last_login = now
+            return True
+        else:
+          user = User.query.filter_by(id=user_id).first()
+          max_devices = int(user.devices) if user.devices else 1
+          if all_devices and len(all_devices) >= max_devices:
+              return jsonify({'error':'Maximum number of devices reached. Please logout of the other devices or contact support'}), 400
+          new_device = Device(user_id=user_id, ua=device)
+          try:
+              db.session.add(new_device)
+              db.session.commit()
+              return True
+          except Exception as e:
+              db.session.rollback()
+              log(f'[500] Database error in /check_devices route: {str(e)}', 'error')
+              return False
+    return False
+          
+          
+    
+@app.route('/login/two_fa', methods=['POST'])
+def two_fa_login():
+
+    raw = request.get_json()
+    encoded = raw.get("data")
+    data = decode(encoded)
+    temp_token = data.get('tt')
+    otp = data.get('otp')
+    device = data.get('ua')
+    if not temp_token or not otp or not device:
+        return jsonify({"error": "Invalid payload. Please try again"}), 400
+    
+    user_id = verify_temp_token(temp_token)
+    if not user_id:
+        return jsonify({"error": "Invalid or expired token"}), 401
+
+    user = User.query.get(user_id)
+    if not user or not user.twofa_secret:
+        return jsonify({"error": "2FA not set for user"}), 401
+
+    decoded_secret = base64.b64decode(user.twofa_secret).decode()
+    totp = pyotp.TOTP(decoded_secret)
+
+    if not totp.verify(otp, valid_window=1):
+        return jsonify({"error": "Invalid 2FA code"}), 401
+
+    try:
+        if check_device(device, user.id):
+            return jsonify(encode({
+                'user': encode(user.to_dict()),
+                'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
+                'token': generate_token(user.id)
+            })), 200
+        return jsonify({'error':'Failed to login. Please try again'}), 400
+    
+    except Exception as e:
+        log(f'[400] Unknown error in /check_device route : {str(e)}','error')
+        return jsonify({'error':f'Please try again: {str(e)}'}), 400
+
 
 @app.route('/verify', methods=['POST'])
 def verify():
@@ -566,7 +655,6 @@ def print_all():
         return jsonify({"error": "Invalid payload"}), 400
 
     i = decode(data.get('i'))
-    print(i)
 
     fid = i.get("f")
     header = data.get("header", "")
@@ -593,6 +681,112 @@ def refresh():
         log(f'[500] error in /refresh/db route: {e}', 'error')
         return jsonify({'error':f'Failed.Please, try again'}), 500
 
+#2FA==============
+
+@app.route('/activate_two_fa', methods=['POST'])
+def activate_two_fa():
+    raw = request.get_json()
+    enc = raw.get("data")
+    data = decode(enc)
+
+    if not data:
+        return jsonify({"error": "Invalid payload"}), 400
+
+    user_data = decode(data.get('u'))
+    if not user_data:
+        return jsonify({"error": "Invalid user data"}), 400
+
+    uid = user_data.get("id")   
+    token = data.get("token") 
+    user = User.query.filter_by(id=uid).first()
+    
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    if user.twofa_secret:
+        return jsonify({'error': '2FA already active'}), 401
+
+    if not validate_token(token, uid):
+        return jsonify({'error':'Unauthorized. Please login again'}), 401
+
+    try:
+        # Generate 2FA secret
+        user.twofa_secret = generate_2fa_secret()
+        db.session.commit()
+
+        # Generate QR code as base64
+        totp = get_totp(user.twofa_secret)
+        account_name = getattr(user, 'name', None) or user.username or user.email
+        uri = totp.provisioning_uri(name=account_name, issuer_name="FormBridge")
+
+        qr_img = qrcode.make(uri)
+        buf = BytesIO()
+        qr_img.save(buf, format='PNG')
+        buf.seek(0)
+        qr_b64 = base64.b64encode(buf.getvalue()).decode()
+
+        return jsonify({
+            'message': '2FA activated successfully',
+            'account_name': account_name,
+            'qr_code_base64': qr_b64
+        }), 200
+
+    except Exception as e:
+        log(f'[500] Database error occurred in /activate_two_fa route: {str(e)}')
+        return jsonify({'error':'An internal error occurred'}), 500
+
+@app.route('/check2fa/<user>')
+def check_2fa(user):
+    if user:
+        decoded = decode(user)
+        if decoded:
+            stored = User.query.filter_by(id=decoded.get('id')).first()
+            if stored:
+                if stored.twofa_secret:
+                    return jsonify({'success':True}), 200
+                return jsonify({'success':False}), 200
+            return jsonify({'error':'User not found'}), 404
+        return jsonify({'error':'An error occurred'}), 400
+    return jsonify({'error':'Invalid payload received'}), 502
+
+@app.route('/get_devices', methods=['POST'])
+def devices():
+    raw = request.get_json()
+    enc = raw.get("data")
+    data = decode(enc)
+
+    if not data:
+        return jsonify({"error": "Invalid payload"}), 400
+
+    u = decode(data.get('u'))
+    token = data.get('t')
+    if u and token:
+        print(u, '===============urgjd-----------')
+        if validate_token(token, u.get('id')):
+            user = User.query.filter_by(id= u.get('id')).first()
+            if user:
+               devices  = Device.query.filter_by(user_id=user.id).all()
+               return jsonify(encode({'devices':[d.ua for d in devices]})), 200
+            return jsonify({'error':'User not found'}), 404
+        return jsonify({'error':'unauthorized. please, login'}), 401
+    return  jsonify({'error':'Invalid payload. Please login again'}), 400
+
+@app.route('/logout')
+def logout():
+    data = request.get_json()
+    data = decode(data)
+    token = data.get('t')
+    user_data = data.get('u')
+    id = user_data.get('id')
+    device = data.get('device')
+    
+    if data and id:
+        user = User.query.filter_by(id=id).first()
+        if user:
+            if validate_token(token, user.id):
+                devices = Device.query.filter_by(user_id=user.id).all()
+                
+    return jsonify({'info':f'{data}{token}'}), 200
 
 if __name__ == '__main__':
     with app.app_context():

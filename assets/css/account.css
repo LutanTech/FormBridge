@@ -97,6 +97,7 @@ width: 100%;
 height: 100%;
 padding: 20px;
 margin-left: 200px;
+
 }
 .cards{
 display: flex;
@@ -295,6 +296,19 @@ background: rgba(0, 0, 0, 0.666);
         &::-webkit-scrollbar-thumb{
             background: black !important;
     }
+    *{
+        &::-webkit-scrollbar{
+            width: 2px !important;
+            background: magenta;
+        }
+            &::-webkit-scrollbar-thumb{
+                background: black !important;
+        }
+    }
+    >div{
+        flex-grow: 1;
+        height: 90% !important;
+    }
 }
 @media (max-width:768px) {
     .overlay{
@@ -306,7 +320,7 @@ background: rgba(0, 0, 0, 0.666);
 
 .main-content-area,
 #app {
-    div {
+    >div {
         overflow: auto !important;
     }
 }
@@ -335,18 +349,16 @@ background: rgba(0, 0, 0, 0.666);
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    height: fit-content;
     background: #000000;
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
-    z-index: 200;
     padding: 10px;
     margin-top: 40px;
-
-
+    overflow-y: auto;
 }
 
 .fields{
@@ -462,11 +474,12 @@ flex: 1 1 1000px;
 .back-btn{
     border-radius: 10px;
     font-weight: 900;
-    position: absolute;
+    position: fixed;
     top: 0px;
     padding: 0px 20px;
     z-index: 3000;
     cursor: pointer;
+    max-height: fit-content;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -836,4 +849,125 @@ color: white;
       font-size: 1.2em;
     }
 
+  }
+  .settings-overlay{
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    background: #000000;
+    position: absolute;
+    overflow-y: auto;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    /* z-index: 200; */
+    margin-top: 40px;
+  }
+
+  .security{
+    hr{
+      border: 1px solid #ffffff29 !important;
+      margin: 20px auto;
+      width: 100%;
+    }
+  }
+  #two-factor-authentication{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: small;
+    margin-top: 20px;
+  }
+  ol{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    li{
+      margin-left: 40px;
+    }
+  }
+  #two-factor-activate{
+    padding: 10px 20px;
+    background: magenta;
+    border: 0;
+    margin: 20px auto;
+
+  }
+  .session-mgnt{
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+>div{
+  flex: 1 1 300px;
+}
+  }
+  .session-mgnt >div select, #printing input{
+    padding: 10px 20px;
+    width: 100%;
+    margin: 10px 0;
+    outline: none;
+    border: 1px solid magenta;
+    color: black;
+    &:focus, &:active{
+      color: black !important;
+    }
+  }
+  .ll{
+    color: magenta;
+  }
+  .sample-img{
+    display: flex;
+    width: 100%;
+   margin-top: 20px;
+   position: relative;
+
+  }
+  .ft-sample{
+    position: relative;
+    user-select: none;
+  }
+  
+  .expand{
+    border: 1px solid black;
+    position: absolute;
+    top: 40px;
+    right: 3px;
+    padding: 5px;
+    border-radius: 50%;
+    width: 30px;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    &:active{
+      scale: 0.9;
+    }
+    *{color: rgb(0, 0, 0) !important;}
+
+  }
+  .qr{
+    width: 100%;
+    background: #000000;
+    height: 100% !important ;
+    position: fixed;
+    top: 0;
+    z-index: 3000000;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+  .flex{
+    display: flex !important;
+  }
+  .none{
+    display: none !important;
   }
