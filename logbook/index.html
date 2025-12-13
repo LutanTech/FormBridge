@@ -225,7 +225,7 @@
                                     <i class="fa fa-phone ic"></i>
                                     <input type="tel" id="phoneNumber" name="phoneNumber" required 
                                         class="w-full bg-surface border border-border rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all"
-                                        placeholder="07XXXXXXXX" maxlength="13">
+                                        placeholder="07XXXXXXXX" maxlength="10">
                                 </div>
                             </div>
                             <div class="space-y-2 relative">
@@ -360,14 +360,28 @@
                     confAdm.textContent = admissionInput.value;
                     confPhone.textContent = phoneInput.value;
                     confGender.textContent = genderInput.value;
-                    confirmDiv.classList.remove('hidden');
-                    confirmDiv.classList.add('flex');
+                    
                     // Trigger animation
                     setTimeout(() => {
-                        confirmDiv.classList.remove('opacity-0');
-                        confirmDiv.querySelector('div').classList.remove('scale-95');
-                        confirmDiv.querySelector('div').classList.add('scale-100');
-                    }, 10);
+                        if (String(phoneInput.value).startsWith('254') || String(phoneInput.value).startsWith('+254')) {
+                            showStatusMessage('error', 'Error', 'Please do not use country prefix (254) in the phone number input')
+                            return
+                          }
+                          if (!String(phoneInput.value).startsWith('07') && !String(phoneInput.value).startsWith('01')) {
+                            showStatusMessage('error', 'Error', 'Invalid phone number')
+                            return
+                          }
+                        if (String(phoneInput.value).length < 10) {
+                          showStatusMessage('error', 'Error', 'Phone number is invalid')
+                          return
+                        } else {
+                          confirmDiv.classList.remove('hidden');
+                          confirmDiv.classList.add('flex');
+                          confirmDiv.classList.remove('opacity-0');
+                          confirmDiv.querySelector('div').classList.remove('scale-95');
+                          confirmDiv.querySelector('div').classList.add('scale-100');
+                        }
+                      }, 10);
                 }
         
                 function hideConfirm() {
@@ -380,8 +394,8 @@
                     }, 300);
                 }
         
-                function showStatusMessage(title, message) {
-                    statusTitleEl.textContent = title;
+                function showStatusMessage(type, title, message) {
+                    statusTitleEl.innerHTML = title;
                     statusTextEl.innerHTML = message;
                     statusMessageEl.classList.remove('hidden');
                     statusMessageEl.classList.add('flex');
@@ -444,12 +458,12 @@
                         if (xhr.status >= 200 && xhr.status < 300 && result.reference_id) {
                             form.reset();
                             localStorage.removeItem('researchDraft');
-                            showStatusMessage(
+                            showStatusMessage('Success',
                                 'Submission Successful',
                                 `Your details have been recorded.<br><div class="mt-4 p-3 bg-zinc-900 border border-zinc-800 rounded text-zinc-300 font-mono text-xs select-all">Ref ID: <span class="text-white font-bold">${result.reference_id}</span></div><div class="mt-2 text-[10px] text-zinc-500">Please screenshot this reference.</div>`
                             );
                         } else {
-                            showStatusMessage('Submission Failed', result.error || 'An unknown error occurred.');
+                            showStatusMessage('error','Submission Failed', result.error || 'An unknown error occurred.');
                         }
                     };
                     
