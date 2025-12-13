@@ -245,16 +245,39 @@ def create_new_form():
     return jsonify({'error': 'Missing data in request. Please Try again'}), 400
 
 @app.route('/get_forms/<id>/<token>')
-def forms(id, token):
+def forms_list(id, token):
     if id and token:
         print(id, token)
         user = User.query.filter_by(id=id).first()
+
         if user:
             if validate_token(token, user.id):
-                forms = Form.query.filter_by(user_id=user.id).all()
+                forms = Form.query.filter_by(user_id=id).all()
+                print('======================= ', forms)
+                
                 if forms:
-                    return jsonify({'forms':[f.to_dict() for f in forms]}), 200
-                return jsonify({'msg':'No forms found. Please add some'})
+                    data = []
+                    for f in forms:
+                        subs = Submission.query.filter_by(form_id=f.id).all()
+                        sub_count = len(subs)
+
+                        fields = ["name", "age", "phone", "adm", "email", "topic", "assignment", "units"]
+                        non_empty_count = 0
+
+                        for s in subs:
+                            for field in fields:
+                                value = getattr(s, field)
+                                if value and str(value).strip() != "":
+                                    non_empty_count += 1
+
+                        data.append({
+                            **f.to_dict(),
+                            "c": sub_count,
+                            "n": non_empty_count
+                        })
+
+                    return jsonify({"forms": data}), 200
+                return jsonify({"msg": "No forms found. Please add some"})
             return jsonify({'error':'Unauthorized'}), 401
         return jsonify({'error':'Failed to load account. Please reload the page or login again'}), 404
     return jsonify({'error':'Misssing data in request. Please, try again'}), 404
@@ -264,7 +287,7 @@ def get_form(id):
     if id:
         form = Form.query.filter_by(id=id).first()
         if form:
-            return jsonify({'form':form.to_dict()}), 200
+            return jsonify({'form':form.to_v_dict()}), 200
         return jsonify({'error':'Page not found'}), 404
     return jsonify({'error':'Incomplete request'}), 400
 
@@ -565,12 +588,11 @@ def refresh():
     try:
         newTest = Form(user_id='Test')
         db.session.add(newTest)
-        return jsonify('success', 'Refreshed database')
+        return jsonify({'msg':'Refreshed database successfully'}), 200
     except Exception as e:
         log(f'[500] error in /refresh/db route: {e}', 'error')
-        return jsonify({'error':f'database error : {str(e)}'}), 500
-        
-    return
+        return jsonify({'error':f'Failed.Please, try again'}), 500
+
 
 if __name__ == '__main__':
     with app.app_context():

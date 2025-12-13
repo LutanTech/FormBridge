@@ -110,6 +110,16 @@ class Form(db.Model):
             'assignment': self.assignment,
             'units': self.units,
         }
+    def to_v_dict(self):
+        return {
+            'id': self.id,
+            'deadline': self.deadline.isoformat() if self.deadline else None,
+            'name_str': self.name_str,
+            'desc': self.desc,
+            'instructions': self.instructions,
+            'is_open': self.is_open,
+            'inputs': self.inputs
+        }
         
 
     

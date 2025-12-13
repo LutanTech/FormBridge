@@ -94,10 +94,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if(attr == 'forms'){
           ZMinus('.newForm')
           ZAdd('.forms-ov')
+          ZMinus('.databases')
+  
+        }
+        if(attr == 'data'){
+          ZMinus('.newForm')
+          ZAdd('.databases')
+          ZMinus('.forms-ov')
+          
         }
         if(attr == 'new'){
           ZAdd('.newForm')
           ZMinus('.forms-ov')
+          ZMinus('.databases')
+
         }
       })
     })
@@ -403,14 +413,16 @@ document.addEventListener('DOMContentLoaded', () => {
     window.initDbs = initDbs
     
     function initDbs(data){
-      
+      const parent = document.querySelector('.dbs')
       const user = jdf(getCookie('user'))
       token = getCookie('token')
+      parent.innerHTML = '<i class="fa sfa spinner fa-spin"></i>'
       if(data){
+        parent.innerHTML = ''
         const dbs = data
         dbs.forEach(db=>{
           const div = document.createElement('div')
-          const parent = document.querySelector('.dbs')
+          
           div.classList.add('db')
           div.innerHTML =  `
                 <div class="db-pic">
@@ -419,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="db-name"><i class="fas fa-database"></i> ${db.name_str}</div>
                 <hr>
                 <div class="db-desc"><i class="fas fa-info-circle"></i> ${db.desc ? db.desc :'No description added'} </div>
-                <div class="db-size"> <i class="fas fa-server"></i> 56.09kb</div>
+                <div class="db-size"> <i class="fas fa-server"></i> ${(parseInt(db.n) / parseInt(db.c)).toFixed(2)}kb</div>
                 <div class="db-actions">
                   <div class="open"><i class="fas fa-eye"></i></div>
                   <div class="pause"> ${db.is_open ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play" style="color:red;"></i>' } </div>
@@ -449,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rd.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'
             setTimeout(() => {
               
-            fetch(`${baseUrl}/refresh/db`)
+            fetch(`${baseUrl}/refresh/db?t=${getCookie('token')}`)
             .then(res=>res.json())
             .then(data=>{
               if(data.error){
@@ -457,9 +469,9 @@ document.addEventListener('DOMContentLoaded', () => {
               }
             if (data.msg){
             rd.innerHTML = '<i class="fas fa-check-circle" style="color:#0f0; scale:1.5"></i>'
+            alert('Success', data.msg, 'success')
           setTimeout(() => {
             rd.innerHTML = '<i class="fas fa-refresh"></i>'
-
           }, 3000);   }
         })
             .catch(e=>{
@@ -551,6 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return
               }
               alert('Success', data.msg, 'success')
+              initForms()
               setTimeout(() => {
                 initDbs(window.forms)
               }, 3000);
