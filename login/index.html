@@ -8,6 +8,7 @@
 <meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
 
 <link rel="canonical" href="https://formbridge.vercel.app/">
+<script src="https://cdn.tailwindcss.com"></script>
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://formbridge.vercel.app/">
@@ -37,7 +38,7 @@
 <meta name="robots" content="index, follow">
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
     <link rel="icon" href="/assets/logo.png" type="image/x-icon">
-    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="/assets/scripts/utils.js" defer></script>
     <link rel="stylesheet" href="/assets/css/utils.css">
     <link rel="stylesheet" href="/assets/css/main.css">
@@ -345,13 +346,13 @@
                                 input.select();
                             });
                         });
-                        const form = document.querySelector('#tfaform')
-                        form.addEventListener('submit', (e) => {
+                        const form1 = document.querySelector('#tfaform')
+                        form1.addEventListener('submit', (e) => {
                             e.preventDefault();
                             e.stopImmediatePropagation();
                           
                             let domOtp = '';
-                            const tt = form.getAttribute('data-token')
+                            const tt = form1.getAttribute('data-token')
                             inputs.forEach(inp => {
                                 domOtp += inp.value.trim();
                             });
@@ -520,7 +521,7 @@
                 if(data){
                     data = jdf(data)
                     alert('Info', data.info, 'info')
-                    showOTPField(data.tt)
+                    showOTPField(data.temp_token)
                 }
                  else{
                     if(data.user){
