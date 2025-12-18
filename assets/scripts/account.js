@@ -204,6 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
                   if(String(data.error).includes('Failed to load account')){
                       document.body.setAttribute('style', 'pointer-events:none;')
                       document.querySelector('#app').innerHTML = ''
+                      document.querySelector('.load-error').classList.toggle('none')
+                      document.querySelector('.load-error').classList.toggle('flex')
                       const ler = document.querySelector('.load-error-text')
                       ler.style.pointerEvents = 'all'
                       ler.innerHTML = `${data.error} <hr> <div class="actions-error"> <a href="?reload=True"> <i class="fas fa-refresh"></i> Reload </a> | <a href="/login"> <i class="fas fa-sign-in-alt"></i> Login </a></div>`
