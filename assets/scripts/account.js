@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function check2Fa(user){
       if(user){
         const tf = document.querySelector('.tfa-btn')
-
+      const resend = document.querySelector('.resend-qr')
         id = jdf(user).id
         if(id){
         tf.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking'
@@ -141,6 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if(data.success){
             tf.disabled = true
             tf.textContent = '2FA Authentication Active'
+            resend.style.display = 'flex !important'
+            resend.disabled = false
             tf.addEventListener('click', (e)=>{
               e.preventDefault()
               e.stopImmediatePropagation()
@@ -286,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
             })
             .catch(e=>{
+              console.log(e)
                 wrapper.innerHTML = `<i style="color:red">Network error fetching your forms : ${e.message}. Please reload</i>`
             })
         }
@@ -460,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function initDbs(data){
       const parent = document.querySelector('.dbs')
       const user = jdf(getCookie('user'))
-      token = getCookie('token')
+      var token = getCookie('token')
       parent.innerHTML = '<i class="fa sfa spinner fa-spin"></i>'
       if(data){
         parent.innerHTML = ''

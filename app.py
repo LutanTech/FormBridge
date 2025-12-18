@@ -169,6 +169,7 @@ def login():
 
     try:
         if check_device(device, user.id):
+            print(check_device(device, user.id))
             return jsonify({
                 'user': encode(user.to_dict()),
                 'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
@@ -178,7 +179,7 @@ def login():
     
     except Exception as e:
         log(f'[400] Unknown error in /check_device route : {str(e)}','error')
-        return jsonify({'error':'Please try again'}), 400
+        return jsonify({'error':f'Please try again: {str(e)}'}), 400
     
 
 
@@ -336,7 +337,6 @@ def create_new_form():
 @app.route('/get_forms/<id>/<token>')
 def forms_list(id, token):
     if id and token:
-        print(id, token)
         user = User.query.filter_by(id=id).first()
 
         if user:
@@ -761,7 +761,6 @@ def devices():
     u = decode(data.get('u'))
     token = data.get('t')
     if u and token:
-        print(u, '===============urgjd-----------')
         if validate_token(token, u.get('id')):
             user = User.query.filter_by(id= u.get('id')).first()
             if user:
@@ -771,22 +770,39 @@ def devices():
         return jsonify({'error':'unauthorized. please, login'}), 401
     return  jsonify({'error':'Invalid payload. Please login again'}), 400
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-    data = request.get_json()
-    data = decode(data)
+    
+    raw_data = request.get_json()
+    data = decode(raw_data.get('data'))
     token = data.get('t')
-    user_data = data.get('u')
+    user_data = decode(data.get('u'))
     id = user_data.get('id')
-    device = data.get('device')
+    device_ua = data.get('d')
     
     if data and id:
         user = User.query.filter_by(id=id).first()
         if user:
             if validate_token(token, user.id):
-                devices = Device.query.filter_by(user_id=user.id).all()
+                device = Device.query.filter_by(ua=device_ua).first()
+                print(device.ua)
+                if device:
+                    if device.user_id == user.id:
+                        db.session.delete(device)
+                        db.session.commit()
+                        return jsonify({'msg':'Logged out'}), 200
+                    return jsonify({'error':'Unauthorized action'}),401
+                return jsonify({'error':'Logout error : Device'}), 400
+            return jsonify({'error':'Unauthorized action'}),401
+        return jsonify({'error':'Logout error. Key Error : User'}), 400
+    return jsonify({'error':'Logout error : Invalid'}), 400
+
+    
+            
+            
                 
-    return jsonify({'info':f'{data}{token}'}), 200
+                
+    return jsonify({'info':f'{raw_data}, {data}'}), 200
 
 if __name__ == '__main__':
     with app.app_context():

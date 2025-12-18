@@ -8,7 +8,7 @@
 <meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
 
 <link rel="canonical" href="https://formbridge.vercel.app/">
-<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+<script src="https://cdn.tailwindcss.com"></script>
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://formbridge.vercel.app/">
@@ -518,12 +518,6 @@
                     alert('Failed', data.error, 'error')
                     toggleBtn(false)
                 }
-                if(data){
-                    data = jdf(data)
-                    alert('Info', data.info, 'info')
-                    showOTPField(data.temp_token)
-                }
-                 else{
                     if(data.user){
                         const exp = data.expiry || 1
                         setCookie('user', data.user , exp)
@@ -533,8 +527,12 @@
                         alert('Logged In', `Welcome ${user.username}. Redirecting...`, 'success')
                         toggleBtn(false)
                         setTimeout(()=>{window.location.href='/account'},2000 )
+                    } else{
+                        data = jdf(data)
+                        alert('Info', data.info, 'info')
+                        showOTPField(data.temp_token)
                     }
-                }
+                
             })
             .catch(err=>{
                 alert('Network Error', 'Please Make sure you have an internet connection', 'error')

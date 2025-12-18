@@ -64,6 +64,19 @@
     padding: 5px 10px;
     border-radius: 10px;
     border: 0;
+    
+  }
+  .resend-qr{
+    display: none;
+    background: lightgreen;
+    border: 0;
+    cursor: pointer;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    width: max-content;
+    margin: auto;
+    min-width: 200px;
   }
 
   </style>
@@ -181,7 +194,7 @@
       <style>
 
       </style>
-      <div class="overlay">
+      <div class="overlay vissible">
 
         <div class="back-btn" t="Back"> 
           
@@ -274,26 +287,243 @@
           <script>
 
           </script>
+          <style>
+            .qr-btns button{
+              padding: 5px 10px;
+              background: red;
+              border: 0;
+              margin: 10px auto;
+            }
+          </style>
         </div>
 
         <!-- Div 2 -->
 
         <div class="forms-ov">
           <div class="forms-wrapper">
+            <div class="skeleton db-sk">
+              <div class="sk-header">
+                <div class="sk-img"></div>
+                <div class="sk-title"></div>
+              </div>
+              <div class="sk-dets">
+                <div class="sk-desc"></div>
+                <div class="sk-size"></div>
+              </div>
+              <div class="sk-actions">
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+              </div>
+            </div>
+            <div class="skeleton db-sk">
+              <div class="sk-header">
+                <div class="sk-img"></div>
+                <div class="sk-title"></div>
+              </div>
+              <div class="sk-dets">
+                <div class="sk-desc"></div>
+                <div class="sk-size"></div>
+              </div>
+              <div class="sk-actions">
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+              </div>
+            </div>
+            <div class="skeleton db-sk">
+              <div class="sk-header">
+                <div class="sk-img"></div>
+                <div class="sk-title"></div>
+              </div>
+              <div class="sk-dets">
+                <div class="sk-desc"></div>
+                <div class="sk-size"></div>
+              </div>
+              <div class="sk-actions">
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+              </div>
+            </div>
+            <div class="skeleton db-sk">
+              <div class="sk-header">
+                <div class="sk-img"></div>
+                <div class="sk-title"></div>
+              </div>
+              <div class="sk-dets">
+                <div class="sk-desc"></div>
+                <div class="sk-size"></div>
+              </div>
+              <div class="sk-actions">
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+                <div class="sk-act"></div>
+              </div>
+            </div>
+            
 
           </div>
         </div>
 
         <!-- DIv #3 Databases -->
 
-        <div class="databases">
+        <div class="databases" style="z-index: 30;">
           <div class="database-inner">
             <h3>Your Databases</h3>
             <hr>
+            <style>
+              .skeleton{
+                display: flex;
+                background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.232), rgba(0, 0, 0, 0));
+                animation: bg 3s linear infinite;
+                background-repeat: no-repeat;
+                background-size: 20%;
+                background-color: rgba(254, 254, 254, 0.142);
+                border: 0;
+                padding: 10px 20px;
+                flex:300px;
+                height: fit-content;
+                border-radius: 10px;
+                justify-content: space-between;
+                align-items: stretch;
+                flex-direction: column;
+                gap: 10px;
+                max-width: 350px;
+                >div{
+                  display: flex;
+                  background: rgba(255, 252, 252, 0.06);
+                  padding: 10px;
+                  flex-grow: 1;
+                  border-radius: 5px;
+                  justify-content: space-between;
+                }
+              }
+              @keyframes bg {
+                100%{
+                  background-position: 150%;
+                }                
+              }
+              .sk-dets{
+                display: flex;
+                padding: 10px;
+                flex-direction: column;
+                background: rgba(255, 0, 0, 0) !important;
+                gap: 5px;
+                >div{
+                background: #0000004f !important;
+                padding: 5px;
+                }
+              }
+              .sk-title{
+                padding: 10px;
+                width: 100px;
+                margin: auto;
+                background: rgba(0, 0, 0, 0.118);
+                border-radius: 2px;
+                min-height: 40px;
+              }
+              .sk-act{
+                background: #0000002c;
+                height: 100%;
+                border-radius: 2px;
+                padding: 10px;
+              }
+              .sk-img{
+                min-height: 80px;
+              }
+            </style>
             <div class="dbs">
+              <div class="skeleton db-sk">
+                <div class="sk-header">
+                  <div class="sk-img"></div>
+                  <div class="sk-title"></div>
+                </div>
+                <div class="sk-dets">
+                  <div class="sk-desc"></div>
+                  <div class="sk-size"></div>
+                </div>
+                <div class="sk-actions">
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                </div>
+              </div>
+              <div class="skeleton db-sk">
+                <div class="sk-header">
+                  <div class="sk-img"></div>
+                  <div class="sk-title"></div>
+                </div>
+                <div class="sk-dets">
+                  <div class="sk-desc"></div>
+                  <div class="sk-size"></div>
+                </div>
+                <div class="sk-actions">
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                </div>
+              </div>
+              <div class="skeleton db-sk">
+                <div class="sk-header">
+                  <div class="sk-img"></div>
+                  <div class="sk-title"></div>
+                </div>
+                <div class="sk-dets">
+                  <div class="sk-desc"></div>
+                  <div class="sk-size"></div>
+                </div>
+                <div class="sk-actions">
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                </div>
+              </div>
+              <div class="skeleton db-sk">
+                <div class="sk-header">
+                  <div class="sk-img"></div>
+                  <div class="sk-title"></div>
+                </div>
+                <div class="sk-dets">
+                  <div class="sk-desc"></div>
+                  <div class="sk-size"></div>
+                </div>
+                <div class="sk-actions">
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                  <div class="sk-act"></div>
+                </div>
+              </div>
+              
+
             </div>
           </div>
         </div>
+        <!-- Div #4 settings -->
         <div class="settings-overlay">
           <h2>Customize your settings</h2>
           <hr style="border: 0.2px solid rgba(255, 255, 255, 0.234); margin:10px 0">
@@ -330,11 +560,11 @@
               <p style="margin-top: 20px;">We only support <i style="color: magenta;">Google Authenticator</i> at the moment</p>
             </details>
             <button disabled id="two-factor-activate" class="tfa-btn"> Activate 2FA</button>
+            <button disabled id="resend-qr" class="resend-qr"> Resend QR</button>
 
 
 <script>
 const tfabtn = document.querySelector('.tfa-btn');
-const qrImg = document.getElementById('qr-img');
 const user = getCookie('user'); 
 const token = getCookie('token'); 
 
@@ -363,10 +593,8 @@ tfabtn.addEventListener('click', () => {
     console.log('Response:', data);
 
     if (data.qr_code_base64) {
-      showQR()
-      setTimeout(()=>{
-      qrImg.src = `data:image/png;base64,${data.qr_code_base64}`;
-    }, 10)
+      showQR(data)
+     
     }
     if(data.error){
       alert('Error', data.error, 'error')
@@ -387,9 +615,13 @@ tfabtn.addEventListener('click', () => {
     tfabtn.innerHTML = 'Activate 2FA';
   });
 });
-function showQR(){
+function showQR(data){
   document.querySelector('.qr').classList.toggle('flex')
   document.querySelector('.qr').classList.toggle('none')
+  setTimeout(()=>{
+    const qrImg = document.getElementById('qr-img');
+    qrImg.src = `data:image/png;base64,${data.qr_code_base64}`;
+  }, 100)
 }
 function showReset(){
   alert('info', "reset?", 'info')

@@ -166,8 +166,21 @@
 
                       const user = getCookie('user')
                       const token = getCookie('token')
+                      const ua = navigator.userAgent;
 
-                      fetch(`${baseUrl}/logout/${user}/${token}`)
+                      const payload = {
+                        u : user,
+                        t : token,
+                        d : ua
+                      }
+
+                      fetch(`${baseUrl}/logout`,{
+                        headers : {
+                            'Content-Type':'application/json'
+                        },
+                         method : 'POST',
+                        body : JSON.stringify({data:jof(payload)})
+                      })
                       .then(res=>res.json())
                       .then(data=>{
                         if(data.error){
