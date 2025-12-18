@@ -1,583 +1,141 @@
 <!DOCTYPE html>
 <html lang="en" class="dark scroll-smooth">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login || FormBridge</title>
-    <meta name="title" content="FormBridge – Smart University Form Automation">
-<meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login || FormBridge</title>
+  <meta name="title" content="FormBridge – Smart University Form Automation">
+  <meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
 
-<link rel="canonical" href="https://formbridge.vercel.app/">
-<script src="https://cdn.tailwindcss.com"></script>
+  <link rel="canonical" href="https://formbridge.vercel.app/">
+  <script src="https://cdn.tailwindcss.com"></script>
 
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://formbridge.vercel.app/">
-<meta property="og:title" content="FormBridge – Smart University Form Automation">
-<meta property="og:description" content="Fast, secure digital form management for universities.">
-<meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://formbridge.vercel.app/">
+  <meta property="og:title" content="FormBridge – Smart University Form Automation">
+  <meta property="og:description" content="Fast, secure digital form management for universities.">
+  <meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://formbridge.vercel.app/">
-<meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
-<meta name="twitter:description" content="Digital form management built for universities.">
-<meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://formbridge.vercel.app/">
+  <meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
+  <meta name="twitter:description" content="Digital form management built for universities.">
+  <meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "FormBridge",
-  "alternateName": "Form Bridge Platform",
-  "url": "https://formbridge.vercel.app/",
-  "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
-  "sameAs": []
-}
-</script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "FormBridge",
+    "alternateName": "Form Bridge Platform",
+    "url": "https://formbridge.vercel.app/",
+    "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
+    "sameAs": []
+  }
 
-<meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
-<meta name="robots" content="index, follow">
-    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
-    <link rel="icon" href="/assets/logo.png" type="image/x-icon">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="/assets/scripts/utils.js" defer></script>
-    <link rel="stylesheet" href="/assets/css/utils.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#151e2e',
-                            950: '#020617',
-                        }
-                    }
-                }
-            }
+  </script>
+
+  <meta name="keywords" content="university forms, Moi University formbridge, digital forms, student portal tools, form submission system, lutan tech projects, formbridge, formbridge kenya, form automations, formbridge">
+  <meta name="robots" content="index, follow">
+  <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon">
+  <link rel="icon" href="/assets/logo.png" type="image/x-icon">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="/assets/scripts/utils.js" defer></script>
+  <link rel="stylesheet" href="/assets/css/utils.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/login.css">
+  <script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+        },
+        colors: {
+          slate: {
+            850: '#151e2e',
+            950: '#020617',
+          }
         }
-    </script>
-    <style>
-        .glass-nav {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .hero-glow {
-            background: radial-gradient(circle at center, rgba(79, 70, 229, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
-        }
-        .text-gradient {
-            background: linear-gradient(to right, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
+      }
+    }
+  }
+
+  </script>
 </head>
+
 <body class="bg-slate-950 min-h-screen flex flex-col text-slate-200 antialiased selection:bg-indigo-500 selection:text-white overflow-x-hidden">
 
-    <!-- Background Elements -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px]"></div>
-        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] " style="animation-delay: 2s;"></div>
+  <!-- Background Elements -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] " style="animation-delay: 2s;"></div>
+  </div>
+
+  <main class="flex-grow flex flex-col">
+    <div class="otpField none">
+      <form id="tfaform" action="/post">
+        <label for="tfa">Enter the 2FA code from your Authenticator app</label>
+        <hr style="width: 100%; border:1px solid #ffffff3b">
+        <div class="div">
+          <input type="text" index="0" name="" id="otp-1" maxLength="1" class="otp-inputs" autocomplete="-otp">
+          <input type="text" index="1" name="" id="otp-2" maxLength="1" class="otp-inputs" autocomplete="-otp">
+          <input type="text" index="2" name="" id="otp-3" maxLength="1" class="otp-inputs" autocomplete="-otp">
+          <input type="text" index="3" name="" id="otp-4" maxLength="1" class="otp-inputs" autocomplete="-otp">
+          <input type="text" index="4" name="" id="otp-5" maxLength="1" class="otp-inputs" autocomplete="-otp">
+          <input type="text" index="5" name="" id="otp-6" maxLength="1" class="otp-inputs" autocomplete="-otp">
+        </div>
+        <div class="btn">
+          <button id="confirm-tfa">Continue</button>
+        </div>
+      </form>
+    </div>
+    <div class="form-wrapper">
+      <form action="/login" id="form" method="post">
+        <div class="logo">
+          <img src="/assets/images/logo-nbg.png" alt="">
+        </div>
+        <div class="name">
+          <hr>
+          <h2 class="3xl">Form<span style="color: rgb(173, 64, 250);">Bridge</span></h2>
+          <hr>
+        </div>
+        <div class="div">
+          <label for="username">Enter Username or Email</label>
+          <div class="div-inp">
+            <i class="fas fa-user-circle"></i>
+            <input type="text" autocomplete="username" name="username" id="username" placeholder="Username">
+          </div>
+        </div>
+        <div class="div">
+          <label for="password">Enter Password</label>
+          <div class="div-inp">
+            <i class="fas fa-lock"></i>
+            <input type="password" name="password" id="password" autocomplete="current-password" placeholder="Password">
+            <div class="eye">
+              <i class="fas fa-eye" style="color: rgb(224, 223, 223) !important;"></i>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" id="lbtn">Login</button>
+          <div class="reg">
+            <hr>
+            <a href="/register" style="color: #0f0;"> Register </a>
+            <hr>
+          </div>
+          <a href="/" style="color: rgb(179, 0, 255);"> Home </a>
+          <hr style="width: 100%;">
+
+        </div>
+      </form>
     </div>
 
-    <style>
-        main{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .form-wrapper{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.256);
-            padding: 20px;
-            border-radius: 20px;
-            max-width: 400px;
-            min-width: 300px;
-            margin: 50px 0;
-            width: 90%;
-            height: fit-content;
-        }
-        form{
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .div-inp{
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
+  </main>
 
-        }
-        .div{
-            position: relative;
-            display: flex;
-            gap: 5px;
-            flex-direction: column;
-        }
-        .div-inp input{
-            display: flex;
-            border-radius: 10px;
-            padding: 10px;
-            padding-left: 40px;
-            flex-grow: 1;
-            border: 0;
-            outline: 2px solid indigo;
-            font-size: small;
-            min-width: 300px;
-            color: black;
-        }
-        .div i:nth-of-type(1){
-            position: absolute;
-            left: 0px;
-            color: rgb(84, 82, 82);
-            padding: 10px;
-        }
-        .eye{
-            position: absolute;
-            right: 5px;
-            width: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 10px;
-            cursor: pointer;
-            height: 30px;
-            &:active{
-                scale: 0.97;
-            }
-            i{
-                position: relative !important;
-                color: rgb(15, 15, 15) !important;
-                padding: 0 !important;
-                left: 0 !important;
-            }
-        }
-        h3, h2, h1{
-            font-weight: bolder;
-            text-align: center;
-        }
-        h2{
-            font-size: 1.5em;
-        }
-        .logo{
-            background: white;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            border-radius: 50%;
-            justify-content: center;
-            margin: auto;
-            img{
-                width: 100%;
-
-            }
-        }
-
-
-        .actions{
-            display: flex;
-            gap: 20px;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        form button{
-            background: green;
-            border: 0px;
-            padding: 10px 20px;
-            flex-grow: 1;
-            width: 80%;
-            border-radius: 10px;
-
-        }
-        .name{
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-            align-items: center;
-            hr{
-            flex-grow: 1;
-            }
-        }
-        .reg{
-            display: flex;
-            width: 100%;
-            margin-bottom: 5px;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            hr{
-                flex-grow: 1;
-                padding: 1px;
-
-            }
-        }
-        .otpField{
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: #000;
-            z-index: 200;
-            input[type="number"]{
-                padding: 10px 20px;
-                color: black;
-                appearance: textfield;
-                -moz-appearance: textfield;
-                -webkit-appearance: none;
-                outline:  2px solid magenta;
-            border: 2px solid rgb(0, 0, 0);
-            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-
-                font-size: large;
-              }
-              
-              /* Chrome, Edge, Safari */
-              input[type="number"]::-webkit-inner-spin-button,
-              input[type="number"]::-webkit-outer-spin-button{
-                -webkit-appearance: none;
-                margin: 0;
-              }
-              
-        }
-        .otp-inputs{
-            padding: 10px 0;
-            font-size: large;
-            text-align: center;
-            flex-grow: 1;
-            background: rgba(255, 255, 255, 0);
-            flex: 1 1 20px;
-            max-width:40px;
-            border: 1px solid magenta;
-            color: white !important;
-            text-transform: uppercase;
-            &:focus{
-                border: 2px solid #0f0;
-                outline: none;
-            }
-            
-        }
-        .otp-inputs:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 1000px aqua inset !important;
-            box-shadow: 0 0 0 1000px rgb(0, 0, 0) inset !important;
-            -webkit-text-fill-color: white !important;
-            transition: background-color 9999s ease-in-out 0s !important;
-          }
-          .otpField .div{
-            display: flex;
-            flex-direction: row;
-          }
-          #tfaform{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 90%;
-            max-width: 400px;
-            padding: 20px;
-            box-shadow: 0px 5px 10px rgba(0, 217, 255, 0.352);
-            div{
-                flex-grow: 1;
-                width: 100%;
-                text-align: center;
-                display: flex;
-                justify-content: center;
-
-            }
-          }
-          .flex{
-            display: flex !important;
-          }
-          .none{
-            display: none !important;
-          }
-    </style>
-
-    <main class="flex-grow flex flex-col">
-        <div class="otpField none">
-            <form id="tfaform" action="/post">
-                <label for="tfa">Enter the 2FA code from your Authenticator app</label>
-                <hr style="width: 100%; border:1px solid #ffffff3b">
-                <div class="div">
-                    <input type="text" index="0"  name="" id="otp-1" maxLength="1" class="otp-inputs" autocomplete="-otp">
-                    <input type="text" index="1"  name="" id="otp-2" maxLength="1" class="otp-inputs" autocomplete="-otp">
-                    <input type="text" index="2"  name="" id="otp-3" maxLength="1" class="otp-inputs" autocomplete="-otp">
-                    <input type="text" index="3"  name="" id="otp-4" maxLength="1" class="otp-inputs" autocomplete="-otp">
-                    <input type="text" index="4"  name="" id="otp-5" maxLength="1" class="otp-inputs" autocomplete="-otp">
-                    <input type="text" index="5"  name="" id="otp-6" maxLength="1" class="otp-inputs" autocomplete="-otp">
-                </div>
-                <div class="btn">
-                <button id="confirm-tfa">Continue</button>
-                </div>
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const inputs = document.querySelectorAll('.otp-inputs');
-                    
-                        inputs.forEach((input, idx) => {
-                            input.addEventListener('input', () => {
-                                if (input.value.trim().length === 1 && idx < inputs.length - 1) {
-                                    inputs[idx + 1].focus();
-                                }
-                            });
-                    
-                            input.addEventListener('keydown', (e) => {
-                                if (e.key === 'Backspace' && !input.value && idx > 0) {
-                                    inputs[idx - 1].focus();
-                                }
-                            });
-                    
-                            input.addEventListener('focus', () => {
-                                input.select();
-                            });
-                        });
-                        const form1 = document.querySelector('#tfaform')
-                        form1.addEventListener('submit', (e) => {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                          
-                            let domOtp = '';
-                            const tt = form1.getAttribute('data-token')
-                            inputs.forEach(inp => {
-                                domOtp += inp.value.trim();
-                            });
-                        
-                            const ua = navigator.userAgent;
-                            if(!ua){
-                                alert('Error', 'Please reload the page or disable any extension', 'error')
-                                return
-                            }
-                          
-                            if (ua) {
-                              const payload = {
-                                otp: domOtp,
-                                tt:tt,
-                                ua: ua
-                              };
-                              console.log(ua)
-                          
-                              login_2fa(payload);
-                            }
-                          });
-                          function login_2fa(payload){
-                            toggleBtn('confirm-tfa',true)
-                            fetch(`${baseUrl}/login/two_fa`, {
-                                headers:{
-                                    'Content-Type':'application/json'
-                                },
-                                 method:'POST',
-                                 body:JSON.stringify({data:jof(payload)})
-                            })
-                            .then(res=>res.json())
-                            .then(data=>{
-                                console.log(data)
-
-                                if(data.error){
-                                    alert('Failed', data.error, 'error')
-                                    toggleBtn('confirm-tfa',false)
-                                }
-                                if(data){
-                                    data = jdf(data)
-                                    if(data.error){
-                                        data = data
-                                    }
-                                    console.log(data)
-                                    console.log(data.user ? 'true':'false' )
-                                    setTimeout(()=>{
-                                    if(data.user){
-                                        const exp = data.expiry || 1
-                                        setCookie('user', data.user , exp)
-                                        setCookie('token', data.token , exp)
-                                        setCookie('expiry', data.expiry , exp)
-                                        const user = jdf(data.user)
-                                        alert('Logged In', `Welcome ${user.username}. Redirecting...`, 'success')
-                                        toggleBtn('confirm-tfa',false)
-                                        setTimeout(()=>{window.location.href='/account'},2000 )
-                                    }
-                                }, 100)
-                                }
-                            })
-                            .catch(err=>{
-                                alert('Network Error', 'Please Make sure you have an internet connection', 'error')
-                                toggleBtn('confirm-tfa',false)
-                            })
-                        
-                        }
-                          
-                    })
-                </script>
-            </form>
-        </div>
-        <div class="form-wrapper">
-            <form action="/login" id="form" method="post">
-                <div class="logo">
-                    <img src="/assets/images/logo-nbg.png" alt="">
-                </div>
-                <div class="name"> <hr>
-                <h2 class="3xl">Form<span style="color: rgb(173, 64, 250);">Bridge</span></h2> <hr></div>
-                <div class="div">
-                    <label for="username">Enter Username or Email</label>
-                    <div class="div-inp">
-                        <i class="fas fa-user-circle"></i>
-                        <input type="text" autocomplete="username" name="username" id="username" placeholder="Username">
-                    </div>
-                </div>
-                <div class="div">
-                    <label for="password">Enter Password</label>
-                    <div class="div-inp">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" name="password" id="password" autocomplete="current-password" placeholder="Password">
-                        <div class="eye">
-                            <i class="fas fa-eye" style="color: rgb(224, 223, 223) !important;"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="actions">
-                    <button type="submit">Login</button>
-                    <div class="reg">
-                        <hr> 
-                    <a href="/register" style="color: #0f0;"> Register </a>
-                    <hr>
-                </div>
-                <a href="/" style="color: rgb(179, 0, 255);"> Home </a>
-                <hr style="width: 100%;">
-
-                </div>
-            </form>
-        </div>
-
-        </main>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', ()=>{
-
-        const eye = document.querySelector('.eye');
-        const form = document.querySelector('#form');
-        const pass = form.querySelector('#password')
-
-        eye.addEventListener('click', () => {
-            eye.classList.toggle('closed')
-            eye.classList.contains('closed') ? pass.setAttribute('type', 'text') :
-            pass.setAttribute('type', 'password')
-
-            if(eye.classList.contains('closed')){
-            eye.innerHTML = '<i style="color: rgb(224, 223, 223) !important" class="fas fa-eye-slash"></i>'
-            } else{
-            eye.innerHTML = '<i style="color: rgb(224, 223, 223) !important"  class="fas fa-eye"></i>'
-            }
-
-        });
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-          
-            const username = form.querySelector('#username').value.trim();
-            const password = form.querySelector('#password').value.trim();
-            const ua = navigator.userAgent;
-            if(!ua){
-                alert('Error', 'Please reload the page or disable any extension', 'error')
-                return
-            }
-          
-            if (username && password) {
-              const payload = {
-                username: username,
-                password: password,
-                ua: ua
-              };
-              console.log(ua)
-          
-              login(jof(payload));
-            }
-          });
-          
-        function login(payload){
-            toggleBtn(true)
-            fetch(`${baseUrl}/login`, {
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                 method:'POST',
-                 body:JSON.stringify({data:payload})
-            })
-            .then(res=>res.json())
-            .then(data=>{
-                if(data.error){
-                    alert('Failed', data.error, 'error')
-                    toggleBtn(false)
-                }
-                    if(data.user){
-                        const exp = data.expiry || 1
-                        setCookie('user', data.user , exp)
-                        setCookie('token', data.token , exp)
-                        setCookie('expiry', data.expiry , exp)
-                        const user = jdf(data.user)
-                        alert('Logged In', `Welcome ${user.username}. Redirecting...`, 'success')
-                        toggleBtn(false)
-                        setTimeout(()=>{window.location.href='/account'},2000 )
-                    } else{
-                        data = jdf(data)
-                        if(data.error){
-                            alert('Error', data.error, 'error')
-                            return
-                        }
-                        alert('Attention',data.info, 'info')
-                        showOTPField(data.temp_token || data.tt)
-                    }
-                
-            })
-            .catch(err=>{
-                alert('Network Error', 'Please Make sure you have an internet connection', 'error')
-                toggleBtn(false)
-            })
-        
-        }
-        function showOTPField(token){
-            const p = document.querySelector('.otpField')
-            p.classList.toggle('none')
-            p.classList.toggle('flex')
-            p.querySelector('form').setAttribute('data-token', token)
-        }
-        function toggleBtn(btn, toggle){
-            if(btn && toggle){
-               var btn =  document.querySelector(`#${btn}`)
-               btn.disabled = toggle
-               toggle ? btn.setAttribute('data-loading', '') : btn.removeAttribute('data-loading', '')
-               if(btn.hasAttribute('data-loading')){
-                btn.innerHTML = 'Continue <i class="fas fa-spinner fa-spin"></i> '
-                   } else{
-                       btn.innerHTML = 'Continue'
-                   }
-             } else{
-               
-                var btn = form.querySelector('button')
-
-                btn.disabled = toggle
-                toggle ? btn.setAttribute('data-loading', '') : btn.removeAttribute('data-loading', '')
-                if(btn.hasAttribute('data-loading')){
-                 btn.innerHTML = 'Login <i class="fas fa-spinner fa-spin"></i> '
-                    } else{
-                        btn.innerHTML = 'Login'
-                    }
-        }
-    }
-
-})
-    </script>
+  <script src="/assets/scripts/login.js"> </script>
 </body>
+
 </html>

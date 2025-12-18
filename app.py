@@ -137,7 +137,7 @@ def login():
 
     if not data:
         log('[400] Failed to decode in /login route', 'error')
-        return jsonify({'error': 'An error occurred. Please try again'}), 400
+        return jsonify(encode({'error': 'An error occurred. Please try again'})), 400
 
     device = data.get('ua')
     if not device:
@@ -146,17 +146,17 @@ def login():
     password = data.get('password')
 
     if not username or not password:
-        return jsonify({'error': 'Missing login credentials'}), 401
+        return jsonify(encode({'error': 'Missing login credentials'})), 401
 
     user = User.query.filter(
         (User.username == username) | (User.email == username)
     ).first()
 
     if not user:
-        return jsonify({'error': 'User not found'}), 401
+        return jsonify(encode({'error': 'User not found'})), 401
 
     if not user.check_password(password):
-        return jsonify({'error': 'Invalid password'}), 401
+        return jsonify(encode({'error': 'Invalid password'})), 401
 
     # If 2FA is enabled
     if user.twofa_secret:
@@ -172,11 +172,11 @@ def login():
         if not ok:
             return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
         
-        return jsonify({
-                'user': encode(user.to_dict()),
-                'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
-                'token': generate_token(user.id)
-            }), 200
+        return jsonify(encode({ 
+              'user': encode(user.to_dict()),
+              'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
+              'token': generate_token(user.id)
+              })), 200
 
     except Exception as e:
         log(f'[400] Unknown error in /check_device route : {str(e)}','error')
@@ -367,11 +367,11 @@ def forms_list():
     
     if id and token:
         user = User.query.filter_by(id=id).first()
-        ok, error = check_device(device, user.id)
-        if not ok:
-            return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
 
         if user:
+            ok, error = check_device(device, user.id)
+            if not ok:
+                return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
             if validate_token(token, user.id):
                 forms = Form.query.filter_by(user_id=id).all()
                 

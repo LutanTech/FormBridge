@@ -750,6 +750,7 @@ function showReset(){
 
       </div>
     </div>
+
     <div class="confirm-modal">
       <div class="confirm-inner">
         <div class="c-content">
@@ -763,7 +764,66 @@ function showReset(){
         </div>
       </div>
     </div>
+
     <style>
+      .load-error{
+        padding: 10px;
+        z-index:2000;
+        background: rgba(0, 0, 0, 0.39);
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+      .load-error-div{
+        padding: 20px;
+        min-height: 100px;
+        background: rgb(255, 0, 0);
+        border-radius: 10px;
+        color: black;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .load-error-text{
+        gap:10px;
+        display: flex;
+        flex-direction: column;
+        hr{
+          border: 1px solid #00000028;
+          margin: 0 !important;
+        }
+      }
+      .actions-error{
+        padding: 10px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        a{
+          padding: 10px;
+          border: 0;
+          background: #4ce24c;
+          border-radius: 40px;
+          color: white;
+          text-align: center;
+          text-decoration: none;
+          flex-grow: 1;
+          max-width: 150px;
+          &:nth-child(1){
+            background: #6262ff;
+          }
+      
+        }
+      }
 
     </style>
 
@@ -775,6 +835,11 @@ function showReset(){
 
     <div class="qr none" style="height: 100% !important;">
       <img id="qr-img" t="Scan this QR with your authenticator app" alt="Scan this QR with your authenticator app">
+    </div>
+    <div class="load-error">
+      <div class="load-error-div">
+        <div class="load-error-text">Failed to Load account. Please Retry</div>
+      </div>
     </div>
   </main>
 
