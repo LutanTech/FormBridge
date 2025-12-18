@@ -2,7 +2,11 @@ from flask import Flask, jsonify, request, send_file, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
+
 from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email, make_pdf_all, get_totp, generate_2fa_secret, generate_temp_token, verify_temp_token
+
+from emails import send_devices_limit_email, generate_temp_link, verify_temp_link
+
 from flask_mail import Mail
 from datetime import datetime, timedelta
 from flask_migrate import Migrate
@@ -828,7 +832,19 @@ def logout():
         return jsonify({'error':'Logout error. Key Error : User'}), 400
     return jsonify({'error':'Logout error : Invalid'}), 400
 
-                
+@app.route('/change_devices_limit/<user_id>/<token>/<int:val>')
+def change_limit(user_id, token, val):
+    if user_id and token and val:
+        user = User.query.filter_by(id=user_id).first()
+        if user:
+            try:
+                temp_link = generate_temp_link(user.id)
+                link = f'http://127.0.0.1:5500/devices/limit?limit={val}&token={temp_link}'
+                send_devices_limit_email(mail, user.email, link, user.username)
+            except Exception as e:
+                log(f'[400] Unexpected error in send_device_limit_email // change devie limit for user :( {user.email} ): {str(e)}', 'error')
+        return jsonify({'error':'Failed to change. Please retry'}), 400
+    return jsonify({'error':'Invalid payload received'}), 400
 
 if __name__ == '__main__':
     with app.app_context():

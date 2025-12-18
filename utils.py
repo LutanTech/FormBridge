@@ -316,7 +316,7 @@ def get_totp(secret_b64):
     raw_secret = base64.b64decode(secret_b64).decode()
     return pyotp.TOTP(raw_secret)
 
-def generate_temp_token(user_id, expiry_seconds=300):  # 5 min default
+def generate_temp_token(user_id, expiry_seconds=300):
     payload = {
         "id": user_id,
         "exp": (datetime.utcnow() + timedelta(seconds=expiry_seconds)).timestamp()
