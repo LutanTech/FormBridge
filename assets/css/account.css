@@ -308,6 +308,7 @@ background: rgba(0, 0, 0, 0.666);
     >div{
         flex-grow: 1;
         height: 90% !important;
+        overflow: auto;
     }
 }
 @media (max-width:768px) {

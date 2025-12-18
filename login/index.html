@@ -393,6 +393,9 @@
                                 }
                                 if(data){
                                     data = jdf(data)
+                                    if(data.error){
+                                        data = data
+                                    }
                                     console.log(data)
                                     console.log(data.user ? 'true':'false' )
                                     setTimeout(()=>{

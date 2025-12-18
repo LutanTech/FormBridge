@@ -170,7 +170,7 @@ def login():
     try:
         ok, error = check_device(device, user.id)
         if not ok:
-            return jsonify({"error": f'Failed to login Key Error: {error}'}), 400
+            return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
         
         return jsonify({
                 'user': encode(user.to_dict()),
@@ -253,7 +253,7 @@ def two_fa_login():
     try:
         ok, error = check_device(device, user_id)
         if not ok:
-            return jsonify({"error": f'Failed to login Key Error: {error}'}), 400
+            return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
 
         return jsonify(encode({
                 'user': encode(user.to_dict()),
@@ -351,19 +351,29 @@ def create_new_form():
 
     return jsonify({'error': 'Missing data in request. Please Try again'}), 400
 
-@app.route('/get_forms/<id>/<token>')
-def forms_list(id, token):
+@app.route('/get_forms', methods=['POST'])
+def forms_list():
+    raw = request.get_json()
+    encoded = raw.get("data")
+
+    data = decode(encoded)
+
+    if not data:
+        log('[400] Failed to decode in /verify route', 'error')
+        return jsonify({'error': 'An error occurred. Please try again'}), 400
+    id = data.get('u')
+    token = data.get('t')
+    device = data.get('d')
+    
     if id and token:
-        device = decode(request.args.get('d'))
         user = User.query.filter_by(id=id).first()
         ok, error = check_device(device, user.id)
         if not ok:
-            return jsonify({"error": f'Failed to login Key Error: {error}'}), 400
+            return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
 
         if user:
             if validate_token(token, user.id):
                 forms = Form.query.filter_by(user_id=id).all()
-                print('======================= ', forms)
                 
                 if forms:
                     data = []

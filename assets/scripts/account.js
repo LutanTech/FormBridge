@@ -167,18 +167,42 @@ document.addEventListener('DOMContentLoaded', () => {
     window.initForms = initForms
 
     function initForms(){
-        const ua = navigator.userAgent
+        const ua = obf(navigator.userAgent)
         const user = jdf(getCookie('user'))
         const token = getCookie('token')
         const wrapper = document.querySelector('.forms-wrapper')
         if(user){
+          const payload = {
+            'u' : user.id,
+            't' : token,
+            'd' : ua
+          }
             wrapper.innerHTML = 'Fetching your forms...'
-            fetch(`${baseUrl}/get_forms/${user.id}/${token}?d=${ua}`)
+            fetch(`${baseUrl}/get_forms`, {
+              method : 'POST',
+              headers : {
+                'Content-Type':'application/json'
+              }, 
+              body : JSON.stringify({data:jof(payload)})
+            })
             .then(res=>res.json())
             .then(data=>{
+            
                 if(data.error){
-                    alert('Error', data.error, 'error')
+                  data = data
+                } else{
+                  data = jdf(data)
                 }
+                if(data.error){
+                  alert('Error', data.error, 'error')
+                  if(String(data.error).includes('Maximum')){
+                    setTimeout(() => {
+                      localStorage.clear()
+                      window.location.href = '/logout'
+                    }, 3000);
+                  }
+                }
+
                 if(data.msg){
                     alert('No Forms Found', data.msg, 'info')
               }

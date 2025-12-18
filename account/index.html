@@ -651,8 +651,8 @@ function showReset(){
           if(data.error){
             alert('Error',data.error, 'error')
           } else{
-            const devices = jdf(data).devices
-            console.log(devices)
+            const raw= jdf(data)
+            const devices = raw.devices
             if(devices){
               const this_device = navigator.userAgent
               const ld = document.querySelector('.device-list ol')
@@ -661,12 +661,12 @@ function showReset(){
               devices.forEach(d=>{
                const li =  document.createElement('li')
 
-               if(String(d.ua).includes('Mobile')){
+               if(String(deobf(d.ua)).includes('Mobile')){
                 icon = '📱 Mobile'
                } 
                li.innerHTML = `
                 <div class="name">
-                  <b class="ll">Device: </b> ${d.ua == this_device ? 'This Device' : d.ua} (${icon})</div>
+                  <b class="ll">Device: </b> ${deobf(d.ua) == this_device ? 'This Device' : d.ua} (${icon})</div>
                 <div class="last-login">
                   <b class="ll">Last Login: </b> ${new Date(d.l).toLocaleString()}
                 </div>
