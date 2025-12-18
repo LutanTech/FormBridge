@@ -371,7 +371,7 @@
                               };
                               console.log(ua)
                           
-                              login_2fa(jof(payload));
+                              login_2fa(payload);
                             }
                           });
                           function login_2fa(payload){
@@ -530,7 +530,7 @@
                     } else{
                         data = jdf(data)
                         alert('Info', data.info, 'info')
-                        showOTPField(data.temp_token)
+                        showOTPField(data.temp_token || data.tt)
                     }
                 
             })
