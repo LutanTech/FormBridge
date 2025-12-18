@@ -532,7 +532,11 @@
                         setTimeout(()=>{window.location.href='/account'},2000 )
                     } else{
                         data = jdf(data)
-                        alert('Info', data.info, 'info')
+                        if(data.error){
+                            alert('Error', data.error, 'error')
+                            return
+                        }
+                        alert('Info', data, 'info')
                         showOTPField(data.temp_token || data.tt)
                     }
                 
