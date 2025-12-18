@@ -765,7 +765,7 @@ def devices():
             user = User.query.filter_by(id= u.get('id')).first()
             if user:
                devices  = Device.query.filter_by(user_id=user.id).all()
-               return jsonify(encode({'devices':[d.ua for d in devices]})), 200
+               return jsonify(encode({'devices':[d.to_dict() for d in devices]})), 200
             return jsonify({'error':'User not found'}), 404
         return jsonify({'error':'unauthorized. please, login'}), 401
     return  jsonify({'error':'Invalid payload. Please login again'}), 400
@@ -797,12 +797,7 @@ def logout():
         return jsonify({'error':'Logout error. Key Error : User'}), 400
     return jsonify({'error':'Logout error : Invalid'}), 400
 
-    
-            
-            
                 
-                
-    return jsonify({'info':f'{raw_data}, {data}'}), 200
 
 if __name__ == '__main__':
     with app.app_context():

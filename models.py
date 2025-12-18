@@ -163,4 +163,11 @@ class Device(db.Model):
     first_login = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=3))
     last_login = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=3))
     ua = db.Column(db.String(1024), nullable=True)
+    def to_dict(self):
+        return{
+            'ua':self.ua,
+            'l':self.last_login.isoformat(),
+            'id':self.id
+        }
+    
     

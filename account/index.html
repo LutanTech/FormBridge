@@ -78,6 +78,14 @@
     margin: auto;
     min-width: 200px;
   }
+  ol li{
+    background: #8080806b;
+    padding: 0 10px;
+    gap: 10px;
+    div{
+     margin: 10px 0;
+    }
+  }
 
   </style>
 
@@ -194,7 +202,7 @@
       <style>
 
       </style>
-      <div class="overlay vissible">
+      <div class="overlay">
 
         <div class="back-btn" t="Back"> 
           
@@ -373,14 +381,14 @@
                 <div class="sk-act"></div>
               </div>
             </div>
-            
+
 
           </div>
         </div>
 
         <!-- DIv #3 Databases -->
 
-        <div class="databases" style="z-index: 30;">
+        <div class="databases" >
           <div class="database-inner">
             <h3>Your Databases</h3>
             <hr>
@@ -629,7 +637,6 @@ function showReset(){
 
 
   function getDevices(){
-    alert('info', 'info' ,'info')
         const payload = jof(window.payload)
 
         fetch(`${baseUrl}/get_devices`,{
@@ -644,9 +651,32 @@ function showReset(){
           if(data.error){
             alert('Error',data.error, 'error')
           } else{
-            const devices = jdf(data)
+            const devices = jdf(data).devices
             console.log(devices)
             if(devices){
+              const this_device = navigator.userAgent
+              const ld = document.querySelector('.device-list ol')
+               ld.innerHTML = ''
+               let icon = '💻 Desktop'
+              devices.forEach(d=>{
+               const li =  document.createElement('li')
+
+               if(String(d.ua).includes('Mobile')){
+                icon = '📱 Mobile'
+               } 
+               li.innerHTML = `
+                <div class="name">
+                  <b class="ll">Device: </b> ${d.ua == this_device ? 'This Device' : d.ua} (${icon})</div>
+                <div class="last-login">
+                  <b class="ll">Last Login: </b> ${new Date(d.l).toLocaleString()}
+                </div>
+                <div class="ip">
+                  <b class="ll">IP: </b> ${new Date(d.l).toLocaleString()}
+                </div>
+               `
+               ld.appendChild(li)
+
+              })
              
 
             }
@@ -689,21 +719,10 @@ function showReset(){
 
           <div class="device-list">
             <b>Logged in devices</b>
+            <hr>
             <br>
             <ol>
-              <li>
-                <div class="name">
-                  <b class="ll">Device: </b> Mozilla/5.0 (Macintosh; Intel Mac OS X 11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Vivaldi/3.7</div>
-                <div class="lasst-login">
-                  <b class="ll">Last Login: </b> 12-2-2025 4:50AM
-                </div>
-                </li>
-              <li>
-                Mozilla/5.0 (Macintosh; Intel Mac OS X 11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Vivaldi/3.7
-              </li>
-              <li>
-                Mozilla/5.0 (Macintosh; Intel Mac OS X 11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 Vivaldi/3.7
-              </li>
+             <h3>Loading...</h3>
             </ol>
 
             </div>
