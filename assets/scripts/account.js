@@ -100,18 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
           ZMinus('.newForm')
           ZAdd('.forms-ov')
           ZMinus('.databases')
+          ZMinus('.settings-overlay')
   
         }
         if(attr == 'data'){
           ZMinus('.newForm')
           ZAdd('.databases')
           ZMinus('.forms-ov')
+          ZMinus('.settings-overlay')
           
         }
         if(attr == 'new'){
           ZAdd('.newForm')
           ZMinus('.forms-ov')
           ZMinus('.databases')
+          ZMinus('.settings-overlay')
 
         }
         if(attr == 'settings'){

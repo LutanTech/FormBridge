@@ -168,15 +168,16 @@ def login():
         })), 200
 
     try:
-        if check_device(device, user.id):
-            print(check_device(device, user.id))
-            return jsonify({
+        ok, error = check_device(device, user.id)
+        if not ok:
+            return jsonify({"error": f'Failed to login Key Error: {error}'}), 400
+        
+        return jsonify({
                 'user': encode(user.to_dict()),
                 'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
                 'token': generate_token(user.id)
             }), 200
-        return jsonify({'error':'Failed to login. Please try again'}), 400
-    
+
     except Exception as e:
         log(f'[400] Unknown error in /check_device route : {str(e)}','error')
         return jsonify({'error':f'Please try again: {str(e)}'}), 400
@@ -184,29 +185,43 @@ def login():
 
 
 def check_device(device, user_id):
-    if device and user_id:
-        exists = Device.query.filter_by(user_id=user_id,ua=device).first()
-        all_devices = Device.query.filter_by(user_id=user_id).all()
-        if exists:
-            now = datetime.utcnow() + timedelta(hours=3)
-            exists.last_login = now
-            return True
-        else:
-          user = User.query.filter_by(id=user_id).first()
-          max_devices = int(user.devices) if user.devices else 1
-          if all_devices and len(all_devices) >= max_devices:
-              return jsonify({'error':'Maximum number of devices reached. Please logout of the other devices or contact support'}), 400
-          new_device = Device(user_id=user_id, ua=device)
-          try:
-              db.session.add(new_device)
-              db.session.commit()
-              return True
-          except Exception as e:
-              db.session.rollback()
-              log(f'[500] Database error in /check_devices route: {str(e)}', 'error')
-              return False
-    return False
-          
+    if not device or not user_id:
+        return False, "Invalid device or user"
+
+    exists = Device.query.filter_by(user_id=user_id, ua=device).first()
+    all_devices = Device.query.filter_by(user_id=user_id).all()
+
+    now = datetime.utcnow() + timedelta(hours=3)
+
+    if exists:
+        exists.last_login = now
+        try:
+            db.session.commit()
+            return True, None
+        except Exception as e:
+            db.session.rollback()
+            log(f"[500] Failed updating last_login: {str(e)}", "error")
+            return False, "Database error"
+
+    user = User.query.filter_by(id=user_id).first()
+    if not user:
+        return False, "User not found"
+
+    max_devices = int(user.devices) if user.devices else 1
+
+    if len(all_devices) >= max_devices:
+        return False, "Maximum number of devices reached"
+
+    new_device = Device(user_id=user_id, ua=device, last_login=now)
+    try:
+        db.session.add(new_device)
+        db.session.commit()
+        return True, None
+    except Exception as e:
+        db.session.rollback()
+        log(f"[500] Failed adding new device: {str(e)}", "error")
+        return False, "Database error"
+
           
     
 @app.route('/login/two_fa', methods=['POST'])
@@ -236,13 +251,15 @@ def two_fa_login():
         return jsonify({"error": "Invalid 2FA code"}), 401
 
     try:
-        if check_device(device, user.id):
-            return jsonify(encode({
+        ok, error = check_device(device, user_id)
+        if not ok:
+            return jsonify({"error": f'Failed to login Key Error: {error}'}), 400
+
+        return jsonify(encode({
                 'user': encode(user.to_dict()),
                 'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
                 'token': generate_token(user.id)
             })), 200
-        return jsonify({'error':'Failed to login. Please try again'}), 400
     
     except Exception as e:
         log(f'[400] Unknown error in /check_device route : {str(e)}','error')
