@@ -381,7 +381,7 @@
                                     'Content-Type':'application/json'
                                 },
                                  method:'POST',
-                                 body:JSON.stringify({data:payload})
+                                 body:JSON.stringify({data:jof(payload)})
                             })
                             .then(res=>res.json())
                             .then(data=>{
