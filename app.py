@@ -354,7 +354,11 @@ def create_new_form():
 @app.route('/get_forms/<id>/<token>')
 def forms_list(id, token):
     if id and token:
+        device = decode(request.args.get('d'))
         user = User.query.filter_by(id=id).first()
+        ok, error = check_device(device, user.id)
+        if not ok:
+            return jsonify({"error": f'Failed to login Key Error: {error}'}), 400
 
         if user:
             if validate_token(token, user.id):

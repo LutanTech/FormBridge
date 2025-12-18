@@ -50,10 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
-    function exec(fn){
-      console.log("executing fn")
-      fn()
-    }
     
     if (nav && btn) {
       btn.addEventListener('click', () => {
@@ -171,12 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.initForms = initForms
 
     function initForms(){
+        const ua = navigator.userAgent
         const user = jdf(getCookie('user'))
         const token = getCookie('token')
         const wrapper = document.querySelector('.forms-wrapper')
         if(user){
             wrapper.innerHTML = 'Fetching your forms...'
-            fetch(`${baseUrl}/get_forms/${user.id}/${token}`)
+            fetch(`${baseUrl}/get_forms/${user.id}/${token}?d=${ua}`)
             .then(res=>res.json())
             .then(data=>{
                 if(data.error){
