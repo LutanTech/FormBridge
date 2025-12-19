@@ -192,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data=>{
                console.clear()
                   data = jdf(data) 
-                  console.log(data, '====')
                 if(data.error){
                   alert('Error', data.error, 'error')
                   if(String(data.error).includes('Maximum')){
@@ -516,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const user = jdf(getCookie('user'))
       var token = getCookie('token')
       parent.innerHTML = '<i class="fa sfa spinner fa-spin"></i>'
-      if(data){
+      if(data.forms){
         parent.innerHTML = ''
         const dbs = data
         dbs.forEach(db=>{
@@ -540,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
           `
           parent.appendChild(div)
-  // 1
+       // 1
           const p = div.querySelector('.pause')
           p.addEventListener('click', ()=>{
             if(p){
@@ -588,7 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         
 
-// 2
+       // 2
 
           div.querySelector('.open').addEventListener('click', ()=>{
             const db_data = {
@@ -645,6 +644,8 @@ document.addEventListener('DOMContentLoaded', () => {
           }
       
         }
+      } else{
+        console.log(data)
       }
      async function toggleStatus(payload){
           if(payload){
@@ -672,9 +673,9 @@ document.addEventListener('DOMContentLoaded', () => {
               alert('Connection error', e.message, 'error')
             })
           }
-      }
-
     }
+
+  }
   });
   function fetchFormInfo(payload) {
     if (payload) {

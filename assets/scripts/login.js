@@ -51,7 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(res => res.json())
         .then(data => {
+          if(data.error){
+            data = data
+          } else{
           data = jdf(data)
+          }
 
           if (data.error) {
             alert('Error', data.error, 'error')

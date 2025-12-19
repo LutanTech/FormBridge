@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email, make_pdf_all, get_totp, generate_2fa_secret, generate_temp_token, verify_temp_token
+from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email, make_pdf_all, get_totp, generate_2fa_secret, generate_temp_token, verify_temp_token, get_client_ip
 
 from emails import send_devices_limit_email, generate_temp_link, verify_temp_link, send_qr_email
 
@@ -170,9 +170,11 @@ def login():
             'tt': temp_token,
             'info': 'Enter your 2FA code'
         })), 200
-
+    ua = request.headers.get("User-Agent")
+    ip = get_client_ip()
+    
     try:
-        ok, error = check_device(device, user.id)
+        ok, error = check_device(device if device else ua, user.id, ip)
         if not ok:
             return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
         
@@ -200,8 +202,8 @@ def check_device(ua, user_id, ip):
     ).first()
 
     if device:
-        device.last_login = now
-        device.ip = ip 
+        # device.last_login = now
+        # device.ip = ip 
         try:
             db.session.commit()
             return True, None
@@ -264,9 +266,13 @@ def two_fa_login():
 
     if not totp.verify(otp, valid_window=1):
         return jsonify({"error": "Invalid 2FA code"}), 401
+    
+    ua = request.headers.get("User-Agent")
+    ip = get_client_ip()
+    
 
     try:
-        ok, error = check_device(device, user_id)
+        ok, error = check_device(device, user_id, ip)
         if not ok:
             return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
 
@@ -375,16 +381,19 @@ def forms_list():
 
     if not data:
         log('[400] Failed to decode in /verify route', 'error')
-        return jsonify({'error': 'An error occurred. Please try again'}), 400
+        return jsonify(encode({'error': 'An error occurred. Please try again'})), 400
     id = data.get('u')
     token = data.get('t')
     device = data.get('d')
     
     if id and token:
         user = User.query.filter_by(id=id).first()
+        ua = request.headers.get("User-Agent")
+        ip = get_client_ip()
+    
 
         if user:
-            ok, error = check_device(device, user.id)
+            ok, error = check_device(device, user.id, ip)
             if not ok:
                 return jsonify(encode({"error": f'Failed to login. Key Error: {error}'})), 400
             if validate_token(token, user.id):
@@ -412,10 +421,10 @@ def forms_list():
                         })
                             
                     return jsonify(encode({"forms": data,'devices':user.devices })), 200
-                return jsonify({"msg": "No forms found. Please add some"})
-            return jsonify({'error':'Unauthorized'}), 401
-        return jsonify({'error':'Failed to load account. Please reload the page or login again'}), 404
-    return jsonify({'error':'Misssing data in request. Please, try again'}), 404
+                return jsonify(encode({"msg": "No forms found. Please add some"})), 404
+            return jsonify(encode({'error':'Unauthorized'})), 401
+        return jsonify(encode({'error':'Failed to load account. Please reload the page or login again'})), 404
+    return jsonify(encode({'error':'Misssing data in request. Please, try again'})), 404
 
 @app.route('/form/<id>')
 def get_form(id):
