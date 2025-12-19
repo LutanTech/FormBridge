@@ -877,7 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <b class="ll">Last Login: </b> ${new Date(d.l).toLocaleString()}
     </div>
     <div class="ip">
-      <b class="ll">IP: </b> ${new Date(d.l).toLocaleString()}
+      <b class="ll">IP: </b> ${d.ip ? d.ip : 'Unknown'}
     </div>
    `
               ld.appendChild(li)
