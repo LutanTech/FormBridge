@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email, make_pdf_all, get_totp, generate_2fa_secret, generate_temp_token, verify_temp_token
 
-from emails import send_devices_limit_email, generate_temp_link, verify_temp_link
+from emails import send_devices_limit_email, generate_temp_link, verify_temp_link, send_qr_email
 
 from flask_mail import Mail
 from datetime import datetime, timedelta
@@ -188,23 +188,26 @@ def login():
     
 
 
-def check_device(device, user_id):
-    if not device or not user_id:
-        return False, "Invalid device or user"
-
-    exists = Device.query.filter_by(user_id=user_id, ua=device).first()
-    all_devices = Device.query.filter_by(user_id=user_id).all()
+def check_device(ua, user_id, ip):
+    if not ua or not user_id or not ip:
+        return False, "Invalid device, user, or IP"
 
     now = datetime.utcnow() + timedelta(hours=3)
 
-    if exists:
-        exists.last_login = now
+    device = Device.query.filter_by(
+        user_id=user_id,
+        ua=ua
+    ).first()
+
+    if device:
+        device.last_login = now
+        device.ip = ip 
         try:
             db.session.commit()
             return True, None
         except Exception as e:
             db.session.rollback()
-            log(f"[500] Failed updating last_login: {str(e)}", "error")
+            log(f"[500] Failed updating device: {str(e)}", "error")
             return False, "Database error"
 
     user = User.query.filter_by(id=user_id).first()
@@ -213,18 +216,26 @@ def check_device(device, user_id):
 
     max_devices = int(user.devices) if user.devices else 1
 
-    if len(all_devices) >= max_devices:
+    device_count = Device.query.filter_by(user_id=user_id).count()
+    if device_count >= max_devices:
         return False, "Maximum number of devices reached"
 
-    new_device = Device(user_id=user_id, ua=device, last_login=now)
+    new_device = Device(
+        user_id=user_id,
+        ua=ua,
+        ip=ip,
+        last_login=now
+    )
+
     try:
         db.session.add(new_device)
         db.session.commit()
         return True, None
     except Exception as e:
         db.session.rollback()
-        log(f"[500] Failed adding new device: {str(e)}", "error")
+        log(f"[500] Failed adding device: {str(e)}", "error")
         return False, "Database error"
+
 
           
     
@@ -375,7 +386,7 @@ def forms_list():
         if user:
             ok, error = check_device(device, user.id)
             if not ok:
-                return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
+                return jsonify(encode({"error": f'Failed to login. Key Error: {error}'})), 400
             if validate_token(token, user.id):
                 forms = Form.query.filter_by(user_id=id).all()
                 
@@ -397,10 +408,10 @@ def forms_list():
                         data.append({
                             **f.to_dict(),
                             "c": sub_count,
-                            "n": non_empty_count
+                            "n": non_empty_count,
                         })
-
-                    return jsonify({"forms": data}), 200
+                            
+                    return jsonify(encode({"forms": data,'devices':user.devices })), 200
                 return jsonify({"msg": "No forms found. Please add some"})
             return jsonify({'error':'Unauthorized'}), 401
         return jsonify({'error':'Failed to load account. Please reload the page or login again'}), 404
@@ -763,7 +774,9 @@ def activate_two_fa():
         return jsonify({
             'message': '2FA activated successfully',
             'account_name': account_name,
-            'qr_code_base64': qr_b64
+            'qr_code_base64': qr_b64,
+            'key': user.twofa_secret 
+            
         }), 200
 
     except Exception as e:
@@ -783,6 +796,40 @@ def check_2fa(user):
             return jsonify({'error':'User not found'}), 404
         return jsonify({'error':'An error occurred'}), 400
     return jsonify({'error':'Invalid payload received'}), 502
+
+
+@app.route('/resend_qr/<payload>')
+def resend_qr(payload):
+    try:
+        data = decode(payload)
+        user = decode(data.get('u'))
+        uid = user.get('id')
+        token = data.get('t')
+        user = User.query.filter_by(id=uid).first()
+        if user and validate_token(token, uid):
+            user.twofa_secret = generate_2fa_secret()
+            db.session.commit()
+
+            totp = get_totp(user.twofa_secret)
+            account_name = getattr(user, 'name', None) or user.username or user.email
+            uri = totp.provisioning_uri(name=account_name, issuer_name="FormBridge")
+
+            qr_img = qrcode.make(uri)
+            buf = BytesIO()
+            qr_img.save(buf, format='PNG')
+            buf.seek(0)
+            qr_b64 = base64.b64encode(buf.getvalue()).decode()
+            img = qr_b64
+            key = user.twofa_secret
+
+            try:
+                send_qr_email(mail, user.email, img, key, user.username)
+                return jsonify({'msg':'QR Code send to your Email. Please open your mail app to scan the QR or enter the key in your authenticator app'}), 200
+            except Exception as e:
+                log(f'[400] Unexpected error in send_qr_email // for user :( {user.email} ): {str(e)}', 'error')
+    except Exception as e:
+        log(f'[400] Unexpected error in send_qr_email // for user :( {user.email} ): {str(e)}', 'error')
+            
 
 @app.route('/get_devices', methods=['POST'])
 def devices():
@@ -810,8 +857,11 @@ def logout():
     
     raw_data = request.get_json()
     data = decode(raw_data.get('data'))
+    print(data)
     token = data.get('t')
     user_data = decode(data.get('u'))
+    print(user_data)
+    
     id = user_data.get('id')
     device_ua = data.get('d')
     
@@ -820,14 +870,13 @@ def logout():
         if user:
             if validate_token(token, user.id):
                 device = Device.query.filter_by(ua=device_ua).first()
-                print(device.ua)
                 if device:
                     if device.user_id == user.id:
                         db.session.delete(device)
                         db.session.commit()
                         return jsonify({'msg':'Logged out'}), 200
                     return jsonify({'error':'Unauthorized action'}),401
-                return jsonify({'error':'Logout error : Device'}), 400
+                return jsonify({'msg':'Already Logged out'}), 200
             return jsonify({'error':'Unauthorized action'}),401
         return jsonify({'error':'Logout error. Key Error : User'}), 400
     return jsonify({'error':'Logout error : Invalid'}), 400
@@ -836,15 +885,54 @@ def logout():
 def change_limit(user_id, token, val):
     if user_id and token and val:
         user = User.query.filter_by(id=user_id).first()
+        print(user_id)
         if user:
+            temp_link = generate_temp_link(user.id)
+            payload = {
+                'l':temp_link,
+                'v':val
+            }
             try:
-                temp_link = generate_temp_link(user.id)
-                link = f'http://127.0.0.1:5500/devices/limit?limit={val}&token={temp_link}'
+                link = f'http://127.0.0.1:5500/devices/?p={encode(payload)}'
                 send_devices_limit_email(mail, user.email, link, user.username)
+                return jsonify({'msg':'Link send to your Email. Please open your mail app and click to verify'}), 200
             except Exception as e:
                 log(f'[400] Unexpected error in send_device_limit_email // change devie limit for user :( {user.email} ): {str(e)}', 'error')
         return jsonify({'error':'Failed to change. Please retry'}), 400
     return jsonify({'error':'Invalid payload received'}), 400
+
+@app.route('/activate_limit/<raw>')
+def activate_limit(raw):
+    if raw:
+        payload = decode(raw)
+        if payload:
+            link = payload.get('l')
+            val = payload.get('v')
+            if link and val:
+                if verify_temp_link(link):
+                    decoded = base64.urlsafe_b64decode(link.encode()).decode()
+                    if decoded:
+                        decoded_str, sig = decoded.split('::')
+                        uid  = json.loads(decoded_str).get('id')
+                        if uid:
+                            user = User.query.filter_by(id=uid).first()
+                            if user:
+                                try:
+                                    user.devices = int(val)
+                                    db.session.commit()
+                                    return jsonify({'msg':f'Updated devices limit to {val} successfully'}), 200
+                                except Exception  as e:
+                                    log(f'[500] Database error in /activate limit route: {str(e)}', 'error')
+                                    return jsonify({'error':f'Database error : {str(e)}'}), 500
+                            return jsonify({'error':'User not found'}), 404
+                        return jsonify({'error':'Invalid payload. Please retry : UID'}), 400
+                    return jsonify({'error':'Invalid payload. Please retry : P_STR'}), 400
+                return jsonify({'error':'Expired link. Please retry again'}), 401
+                
+            return jsonify({'error':'Invalid payload. Please retry : V|L'}), 400
+        return jsonify({'error':'Invalid payload. Please retry : P'}), 400
+    return jsonify({'error':'Invalid payload. Please retry : R'}), 400
+
 
 if __name__ == '__main__':
     with app.app_context():

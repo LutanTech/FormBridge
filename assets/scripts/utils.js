@@ -1,6 +1,6 @@
-const baseUrl = 'http://127.0.0.1:6050'
+// const baseUrl = 'http://127.0.0.1:6050'
 // const baseUrl = "http://10.130.144.82:6500"
-// const baseUrl = 'https://formbridge.eu.pythonanywhere.com'
+const baseUrl = 'https://formbridge.eu.pythonanywhere.com'
 window.baseUrl = baseUrl
 
 function obf(text){
@@ -107,6 +107,11 @@ function getCookie(name) {
     }
     return null;
 }
+function deleteCookie(name) {
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=strict";
+}
+
+window.deleteCookie = deleteCookie;
 window.setCookie = setCookie
 window.getCookie = getCookie
 

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import string, secrets, uuid, base64, json, hmac, hashlib, requests
 from flask_mail import Mail, Message
 from sqlalchemy import column
-
+from flask import request
 
 def generate_account_id(length=7):
     characters = string.digits + string.ascii_uppercase
@@ -340,3 +340,9 @@ def verify_temp_token(token):
     except Exception:
         return None
 
+def get_client_ip():
+    return (
+        request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+        or request.headers.get("X-Real-IP")
+        or request.remote_addr
+    )

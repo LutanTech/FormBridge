@@ -54,39 +54,7 @@
     <div class="hero-glow-2" style="animation-delay: 2s;"></div>
   </div>
   <style>
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-  }
-
-  .account-button {
-    background: #0000;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 10px;
-    border: 0;
-    
-  }
-  .resend-qr{
-    display: none;
-    background: lightgreen;
-    border: 0;
-    cursor: pointer;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: center;
-    width: max-content;
-    margin: auto;
-    min-width: 200px;
-  }
-  ol li{
-    background: #8080806b;
-    padding: 0 10px;
-    gap: 10px;
-    div{
-     margin: 10px 0;
-    }
-  }
-
+  
   </style>
 
   <nav class="glass-nav">
@@ -204,9 +172,15 @@
       </style>
       <div class="overlay vissible">
 
-        <div class="back-btn" t="Back"> 
-          
-          <svg fill="#ffffff" width="20px" height="64px" viewBox="-10.4 -10.4 72.80 72.80" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" stroke-width="5.2"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M50,24H6.83L27.41,3.41a2,2,0,0,0,0-2.82,2,2,0,0,0-2.82,0l-24,24a1.79,1.79,0,0,0-.25.31A1.19,1.19,0,0,0,.25,25c0,.07-.07.13-.1.2l-.06.2a.84.84,0,0,0,0,.17,2,2,0,0,0,0,.78.84.84,0,0,0,0,.17l.06.2c0,.07.07.13.1.2a1.19,1.19,0,0,0,.09.15,1.79,1.79,0,0,0,.25.31l24,24a2,2,0,1,0,2.82-2.82L6.83,28H50a2,2,0,0,0,0-4Z"></path></g></svg>
+        <div class="back-btn" t="Back">
+
+          <svg fill="#ffffff" width="20px" height="64px" viewBox="-10.4 -10.4 72.80 72.80" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" stroke-width="5.2">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path d="M50,24H6.83L27.41,3.41a2,2,0,0,0,0-2.82,2,2,0,0,0-2.82,0l-24,24a1.79,1.79,0,0,0-.25.31A1.19,1.19,0,0,0,.25,25c0,.07-.07.13-.1.2l-.06.2a.84.84,0,0,0,0,.17,2,2,0,0,0,0,.78.84.84,0,0,0,0,.17l.06.2c0,.07.07.13.1.2a1.19,1.19,0,0,0,.09.15,1.79,1.79,0,0,0,.25.31l24,24a2,2,0,1,0,2.82-2.82L6.83,28H50a2,2,0,0,0,0-4Z"></path>
+            </g>
+          </svg>
         </div>
 
         <!-- Div 1 -->
@@ -224,20 +198,21 @@
                 </label>
                 <input type="datetime-local" class="f-input" id="deadline" required>
                 <script>
-                  document.addEventListener('DOMContentLoaded', ()=>{
-                   const dl =  document.querySelector('#deadline')
-                    dl.addEventListener('input', ()=>{
-                      const now = new Date().toISOString()
-                      const newdate = new Date(dl.value).toISOString()
-                      alert(now,newdate, 'success')
-                      const diff = newdate - now
-                      if(diff > 0){
-                        setTimeout(()=>{
+                document.addEventListener('DOMContentLoaded', () => {
+                  const dl = document.querySelector('#deadline')
+                  dl.addEventListener('input', () => {
+                    const now = new Date().toISOString()
+                    const newdate = new Date(dl.value).toISOString()
+                    alert(now, newdate, 'success')
+                    const diff = newdate - now
+                    if (diff > 0) {
+                      setTimeout(() => {
 
-                        }, 3000)
-                      }
-                    })
+                      }, 3000)
+                    }
                   })
+                })
+
                 </script>
               </div>
               <div class="input">
@@ -254,7 +229,7 @@
                 <div class="lb nm">
                   <input type="checkbox" name="" id="-name">
                   <label for="-name">
-                    <i class="fas fa-user-circle"></i>  
+                    <i class="fas fa-user-circle"></i>
                     Name</label>
 
                 </div>
@@ -296,12 +271,7 @@
 
           </script>
           <style>
-            .qr-btns button{
-              padding: 5px 10px;
-              background: red;
-              border: 0;
-              margin: 10px auto;
-            }
+
           </style>
         </div>
 
@@ -388,70 +358,12 @@
 
         <!-- DIv #3 Databases -->
 
-        <div class="databases" >
+        <div class="databases">
           <div class="database-inner">
             <h3>Your Databases</h3>
             <hr>
             <style>
-              .skeleton{
-                display: flex;
-                background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.232), rgba(0, 0, 0, 0));
-                animation: bg 3s linear infinite;
-                background-repeat: no-repeat;
-                background-size: 20%;
-                background-color: rgba(254, 254, 254, 0.142);
-                border: 0;
-                padding: 10px 20px;
-                flex:300px;
-                height: fit-content;
-                border-radius: 10px;
-                justify-content: space-between;
-                align-items: stretch;
-                flex-direction: column;
-                gap: 10px;
-                max-width: 350px;
-                >div{
-                  display: flex;
-                  background: rgba(255, 252, 252, 0.06);
-                  padding: 10px;
-                  flex-grow: 1;
-                  border-radius: 5px;
-                  justify-content: space-between;
-                }
-              }
-              @keyframes bg {
-                100%{
-                  background-position: 150%;
-                }                
-              }
-              .sk-dets{
-                display: flex;
-                padding: 10px;
-                flex-direction: column;
-                background: rgba(255, 0, 0, 0) !important;
-                gap: 5px;
-                >div{
-                background: #0000004f !important;
-                padding: 5px;
-                }
-              }
-              .sk-title{
-                padding: 10px;
-                width: 100px;
-                margin: auto;
-                background: rgba(0, 0, 0, 0.118);
-                border-radius: 2px;
-                min-height: 40px;
-              }
-              .sk-act{
-                background: #0000002c;
-                height: 100%;
-                border-radius: 2px;
-                padding: 10px;
-              }
-              .sk-img{
-                min-height: 80px;
-              }
+            
             </style>
             <div class="dbs">
               <div class="skeleton db-sk">
@@ -526,7 +438,7 @@
                   <div class="sk-act"></div>
                 </div>
               </div>
-              
+
 
             </div>
           </div>
@@ -538,266 +450,101 @@
           <div class="security">
             <h3>Security</h3>
             <style>
-             
+
             </style>
-           
+
             <section id="two-factor-authentication">
-                <details>
-               <summary><b t="Click to view more" style="color: magenta; width:fit-content">Two-Factor Authentication (2FA)</b></summary>
-
-                
-              <p>
-                <b>Two-Factor Authentication (2FA)</b> is an additional layer of security for your account. 
-                <br>In addition to your password, 2FA requires a second verification step to confirm your identity. 
-                This second factor can be a code sent to your mobile device, an authenticator app, or a biometric verification such as a fingerprint or facial recognition.
-              </p>
-              <p>
-                By enabling 2FA, you significantly reduce the risk of unauthorized access, even if your password is compromised.
-              </p>
-              <article>
-                <header>
-                  <h3>How it works</h3>
-                </header>
-                <ol>
-                  <li>Enter your password as usual.</li>
-                  <li>Provide the second authentication factor when prompted.</li>
-                  <li>Access is granted securely.</li>
-                </ol>
-
-              </article>
-              <p style="margin-top: 20px;">We only support <i style="color: magenta;">Google Authenticator</i> at the moment</p>
-            </details>
-            <button disabled id="two-factor-activate" class="tfa-btn"> Activate 2FA</button>
-            <button disabled id="resend-qr" class="resend-qr"> Resend QR</button>
+              <details>
+                <summary><b t="Click to view more" style="color: magenta; width:fit-content">Two-Factor Authentication (2FA)</b></summary>
 
 
-<script>
-const tfabtn = document.querySelector('.tfa-btn');
-const user = getCookie('user'); 
-const token = getCookie('token'); 
+                <p>
+                  <b>Two-Factor Authentication (2FA)</b> is an additional layer of security for your account.
+                  <br>In addition to your password, 2FA requires a second verification step to confirm your identity.
+                  This second factor can be a code sent to your mobile device, an authenticator app, or a biometric verification such as a fingerprint or facial recognition.
+                </p>
+                <p>
+                  By enabling 2FA, you significantly reduce the risk of unauthorized access, even if your password is compromised.
+                </p>
+                <article>
+                  <header>
+                    <h3>How it works</h3>
+                  </header>
+                  <ol>
+                    <li>Enter your password as usual.</li>
+                    <li>Provide the second authentication factor when prompted.</li>
+                    <li>Access is granted securely.</li>
+                  </ol>
 
-const payload = {
-  'u':user,
-  't':token
-   
-}
-window.payload = payload
-
-tfabtn.addEventListener('click', () => {
-  tfabtn.setAttribute('loading', true);
-  tfabtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Activating...`;
-  tfabtn.disabled = true;
-
-
-  const payload = { u: user, token: token };
-
-  fetch(`${baseUrl}/activate_two_fa`, {
-    headers: { 'Content-Type': 'application/json' },
-    method: 'POST',
-    body: JSON.stringify({ data: jof(payload) })
-  })
-  .then(res => res.json())
-  .then(data => {
-    console.log('Response:', data);
-
-    if (data.qr_code_base64) {
-      showQR(data)
-     
-    }
-    if(data.error){
-      alert('Error', data.error, 'error')
-    }
-    if(data.info){
-      alert('Attention', data.info, 'info')
-      showReset()
-    }
-    tfabtn.removeAttribute('loading');
-    tfabtn.disabled = false;
-    tfabtn.innerHTML = 'Activate 2FA';
-  })
-  .catch(err => {
-    console.error('Error:', err);
-    alert('Error',err.message, 'error')
-    tfabtn.removeAttribute('loading');
-    tfabtn.disabled = false;
-    tfabtn.innerHTML = 'Activate 2FA';
-  });
-});
-function showQR(data){
-  document.querySelector('.qr').classList.toggle('flex')
-  document.querySelector('.qr').classList.toggle('none')
-  setTimeout(()=>{
-    const qrImg = document.getElementById('qr-img');
-    qrImg.src = `data:image/png;base64,${data.qr_code_base64}`;
-  }, 100)
-}
-function showReset(){
-  alert('info', "reset?", 'info')
-}
+                </article>
+                <p style="margin-top: 20px;">We only support <i style="color: magenta;">Google Authenticator</i> at the moment</p>
+              </details>
+              <button disabled id="two-factor-activate" class="tfa-btn"> Activate 2FA</button>
+              <button disabled id="resend-qr" class="resend-qr" onclick="resend_qr()"> Resend QR</button>
 
 
-  function getDevices(){
-        const payload = jof(window.payload)
-
-        fetch(`${baseUrl}/get_devices`,{
-          headers: {
-            'Content-Type':'application/json'
-          }, 
-          method:'POST',
-          body:JSON.stringify({data:payload})
-        })
-        .then(res=>res.json())
-        .then(data=>{
-          if(data.error){
-            alert('Error',data.error, 'error')
-          } else{
-            const raw= jdf(data)
-            const devices = raw.devices
-            if(devices){
-              const this_device = navigator.userAgent
-              const ld = document.querySelector('.device-list ol')
-               ld.innerHTML = ''
-               let icon = '💻 Desktop'
-              devices.forEach(d=>{
-               const li =  document.createElement('li')
-
-               if(String(deobf(d.ua)).includes('Mobile')){
-                icon = '📱 Mobile'
-               } 
-               li.innerHTML = `
-                <div class="name">
-                  <b class="ll">Device: </b> ${deobf(d.ua) == this_device ? 'This Device' : d.ua} (${icon})</div>
-                <div class="last-login">
-                  <b class="ll">Last Login: </b> ${new Date(d.l).toLocaleString()}
-                </div>
-                <div class="ip">
-                  <b class="ll">IP: </b> ${new Date(d.l).toLocaleString()}
-                </div>
-               `
-               ld.appendChild(li)
-
-              })
-             
-
-            }
-
-          }
-        })
-        .catch(err=>{
-          alert('Network Error', err.message, 'error')
-        })
-
-  }
-</script>
-
-          </section>
-          <section class="session-mgnt">
-            <h4>Session Management</h4>
-            <hr>
-            <div class="expiry">
-            <b>Sesssion expires after </b>
-            <select name="" id="sesion-expiry">
-              <option value="7">Default (7Days)</option>
-              <option value="0">Immediately On Tab Close</option>
-              <option value="1">24 Hours</option>
-              <option value="3">3 Days</option>
-            </select>
-            </div>
-            <div class="devices">
-              <div class="limit">
-            <b>Limit devices per session</b>
-            <select name="" id="session-devices">
-              <option value="1">Default (1)</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-            <script>
-              document.addEventListener('DOMContentLoaded', () => {
-                const ds = document.querySelector('#session-devices')
-                let prevValue = ds.value
-              
-                ds.addEventListener('change', () => {
-                  if (ds.value === prevValue) return 
-              
-                  confirm(
-                    'Confirm Device Limit',
-                    'You are about to set the maximum number of devices to ' + ds.value + '. Proceed?',
-                    false,
-                    null,
-                    () => {
-                      alert('Info', 'Continuing...', 'info')
-                      prevValue = ds.value 
-                    }
-                  )
-              
-                  const modal = document.querySelector('.confirm-modal')
-                  const cancelBtn = modal.querySelector('[data-id="cancel"]')
-                  const pBtn = modal.querySelector('[data-id="continue"]')
-                  pBtn.disabled = false
-              
-                  cancelBtn.onclick = () => {
-                    ds.value = prevValue 
-                    modal.classList.remove('appear')
-                  }
-                  pBtn.onclick = () => {
-                    prevValue = ds.value 
-                      const id = jdf(getCookie('user')).id
-                      const token = getCookie('token')
-                      const val  = ds.value
-                    change_limit(id, token, val)
-
-                  }
-                })
-                function change_limit(i, t, v){
-                  fetch(`${baseUrl}/change_devices_limit/${i}/${t}/${v}`)
-                  .then(res=>res.json())
-                  .then(data=>{
-                    console.log(data)
-                    if(data.error){
-                      alert('Error', data.error, 'error')
-                    }
-                  })
-                  .catch(e=>{
-                    console.log(e)
-                    alert('Error', e.message, 'error')
-                  })
-                }
-              })
+              <script>
               
               </script>
-              
-          </div>
-            </div>
-            <hr>
 
-          <div class="device-list">
-            <b>Logged in devices</b>
-            <hr>
-            <br>
-            <ol>
-             <h3>Loading...</h3>
-            </ol>
+            </section>
+            <section class="session-mgnt">
+              <h4>Session Management</h4>
+              <hr>
+              <div class="expiry">
+                <b>Sesssion expires after </b>
+                <select name="" id="sesion-expiry" disabled>
+                  <option value="7">Default (7Days)</option>
+                  <option value="0">Immediately On Tab Close</option>
+                  <option value="1">24 Hours</option>
+                  <option value="3">3 Days</option>
+                </select>
+              </div>
+              <div class="devices">
+                <div class="limit">
+                  <b>Limit devices per session</b>
+                  <select name="" id="session-devices" disabled>
+                    <option value="1">Default (1)</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                  <script>
+                  
 
-            </div>
-          </section>
-          <hr>
-          <section id="printing">
-            <h4 style="margin-bottom: 10px;">Printing Preferences</h4>
-            <label for="customFooter">Set Custom PDF footer</label>
-            <input type="text" name="" maxlength="50" id="customFooter" placeholder="Eg. Lutan Technologies Ltd, Akon Inc. Report. (Max. Chars: 50)">
-           
+                  </script>
+
+                </div>
+              </div>
+              <hr>
+
+              <div class="device-list">
+                <b>Logged in devices <span class="dc"></span></b>
+                <hr>
+                <br>
+                <ol>
+                  <h3>Loading...</h3>
+                </ol>
+
+              </div>
+            </section>
             <hr>
-            <div class="ft-sample">
-            <b>Sample</b>
-            <img class="sample-img" id="footer_sample" src="/assets/images/samples/footer.png" alt="">
-            <div class="expand" onclick="window.open(document.querySelector('.sample-img').src, '_blank')" t="Open Image">
-              <i class="fas fa-expand"></i>
-            </div>
-          </div>
-          </section>
-            
+            <section id="printing">
+              <h4 style="margin-bottom: 10px;">Printing Preferences</h4>
+              <label for="customFooter">Set Custom PDF footer</label>
+              <input type="text" name="" maxlength="50" id="customFooter" placeholder="Eg. Lutan Technologies Ltd, Akon Inc. Report. (Max. Chars: 50)">
+
+              <hr>
+              <div class="ft-sample">
+                <b>Sample</b>
+                <img class="sample-img" id="footer_sample" src="/assets/images/samples/footer.png" alt="">
+                <div class="expand" onclick="window.open(document.querySelector('.sample-img').src, '_blank')" t="Open Image">
+                  <i class="fas fa-expand"></i>
+                </div>
+              </div>
+            </section>
+
           </div>
 
         </div>
@@ -821,6 +568,8 @@ function showReset(){
     </div>
 
     <style>
+    
+
     </style>
 
     <div class="infoModal">
@@ -835,6 +584,12 @@ function showReset(){
     <div class="load-error none">
       <div class="load-error-div">
         <div class="load-error-text">Failed to Load account. Please Retry</div>
+      </div>
+    </div>
+    <div class="lcl none">
+      <div class="lcl-inner">
+        <div class="spinner"></div>
+        <p><span class="user_email">joesmith@mail.com</span></p>
       </div>
     </div>
   </main>

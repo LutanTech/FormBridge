@@ -104,126 +104,102 @@
         </div>
     </nav>
     <style>
-        .logging{
+        .main-content{
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 40vh;
+            min-height: 50vh;
         }
-        .log-content{
+        .result{
+            background: rgba(255, 255, 255, 0.27);
             display: flex;
+            padding: 10px;
+            flex-grow: 1;
+            max-width: 350px;
+            border-radius: 10px;
             justify-content: center;
             align-items: center;
+            min-height: 200px;
+            color: rgb(255, 255, 255);
             flex-direction: column;
-            gap: 30px;
+            gap: 10px;
+            hr{
+                width: 100%;
+                border: 1px solid #00000048;
+            }
         }
         .spinner{
             width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0);
-            border: 4px solid #ffffff1c;
-            border-top: 4px solid rgb(204, 0, 255);
-            padding: 10px;
+            aspect-ratio: 1;
+            border: 5px solid #0000000d;
             border-radius: 50%;
-            animation: rotate 1s linear infinite;
+            padding: 10px;
+            border-top: 5px solid magenta;
+            animation: spin 1s linear infinite;
         }
-        @keyframes rotate {
-            to{
+        @keyframes spin {
+            100%{
                 rotate: 360deg;
-            }            
+            }
+            
         }
-        
+        .error-div{
+            background: red;
+            color: black;
+        }
+        .success-div{
+            background: rgb(123, 253, 134);
+            color: black;
+        }
     </style>
     
 
     <main class="main-content-area" style="margin-top: 80px;">
-        <div class="logging">
-            <div class="log-content">
+        <div class="main-content">
+            <div class="result">
+                <h3>Activating limit... Please wait</h3>
                 <div class="spinner"></div>
-                <h2>Logging you out</h2>
-                <progress max="100"></progress>
-                <div class="log-texts">
-                    <div class="text">Initiating Logout</div>
-                    <script>
-                        document.addEventListener('DOMContentLoaded',()=>{
-                        const texts = ['Clearing app cache...', 'Clearing Session from Main Database...', 'Locking open database sessions...', 'Creating firewall for next login...', 'Exiting session gracefully...', '...']
-
-                        const tc = document.querySelector('.text')
-                        var i = 0
-                        tc.textContent = texts[0]
-                        setInterval(()=>{
-                            if(i <= texts.length + 1){
-                                i++
-                                tc.textContent = texts[i || 0]
-                            }
-                             else{
-                                return
-                            }
-                     
-                      },1000)
-
-                      const user = getCookie('user')
-                      const token = getCookie('token')
-                      const ua = navigator.userAgent;
-                      const baseUrl = window.baseUrl
-
-                      const payload = {
-                        u : user,
-                        t : token,
-                        d : ua
-                      }
-                      if(user && token && ua){
-
-                      fetch(`${baseUrl}/logout`,{
-                        headers : {
-                            'Content-Type':'application/json'
-                        },
-                         method : 'POST',
-                        body : JSON.stringify({data:jof(payload)})
-                      })
-                      .then(res=>res.json())
-                      .then(data=>{
-                        if(data.error){
-                            alert('Error', data.error, 'error')
-                        }
-                        if (data.msg){
-                            alert('Success', data.msg, 'success')
-                            showLoggedOut()
-                            localStorage.clear()
-                            deleteCookie('user')
-                            deleteCookie('token')
-                            deleteCookie('expiry')
-                            deleteCookie('id')
-                        }
-                      })
-                      .catch(err=>{
-                        alert('Error', err.message, 'error')
-                      })
-                    } else{
-                        setTimeout(()=>{
-                        alert('Success', 'Already Logged out', 'success')
-                        showLoggedOut('already')
-                        }, 200)
-                    }
-
-                    function showLoggedOut(already){
-                        const parent = document.querySelector('.log-content')
-                        let state = 'Logged out successfully'
-                        if(already){
-                            state = 'Already logged out'
-                        }
-                        parent.innerHTML = `
-                        <i class="fas fa-check-circle icon" style="color:#0f0"></i>
-                        <hr style="width:100%">
-                        <h3>${state}</h3>
-                        `
-                    }
-                      })
-
-                    </script>
-                </div>
             </div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', ()=>{
+                const params = new URLSearchParams(window.location.search)
+                const div = document.querySelector('.result')
+                if(params){
+                    p = params.get('p')
+                    if(p){
+                        activate_limit(p)
+                        return
+                    } else if(!p){
+                        div.innerHTML = '<span style="color:red">Please use the correct link send to your email</span> <hr style="width:100%; border:1px solid #444; margin:0 !important"> <br> <a target="_blank" style="color:magenta" href="https://mail.google.com/mail/u/0/#search/formbridge"> Open Gmail</a>'
+                        setTimeout(()=>{
+                        alert('Error', 'Incomplete link', 'error')}, 100)
+                        return
+                    }
+                }
+                function activate_limit(p){
+                const div = document.querySelector('.result')
+                    if(p.length < 20){
+                        alert('Error','Invalid parameters','error')
+                        return
+                    } else{
+                        fetch(`${baseUrl}/activate_limit/${p}`)
+                        .then(res=>res.json())
+                        .then(data=>{
+                            console.log(data)
+                            if(data.error){
+                                div.classList.add('error-div')
+                                div.innerHTML = `<h3>Error</h3> <hr><p> ${data.error}</p>`
+                            }
+                            else if(data.msg){
+                                div.classList.add('success-div')
+                                div.innerHTML = `<h3>Success</h3> <br><hr> <p>${data.msg}</p> <a href="/account"> Back to account </a>`
+                            }
+                        })
+                    }
+                }
+            })
+        </script>
 
         </main>
     <footer class="page-footer">

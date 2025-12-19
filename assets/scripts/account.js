@@ -153,6 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
             tf.innerHTML  = 'Ativate 2FA'
           }
         })
+        .catch(e=>{
+          alert('Error', e.message, 'error')
+        })
       }
     }
 
@@ -187,12 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(res=>res.json())
             .then(data=>{
-            
-                if(data.error){
-                  data = data
-                } else{
-                  data = jdf(data)
-                }
+               console.clear()
+                  data = jdf(data) 
+                  console.log(data, '====')
                 if(data.error){
                   alert('Error', data.error, 'error')
                   if(String(data.error).includes('Maximum')){
@@ -202,13 +202,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 3000);
                   }
                   if(String(data.error).includes('Failed to load account')){
-                      // document.body.setAttribute('style', 'pointer-events:none;')
-                      // document.querySelector('#app').innerHTML = ''
-                      // document.querySelector('.load-error').classList.toggle('none')
-                      // document.querySelector('.load-error').classList.toggle('flex')
-                      // const ler = document.querySelector('.load-error-text')
-                      // ler.style.pointerEvents = 'all'
-                      // ler.innerHTML = `${data.error} <hr> <div class="actions-error"> <a href="?reload=True"> <i class="fas fa-refresh"></i> Reload </a> | <a href="/login"> <i class="fas fa-sign-in-alt"></i> Login </a></div>`
+                      document.body.setAttribute('style', 'pointer-events:none;')
+                      document.querySelector('#app').innerHTML = ''
+                      document.querySelector('.load-error').classList.toggle('none')
+                      document.querySelector('.load-error').classList.toggle('flex')
+                      const ler = document.querySelector('.load-error-text')
+                      ler.style.pointerEvents = 'all'
+                      ler.innerHTML = `${data.error} <hr> <div class="actions-error"> <a href="?reload=True"> <i class="fas fa-refresh"></i> Reload </a> | <a href="/login"> <i class="fas fa-sign-in-alt"></i> Login </a></div>`
                   }
                 }
 
@@ -217,6 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
               }
               wrapper.innerHTML = ''
                 const forms = data.forms
+                const devices = data.devices
+                setUserDevices(devices)
                 window.forms = forms
                 if(forms && forms.length > 0){
                   initDbs(forms)
@@ -329,6 +331,22 @@ document.addEventListener('DOMContentLoaded', () => {
     initForms()
     
   })
+  function setUserDevices(c){
+    const s = document.querySelector('#session-devices')
+    const options = s.querySelectorAll('option')
+    if(options){
+      options.forEach(op=>{
+        if(op.value == c){
+          op.setAttribute('selected', '')
+          s.disabled = false
+        }
+        // else{
+        //   s.classList.add('error-div')
+        //   s.innerHTML = "<option value=''> An error occurred </option>"
+        // }
+      })
+    }
+  }
   function checkVal(val, expected) {
     const btn = document.querySelector('[data-id="continue"]')
     if (!btn) return
@@ -700,3 +718,264 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  const tfabtn = document.querySelector('.tfa-btn');
+  const user = getCookie('user');
+  const token = getCookie('token');
+
+  const payload = {
+    'u': user,
+    't': token
+
+  }
+  window.payload = payload
+
+  function resend_qr() {
+    confirm(
+      'Confirm Resending QR',
+      'You are about to resend your QR code. This action will require you to scan the send QR using your authenticator app again. Would you like to Proceed?',
+      false,
+      null,
+      () => {}
+    )
+
+    const modal = document.querySelector('.confirm-modal')
+    const cancelBtn = modal.querySelector('[data-id="cancel"]')
+    const pBtn = modal.querySelector('[data-id="continue"]')
+    pBtn.disabled = false
+
+    cancelBtn.onclick = () => {
+      modal.classList.remove('appear')
+    }
+    pBtn.onclick = () => {
+
+
+      toggleLimitLoader('qr')
+      fetch(`${baseUrl}/resend_qr/${jof(payload)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Error', data.error, 'error')
+            document.querySelector('.lcl-inner').classList.add('error-div')
+            document.querySelector('.lcl-inner').innerHTML = `<i class="fas fa-close-circle icon"></i> <hr> ${data.error}`
+
+
+          } else {
+            if (data.msg) {
+              document.querySelector('.lcl-inner').classList.add('success-div')
+              document.querySelector('.lcl-inner').innerHTML = `<i class="fas fa-check-circle icon"></i> <hr> ${data.msg}`
+
+            }
+          }
+        })
+        .catch(e => {
+          console.log(e)
+          alert('Error', e.message, 'error')
+          document.querySelector('.lcl-inner').innerHTML = `<i class="fas fa-close-circle icon"></i> <hr> ${e.message}`
+
+        })
+    }
+  }
+
+  tfabtn.addEventListener('click', () => {
+    tfabtn.setAttribute('loading', true);
+    tfabtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Activating...`;
+    tfabtn.disabled = true;
+
+
+    const payload = {
+      u: user,
+      token: token
+    };
+
+    fetch(`${baseUrl}/activate_two_fa`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          data: jof(payload)
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Response:', data);
+
+        if (data.qr_code_base64) {
+          showQR(data)
+
+        }
+        if (data.error) {
+          alert('Error', data.error, 'error')
+        }
+        if (data.info) {
+          alert('Attention', data.info, 'info')
+          showReset()
+        }
+        tfabtn.removeAttribute('loading');
+        tfabtn.disabled = false;
+        tfabtn.innerHTML = 'Activate 2FA';
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        alert('Error', err.message, 'error')
+        tfabtn.removeAttribute('loading');
+        tfabtn.disabled = false;
+        tfabtn.innerHTML = 'Activate 2FA';
+      });
+  });
+
+  function showQR(data) {
+    document.querySelector('.qr').classList.toggle('flex')
+    document.querySelector('.qr').classList.toggle('none')
+    setTimeout(() => {
+      const qrImg = document.getElementById('qr-img');
+      qrImg.src = `data:image/png;base64,${data.qr_code_base64}`;
+    }, 100)
+  }
+
+  function showReset() {
+    alert('info', "reset?", 'info')
+  }
+
+
+  function getDevices() {
+    const payload = jof(window.payload)
+
+    fetch(`${baseUrl}/get_devices`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          data: payload
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          alert('Error', data.error, 'error')
+        } else {
+          const raw = jdf(data)
+          const devices = raw.devices
+          if (devices) {
+            const count = document.querySelector('.dc').textContent = `(${devices.length})`
+            const this_device = navigator.userAgent
+            const ld = document.querySelector('.device-list ol')
+            ld.innerHTML = ''
+            let icon = '💻 Desktop'
+            devices.forEach(d => {
+              const li = document.createElement('li')
+
+              if (String(deobf(d.ua)).includes('Mobile')) {
+                icon = '📱 Mobile'
+              }
+              li.innerHTML = `
+    <div class="name">
+      <b class="ll">Device: </b> ${deobf(d.ua) == this_device ? 'This Device' : adeobf(d.ua)} (${icon})</div>
+    <div class="last-login">
+      <b class="ll">Last Login: </b> ${new Date(d.l).toLocaleString()}
+    </div>
+    <div class="ip">
+      <b class="ll">IP: </b> ${new Date(d.l).toLocaleString()}
+    </div>
+   `
+              ld.appendChild(li)
+
+            })
+
+
+          }
+
+        }
+      })
+      .catch(err => {
+        alert('Network Error', err.message + 'in /get_devices', 'error')
+      })
+
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const ds = document.querySelector('#session-devices')
+    let prevValue = ds.value
+
+    ds.addEventListener('change', () => {
+      if (ds.value === prevValue) return
+
+      confirm(
+        'Confirm Device Limit',
+        'You are about to set the maximum number of devices to ' + ds.value + '. Proceed?',
+        false,
+        null,
+        () => {
+          alert('Info', 'Continuing...', 'info')
+          prevValue = ds.value
+        }
+      )
+
+      const modal = document.querySelector('.confirm-modal')
+      const cancelBtn = modal.querySelector('[data-id="cancel"]')
+      const pBtn = modal.querySelector('[data-id="continue"]')
+      pBtn.disabled = false
+
+      cancelBtn.onclick = () => {
+        ds.value = prevValue
+        modal.classList.remove('appear')
+      }
+      pBtn.onclick = () => {
+        prevValue = ds.value
+        const id = jdf(getCookie('user')).id
+        const token = getCookie('token')
+        const val = ds.value
+        change_limit(id, token, val)
+        toggleLimitLoader()
+
+      }
+    })
+
+    function toggleLimitLoader(qr) {
+      const ll = document.querySelector('.lcl')
+      ll.classList.toggle('none')
+      ll.classList.toggle('flex')
+      const user = jdf(getCookie('user'))
+      qr ? ll.querySelector('.user_email').textContent = `Sending QR image to ${user.email}` : ll.querySelector('.user_email').textContent = `Sending link to ${user.email}  `
+      ll.addEventListener('click', (e) => {
+        let isNotInner = e.target != ll.querySelector('.lcl-inner')
+        if (ll.classList.contains('flex') && isNotInner) {
+          ll.classList.add('none')
+          ll.classList.remove('flex')
+          const cancel = document.querySelector('[data-id="cancel"]')
+          if (cancel) {
+            cancel.click()
+          }
+        }
+
+      })
+    }
+    window.toggleLimitLoader = toggleLimitLoader
+
+    function change_limit(i, t, v) {
+      fetch(`${baseUrl}/change_devices_limit/${i}/${t}/${v}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log(data)
+          if (data.error) {
+            alert('Error', data.error, 'error')
+            document.querySelector('.lcl-inner').classList.add('error-div')
+            document.querySelector('.lcl-inner').innerHTML = `<i class="fas fa-close-circle icon"></i> <hr> ${data.error}`
+
+
+          } else {
+            if (data.msg) {
+              document.querySelector('.lcl-inner').classList.add('success-div')
+              document.querySelector('.lcl-inner').innerHTML = `<i class="fas fa-check-circle icon"></i> <hr> ${data.msg}`
+
+            }
+          }
+        })
+        .catch(e => {
+          console.log(e)
+          alert('Error', e.message, 'error')
+          document.querySelector('.lcl-inner').innerHTML = `<i class="fas fa-close-circle icon"></i> <hr> ${e.message}`
+
+        })
+    }
+  })

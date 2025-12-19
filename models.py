@@ -82,6 +82,7 @@ class Form(db.Model):
     instructions = db.Column(db.String(512))
     is_open = db.Column(db.Boolean, default=True)
     inputs = db.Column(db.Text)
+    selects = db.Column(db.Text, nullable=True)
     name = db.Column(db.Boolean, default=False)
     age = db.Column(db.Boolean, default=False)
     phone = db.Column(db.Boolean, default=False)
@@ -91,6 +92,7 @@ class Form(db.Model):
     assignment = db.Column(db.Boolean, default=False)
     units = db.Column(db.Boolean, default=False)
     is_deleted = db.Column(db.Boolean, default=False)
+    
 
     def to_dict(self):
         return {
@@ -104,6 +106,7 @@ class Form(db.Model):
             'instructions': self.instructions,
             'is_open': self.is_open,
             'inputs': self.inputs,
+            'selects': self.selects,
             'name': self.name,
             'age': self.age,
             'phone': self.phone,
@@ -121,7 +124,8 @@ class Form(db.Model):
             'desc': self.desc,
             'instructions': self.instructions,
             'is_open': self.is_open,
-            'inputs': self.inputs
+            'inputs': self.inputs,
+            'selects': self.selects,
         }
         
 
@@ -137,6 +141,7 @@ class Submission(db.Model):
     email = db.Column(db.String(255), nullable=True)
     topic = db.Column(db.String(255), nullable=True)
     assignment = db.Column(db.String(255), nullable=True)
+    selects = db.Column(db.Text, nullable=True)
     units = db.Column(db.String(255), nullable=True)
     at = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=3))
     
@@ -153,21 +158,25 @@ class Submission(db.Model):
             "topic": self.topic,
             "assignment": self.assignment,
             "units": self.units,
+            "selects": self.selects,
             "at": self.at.isoformat() if self.at else None
     }
 
     
 class Device(db.Model):
-    id = db.Column(db.String(6), primary_key=True, default=lambda: generate_random_id(10))
+    id = db.Column(db.String(10), primary_key=True, default=lambda: generate_random_id(10))
     user_id = db.Column(db.String(10), nullable=False)
-    first_login = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=3))
-    last_login = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=3))
+    first_login = db.Column(db.DateTime,default=lambda: datetime.utcnow() + timedelta(hours=3))
+    last_login = db.Column(db.DateTime,default=lambda: datetime.utcnow() + timedelta(hours=3))
     ua = db.Column(db.String(1024), nullable=True)
+    ip = db.Column(db.String(45), nullable=False)  
+
     def to_dict(self):
-        return{
-            'ua':self.ua,
-            'l':self.last_login.isoformat(),
-            'id':self.id
+        return {
+            'id': self.id,
+            'ua': self.ua,
+            'ip': self.ip,
+            'l': self.last_login.isoformat()
         }
-    
+
     
