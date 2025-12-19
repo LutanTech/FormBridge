@@ -872,7 +872,7 @@ document.addEventListener('DOMContentLoaded', () => {
               }
               li.innerHTML = `
     <div class="name">
-      <b class="ll">Device: </b> ${deobf(d.ua) == this_device ? 'This Device' : adeobf(d.ua)} (${icon})</div>
+      <b class="ll">Device: </b> ${deobf(d.ua) == this_device ? 'This Device' : deobf(d.ua)} (${icon})</div>
     <div class="last-login">
       <b class="ll">Last Login: </b> ${new Date(d.l).toLocaleString()}
     </div>
