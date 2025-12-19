@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const payload = {
           username: username,
           password: password,
-          ua: ua
+          ua: obf(ua)
         };
         login(jof(payload));
       }
