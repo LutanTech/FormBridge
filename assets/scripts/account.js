@@ -894,7 +894,15 @@ document.addEventListener('DOMContentLoaded', () => {
               li.addEventListener('click', (e)=>{
                 if(li.contains(e.target) && li.querySelector('.actions').contains(e.target))
                 if(e.target.classList.contains('fa-sign-out-alt')){
-                  alert('l', 'l', 'l')
+                  confirmAction(
+                    'Attention',
+                    `You are about to logout this ${icon} device `
+                  ).then(resp => {
+                    if(resp){
+                      logoutDevice(d.ua)
+                    }
+                  })
+                  
                 }
                 else if(e.target.classList.contains('fa-ban')){
                   alert('b', 'b', 'b')
@@ -916,6 +924,61 @@ document.addEventListener('DOMContentLoaded', () => {
       })
 
   }
+  function logoutDevice(ua){
+    console.log(ua)
+    if(ua == obf(navigator.userAgent)){
+      window.location.href= '/logout'
+      return
+    }
+    fetch(`${baseUrl}/logout/device/${ua}`)
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.error){
+        alert('Error',data.error, 'error')
+      } else{
+        alert('Success',data.msg, 'success')
+        console.log(data)
+      }
+    })
+    .catch(err=>{
+      alert('Connection Error',err.message, 'error' )
+    })
+  }
+
+  function confirmAction(title, text){
+    return new Promise(resolve => {
+      const parent = document.querySelector('.confirmActionDiv')
+      parent.classList.remove('none')
+      parent.classList.add('flex')
+  
+      parent.querySelector('.c-title').textContent = title
+      parent.querySelector('.c-text').textContent = text
+  
+      const tr = parent.querySelector('.c-true')
+      const fa = parent.querySelector('.c-false')
+  
+      const cleanup = () => {
+        parent.classList.remove('flex')
+        parent.classList.add('none')
+        tr.removeEventListener('click', onTrue)
+        fa.removeEventListener('click', onFalse)
+      }
+  
+      const onTrue = () => {
+        cleanup()
+        resolve(true)
+      }
+  
+      const onFalse = () => {
+        cleanup()
+        resolve(false)
+      }
+  
+      tr.addEventListener('click', onTrue)
+      fa.addEventListener('click', onFalse)
+    })
+  }
+  
   document.addEventListener('DOMContentLoaded', () => {
     const ds = document.querySelector('#session-devices')
     let prevValue = ds.value || 0

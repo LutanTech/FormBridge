@@ -993,9 +993,9 @@ gap: 10px;
   .load-error-div{
     padding: 20px;
     min-height: 100px;
-    background: rgb(255, 0, 0);
+    background:rgb(140 107 107 / 35%);
     border-radius: 10px;
-    color: black;
+    color: rgb(255, 255, 255);
     justify-content: center;
     display: flex;
     align-items: center;
