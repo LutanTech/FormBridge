@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const payload = {
           otp: domOtp,
           tt: tt,
-          ua: ua
+          ua: obf(ua)
         };
         console.log(ua)
 
