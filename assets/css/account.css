@@ -1183,3 +1183,29 @@ gap: 10px;
     background: rgb(123, 253, 134);
     color: black;
   }
+  .device-list li{
+     .actions {
+    display: flex;
+    width: fit-content;
+    margin-left: auto;
+    gap: 20px;
+    align-items: center;
+    position: absolute;
+  }
+  
+  .actions div {
+    cursor: pointer;
+    transition: opacity 0.2s;
+    &:active{
+      scale: 0.8;
+    }
+  }
+  
+  .actions div:hover {
+    opacity: 0.9;
+  }
+  
+  .logout { color: #ffb300; }  
+  .block { color: #e74c3c; }  
+  .report { color: #00ff00; }  
+}

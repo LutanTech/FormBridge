@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
                    `
                    wrapper.appendChild(div)
                    div.querySelector('.copy').addEventListener('click', ()=>{
-                    const link = `${window.origin}/submit/?${f.name_str}&id=${f.id}`
+                    const link = `${window.origin}/submit/?${f.name_str.replaceAll(' ', '_')}&id=${f.id}`
                     navigator.clipboard.writeText(link)
                     alert('Link copied', link, 'success')
                    })
@@ -339,10 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
           op.setAttribute('selected', '')
           s.disabled = false
         }
-        // else{
-        //   s.classList.add('error-div')
-        //   s.innerHTML = "<option value=''> An error occurred </option>"
-        // }
+
       })
     }
   }
@@ -515,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const user = jdf(getCookie('user'))
       var token = getCookie('token')
       parent.innerHTML = '<i class="fa sfa spinner fa-spin"></i>'
-      if(data.forms){
+      if(data){
         parent.innerHTML = ''
         const dbs = data
         dbs.forEach(db=>{
@@ -871,6 +868,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 icon = '📱 Mobile'
               }
               li.innerHTML = `
+              <div class="actions" style="width: fit-content;
+    justify-self: right;
+    gap: 20px;">
+              <div class="logout" t='Logout'>
+                 <i class="fas fa-sign-out-alt"></i>
+                 </div>
+              <div class="block" t='Block'>
+                 <i class="fas fa-ban"></i>
+                 </div>
+              <div class="report" t='Report'>
+                 <i class="fas fa-flag"></i>
+                 </div>
+              </div>
     <div class="name">
       <b class="ll">Device: </b> ${deobf(d.ua) == this_device ? 'This Device' : deobf(d.ua)} (${icon})</div>
     <div class="last-login">
@@ -881,6 +891,18 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
    `
               ld.appendChild(li)
+              li.addEventListener('click', (e)=>{
+                if(li.contains(e.target) && li.querySelector('.actions').contains(e.target))
+                if(e.target.classList.contains('fa-sign-out-alt')){
+                  alert('l', 'l', 'l')
+                }
+                else if(e.target.classList.contains('fa-ban')){
+                  alert('b', 'b', 'b')
+                }
+               else if(e.target.classList.contains('fa-flag')){
+                  alert('f', 'f', 'f')
+                }
+              })
 
             })
 
@@ -896,9 +918,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   document.addEventListener('DOMContentLoaded', () => {
     const ds = document.querySelector('#session-devices')
-    let prevValue = ds.value
+    let prevValue = ds.value || 0
 
-    ds.addEventListener('change', () => {
+    ds.addEventListener('input', () => {
+      alert(ds.value, ds.value, 'info')
       if (ds.value === prevValue) return
 
       confirm(
