@@ -122,7 +122,9 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         try:
-           send_otp_email(mail, new_user.email, generate_otp(5))
+           otp = generate_otp(5)
+           new_user.otp = otp
+           send_otp_email(mail, new_user.email, otp)
            log(f'[200] New User joined : {new_user.username}', 'success')
            return jsonify({'msg': 'Registered successfully. Check your email for OTP'}), 200
         except Exception as e:
@@ -149,20 +151,37 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    if not username or not password:
+    if not username or not password or not device:
         return jsonify(encode({'error': 'Missing login credentials'})), 401
 
     user = User.query.filter(
         (User.username == username) | (User.email == username)
     ).first()
+    
 
     if not user:
         return jsonify(encode({'error': 'User not found'})), 401
+    
+    reported = json.loads(user.reported) if user.reported else []
+    
+    if device in reported:
+        log(f'[401] Unauthorized login from reported device on user account {user.email} by UA: {device}', 'error')
+        
+        return jsonify(encode({'error':'Account suspended. Please contact support'})), 401
+    
+    blocked = json.loads(user.blocked) if user.blocked else []
+    
+    if device in blocked:
+        log(f'[401] Unauthorized login from blocked device on user account {user.email} by UA: {device}', 'error')
+        
+        return jsonify(encode({'error':'Account blocked. Please contact support'})), 401
+
+    if not user.is_verified:
+        return jsonify(encode({'error': 'Account not verified. Please use the OTP sent to your email to verify or request a new one'})), 404
 
     if not user.check_password(password):
         return jsonify(encode({'error': 'Invalid password'})), 401
 
-    # If 2FA is enabled
     if user.twofa_secret:
         temp_token = generate_temp_token(user.id)
         return jsonify(encode({
@@ -307,8 +326,9 @@ def verify():
         if otp == user.otp:
             try:
                 user.otp = ''
+                user.is_verified = True
                 db.session.commit()
-                log(f'[200] user {user.username} verified their email', 'ssuccess')
+                log(f'[200] user {user.username} verified their email', 'success')
                 return jsonify({'msg':'Account verified sucessfully', 'reload':True}), 200
             except Exception as e:
                 db.session.rollback()
@@ -942,7 +962,82 @@ def activate_limit(raw):
         return jsonify({'error':'Invalid payload. Please retry : P'}), 400
     return jsonify({'error':'Invalid payload. Please retry : R'}), 400
 
+#devices maintenance
 
+@app.route('/logout/device/<ua>/<id>/<token>')
+def logout_d(ua,id,token):
+    if ua and id and token:
+        device = Device.query.filter_by(ua=ua).first()
+        if device:
+            user = User.query.filter_by(id=id).first()
+            if user:
+                if validate_token(token, id):
+                    if device.user_id == user.id:
+                        db.session.delete(device)
+                        db.session.commit()
+                        return jsonify({'msg':'Logged device out successfully'}), 200
+                    return jsonify({'error':'Unauthorized action : ID mismatch'}), 401
+                return jsonify({'error':'Unauthorized action : Token'}), 401
+            return jsonify({'error':'Unauthorized action : User'}), 401
+        return jsonify({'error':'Unauthorized action : Device'}), 401
+    return jsonify({'error':'Unauthorized action : Payload'}), 401
+
+@app.route('/report/device/<ua>/<id>/<token>')
+def report_d(ua,id,token):
+    if ua and id and token:
+        device = Device.query.filter_by(ua=ua).first()
+        if device:
+            user = User.query.filter_by(id=id).first()
+            if user:
+                if validate_token(token, id):
+                    if device.user_id == user.id:
+                        db.session.delete(device)
+                        reported = json.loads(user.reported) if user.reported else []
+                        if ua not in reported:
+                            reported.append(ua)
+                        user.reported = json.dumps(reported)
+                        db.session.commit()
+                        return jsonify({'msg': 'reported device successfully'}), 200
+                    return jsonify({'error':'Unauthorized action : ID mismatch'}), 401
+                return jsonify({'error':'Unauthorized action : Token'}), 401
+            return jsonify({'error':'Unauthorized action : User'}), 401
+        return jsonify({'error':'Unauthorized action : Device'}), 401
+    return jsonify({'error':'Unauthorized action : Payload'}), 401
+
+import json
+
+@app.route('/block/device/<ua>/<int:id>/<token>')
+def block_d(ua, id, token):
+    if not ua or not id or not token:
+        return jsonify({'error': 'Unauthorized action : Payload'}), 401
+
+    device = Device.query.filter_by(ua=ua).first()
+    if not device:
+        return jsonify({'error': 'Unauthorized action : Device'}), 401
+
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        return jsonify({'error': 'Unauthorized action : User'}), 401
+
+    if not validate_token(token, id):
+        return jsonify({'error': 'Unauthorized action : Token'}), 401
+
+    if device.user_id != user.id:
+        return jsonify({'error': 'Unauthorized action : ID mismatch'}), 401
+
+    blocked = json.loads(user.blocked) if user.blocked else []
+
+    if ua not in blocked:
+        blocked.append(ua)
+
+    user.blocked = json.dumps(blocked)
+
+    db.session.commit()
+    return jsonify({'msg': 'Blocked device successfully'}), 200
+
+
+    
+                
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

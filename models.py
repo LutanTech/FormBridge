@@ -19,10 +19,14 @@ class User(db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     level = db.Column(db.String(10), default='1')
     devices = db.Column(db.Integer, default=1)
-    otp = db.Column(db.String(5), default=generate_otp)
+    otp = db.Column(db.String(5))
     is_deleted = db.Column(db.Boolean, default=False)
     two_fa = db.Column(db.Boolean, default=False)
     twofa_secret = db.Column(db.String(32), nullable=True)
+    blocked = db.Column(db.Text)
+    reported = db.Column(db.Text)
+    reportedActions = db.Column(db.Text)
+    
     
     def set_password(self, raw_password):
         self.password = generate_password_hash(raw_password)

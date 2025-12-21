@@ -868,34 +868,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 icon = '📱 Mobile'
               }
               li.innerHTML = `
-              <div class="actions" style="width: fit-content;
-    justify-self: right;
-    gap: 20px;">
-              <div class="logout" t='Logout'>
-                 <i class="fas fa-sign-out-alt"></i>
-                 </div>
-              <div class="block" t='Block'>
-                 <i class="fas fa-ban"></i>
-                 </div>
-              <div class="report" t='Report'>
-                 <i class="fas fa-flag"></i>
-                 </div>
+              <div class="dets">
+              <div class="name">
+                <b class="ll">Device: </b> ${deobf(d.ua) == this_device ? 'This Device' : deobf(d.ua)} (${icon}) 
               </div>
-    <div class="name">
-      <b class="ll">Device: </b> ${deobf(d.ua) == this_device ? 'This Device' : deobf(d.ua)} (${icon})</div>
-    <div class="last-login">
-      <b class="ll">Last Login: </b> ${new Date(d.l).toLocaleString()}
-    </div>
-    <div class="ip">
-      <b class="ll">IP: </b> ${d.ip ? d.ip : 'Unknown'}
-    </div>
-   `
+              <div class="last-login">
+                <b class="ll">Last Login: </b> ${new Date(d.l).toLocaleString()}
+              </div>
+              <div class="ip">
+                <b class="ll">IP: </b> ${d.ip ? d.ip : 'Unknown'}
+              </div> 
+              </div>
+              <div class="actions">
+                <div class="logout" t='Logout ${deobf(d.ua) == this_device ? 'You' : d.ua.slice(0, 4)}'>
+                  <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <div class="block" t='Block'>
+                  <i class="fas fa-ban"></i>
+                </div>
+                <div class="report" t='Report'>
+                  <i class="fas fa-flag"></i>
+                </div>
+              </div>
+               `
               ld.appendChild(li)
               li.addEventListener('click', (e)=>{
                 if(li.contains(e.target) && li.querySelector('.actions').contains(e.target))
                 if(e.target.classList.contains('fa-sign-out-alt')){
                   confirmAction(
-                    'Attention',
+                    'Attention !!!',
                     `You are about to logout this ${icon} device `
                   ).then(resp => {
                     if(resp){
@@ -905,10 +906,24 @@ document.addEventListener('DOMContentLoaded', () => {
                   
                 }
                 else if(e.target.classList.contains('fa-ban')){
-                  alert('b', 'b', 'b')
+                  confirmAction(
+                    'Attention! Block Action warning ',
+                    `You are about to block this ${icon} device `
+                  ).then(resp => {
+                    if(resp){
+                      blockDevice(d.ua)
+                    }
+                  })
                 }
                else if(e.target.classList.contains('fa-flag')){
-                  alert('f', 'f', 'f')
+                confirmAction(
+                  'Attention! Report Action Warning',
+                  `You are about to report this ${icon} device `
+                ).then(resp => {
+                  if(resp){
+                    reportDevice(d.ua)
+                  }
+                })
                 }
               })
 
@@ -930,7 +945,54 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href= '/logout'
       return
     }
-    fetch(`${baseUrl}/logout/device/${ua}`)
+    const id = jdf(getCookie('user')).id
+    const token = getCookie('token')
+    fetch(`${baseUrl}/logout/device/${ua}/${id}/${token}`)    .then(res=>res.json())
+    .then(data=>{
+      if(data.error){
+        alert('Error',data.error, 'error')
+      } else{
+        alert('Success',data.msg, 'success')
+        console.log(data)
+      }
+    })
+    .catch(err=>{
+      alert('Connection Error',err.message, 'error' )
+    })
+  }
+
+  function blockDevice(ua){
+    console.log(ua)
+    if(ua == obf(navigator.userAgent)){
+      alert('Error','You can not block your own device', 'error')
+      return
+    }
+    const id = jdf(getCookie('user')).id
+    const token = getCookie('token')
+    fetch(`${baseUrl}/block/device/${ua}/${id}/${token}`)
+    .then(res=>res.json())
+    .then(data=>{
+      if(data.error){
+        alert('Error',data.error, 'error')
+      } else{
+        alert('Success',data.msg, 'success')
+        console.log(data)
+      }
+    })
+    .catch(err=>{
+      alert('Connection Error',err.message, 'error' )
+    })
+  }
+
+  function reportDevice(ua){
+    console.log(ua)
+    if(ua == obf(navigator.userAgent)){
+      alert('Error', 'You can not block your own device', 'error' )
+      return
+    }
+    const id = jdf(getCookie('user')).id
+    const token = getCookie('token')
+    fetch(`${baseUrl}/report/device/${ua}/${id}/${token}`)
     .then(res=>res.json())
     .then(data=>{
       if(data.error){

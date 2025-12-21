@@ -107,7 +107,6 @@
     
 
     <main class="main-content-area">            
-            <!-- Tailwind CSS -->
             <script src="https://cdn.tailwindcss.com"></script>
             <script>
                 tailwind.config = {
@@ -119,9 +118,9 @@
                             },
                             colors: {
                                 background: '#000000',
-                                surface: '#09090b', // zinc-950
-                                border: '#27272a', // zinc-800
-                                input: '#18181b', // zinc-900
+                                surface: '#09090b', 
+                                border: '#27272a',
+                                input: '#18181b', 
                                 primary: '#ffffff',
                             },
                             animation: {
@@ -492,8 +491,8 @@
                     const msInMinute = 60 * msInSecond;
                     const msInHour = 60 * msInMinute;
                     const msInDay = 24 * msInHour;
-                    const msInMonth = 30 * msInDay; // approximate month as 30 days
-                    const msInYear = 365 * msInDay; // approximate year as 365 days
+                    const msInMonth = 30 * msInDay;
+                    const msInYear = 365 * msInDay; 
                   
                     const years = Math.floor(diff / msInYear);
                     diff -= years * msInYear;
