@@ -75,18 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
     initAccount()
-    function ZMinus(div){
 
-    overlay.querySelector(div).setAttribute('style', 'z-index:-1')
+  function ZMinus(div){
+    if(div){
+    overlay.querySelector(div).classList.remove('z-4')
+    overlay.querySelector(div).classList.add('z-1')
+    }
   }
   function ZAdd(div){
     setTimeout(() => {
-    if(div)
-    console.log(div)
-    overlay.querySelector(`${div}`).setAttribute('style', 'z-index:4')
+    if(div){
+    overlay.querySelector(div).classList.remove('z-1')
+    overlay.querySelector(div).classList.add('z-4')
+    }
   }, 10);
-
   }
+
     const cards = document.querySelectorAll('.card')
     cards.forEach(c => {
       c.addEventListener('click', () => {
@@ -97,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ZAdd('.forms-ov')
           ZMinus('.databases')
           ZMinus('.settings-overlay')
+          ZMinus('.profile-div')
   
         }
         if(attr == 'data'){
@@ -104,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ZAdd('.databases')
           ZMinus('.forms-ov')
           ZMinus('.settings-overlay')
+          ZMinus('.profile-div')
           
         }
         if(attr == 'new'){
@@ -111,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ZMinus('.forms-ov')
           ZMinus('.databases')
           ZMinus('.settings-overlay')
+          ZMinus('.profile-div')
 
         }
         if(attr == 'settings'){
@@ -118,10 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
           ZMinus('.forms-ov')
           ZMinus('.databases')
           ZAdd('.settings-overlay')
+          ZMinus('.profile-div')
           check2Fa(getCookie('user'))
           getDevices()
-
-
+        }
+        if(attr == 'profile'){
+          ZMinus('.newForm')
+          ZAdd('.profile-div')
+          ZMinus('.forms-ov')
+          ZMinus('.databases')
+          ZMinus('.settings-overlay')
         }
       })
     })
@@ -212,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if(data.msg){
-                    alert('No Forms Found', data.msg, 'info')
+                  console.log(data.msg)
               }
               wrapper.innerHTML = ''
                 const forms = data.forms
@@ -316,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
                 } else{
-                    wrapper.innerHTML = 'No forms found. Add some'
+                    wrapper.innerHTML = `No forms found. Add some <a href="#new" style="color:magenta; margin-left:10px" onclick='document.querySelector("[data-id=new]").click(); document.querySelector("[data-id=new]").click()'> here</a>`
                 }
         
                 
@@ -911,6 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     `You are about to block this ${icon} device `
                   ).then(resp => {
                     if(resp){
+                      alert('blocking device')
                       blockDevice(d.ua)
                     }
                   })
@@ -939,6 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
 
   }
+  window.confirmAction = confirmAction
   function logoutDevice(ua){
     console.log(ua)
     if(ua == obf(navigator.userAgent)){
@@ -954,6 +969,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else{
         alert('Success',data.msg, 'success')
         console.log(data)
+        getDevices()
       }
     })
     .catch(err=>{
@@ -969,7 +985,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const id = jdf(getCookie('user')).id
     const token = getCookie('token')
-    fetch(`${baseUrl}/block/device/${ua}/${id}/${token}`)
+    fetch(`${baseUrl}/block_device/${ua}/${id}/${token}`)
     .then(res=>res.json())
     .then(data=>{
       if(data.error){
@@ -977,6 +993,8 @@ document.addEventListener('DOMContentLoaded', () => {
       } else{
         alert('Success',data.msg, 'success')
         console.log(data)
+        getDevices()
+
       }
     })
     .catch(err=>{
@@ -1000,6 +1018,8 @@ document.addEventListener('DOMContentLoaded', () => {
       } else{
         alert('Success',data.msg, 'success')
         console.log(data)
+        getDevices()
+
       }
     })
     .catch(err=>{

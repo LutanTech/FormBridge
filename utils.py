@@ -90,7 +90,7 @@ def send_otp_email(mail, user_email, otp_code, username=None):
                         <div style="background:rgba(255,255,255,0.2); padding:16px; border-radius:8px; margin-bottom:18px; font-size:24px; font-weight:700;">
                             {otp_code}
                         </div>
-                        <p style="margin:0; font-size:20px; opacity:1; color:#0f0;">or click this link to verify. <a href="http://127.0.0.1:5500/verify_email/?email={encode(user_email)}&otp={encode(otp_code)}">Verify</a><br></p>
+                        <p style="margin:0; font-size:12px; opacity:1; color:#0f0;">or click this link to verify. <a href="https://formbridge.vercel.app/verify_email/?email={encode(user_email)}&otp={encode(otp_code)}">Verify</a><br></p>
                         <p style="margin:0; font-size:13px; opacity:0.85; color:white;">This OTP will expire in 3 minutes.<br>-- FormBridge --</p>
                     </td>
                 </tr>

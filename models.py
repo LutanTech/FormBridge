@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from utils import generate_random_id, generate_otp , generate_account_id
 from werkzeug.security import generate_password_hash, check_password_hash
+import json
 
 db = SQLAlchemy()
 
@@ -18,7 +19,7 @@ class User(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     is_verified = db.Column(db.Boolean, default=False)
     level = db.Column(db.String(10), default='1')
-    devices = db.Column(db.Integer, default=1)
+    devices = db.Column(db.Integer, default=2)
     otp = db.Column(db.String(5))
     is_deleted = db.Column(db.Boolean, default=False)
     two_fa = db.Column(db.Boolean, default=False)
@@ -45,6 +46,10 @@ class User(db.Model):
             'is_active':self.is_active,
             'is_verified':self.is_verified,
             'level':self.level,
+            'devices':self.devices,
+            'two_fa':True if self.twofa_secret else False,
+            'blocked': json.loads(self.blocked) if self.blocked else [],
+            'reported': json.loads(self.reported) if self.reported else []
         }    
     
 

@@ -1,0 +1,49 @@
+.account-details{
+    .cardy{
+        padding: 20px;
+        border-radius: 10px;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        background: rgba(153, 0, 255, 0.182);
+        display: flex;
+        flex-direction: column;
+        width: fit-content;
+        flex-grow: 1;
+        b{
+            font-size: 1.1em;
+        }
+        span{
+            font-size: 1.5em;
+            font-weight: 600;
+            color: magenta;
+        }
+    }
+}
+.cardys{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+summary{
+    cursor: pointer;
+    user-select: none;
+    &:hover{
+        color:magenta;
+    }
+}
+.bdl li, .rdl li{
+    display: flex;
+    gap: 2px;
+    justify-content: space-between;
+    .d-actions{
+        margin: 0;
+        padding: 5px 10px;
+        div{
+            cursor: pointer;
+            &:hover{
+                scale: 1.2;
+            }
+        }
+    }
+}

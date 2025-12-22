@@ -43,7 +43,9 @@
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/utils.css">
   <script src="/assets/scripts/utils.js"></script>
+  <script src="/assets/scripts/profile.js" defer></script>
   <link rel="stylesheet" href="/assets/css/account.css">
+  <link rel="stylesheet" href="/assets/css/profile.css">
 
 </head>
 
@@ -117,9 +119,14 @@
           <div class="item" onclick="document.querySelector(`[data-id='new']`).click();document.querySelector(`.mobile-menu-btn`).click()"> <i class="fas fa-plus"></i> New Form</div>
           
           <div class="item"  onclick="window.location.href='/support'"><i class="fas fa-headset"></i> Support</div>
-          <div class="item"> <i class="fas fa-user-circle"></i> Profile</div>
-          <div class="item" onclick="window.location.href='/logout'"><i class="fas fa-sign-out-alt"></i> Logout</div>
+          <div class="item"  onclick="document.querySelector(`[data-id='profile']`).click();document.querySelector(`.mobile-menu-btn`).click()"> <i class="fas fa-user-circle"></i> Profile</div>
+
+          <div class="item" onclick="document.querySelector(`[data-id='settings']`).click();document.querySelector(`.mobile-menu-btn`).click()"> <i class="fas fa-cogs"></i> Settings</div>
+
+          <div class="item" onclick="document.querySelector(`[data-id='forms']`).click();document.querySelector(`.mobile-menu-btn`).click()"> <i class="fas fa-message"></i> Forms</div>
+          <div class="item" onclick="document.querySelector(`[data-id='data']`).click();document.querySelector(`.mobile-menu-btn`).click()"> <i class="fas fa-server"></i> Databases</div>
           <div class="item"> <i class="fas fa-share-alt"></i> Share App</div>
+          <div class="item" onclick="window.location.href='/logout'"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
       </div>
       <div class="content">
@@ -147,7 +154,7 @@
 
           <div class="card data" data-id="data">
             <div class="card-icon">
-              <i class="fas fa-globe"></i>
+              <i class="fas fa-server"></i>
             </div>
             <div class="card-title">Data</div>
             <div class="card-desc">View and Manage your Data</div>
@@ -184,8 +191,7 @@
           </svg>
         </div>
 
-        <!-- Div 1 -->
-
+        <!-- Div 1 Add New-->
         <div class="newForm">
           <div class="inner">
             <form action="/new_form" id="newFormForm" method="post" onsubmit="return false">
@@ -276,8 +282,7 @@
           </style>
         </div>
 
-        <!-- Div 2 -->
-
+        <!-- Div 2 Forms-->
         <div class="forms-ov">
           <div class="forms-wrapper">
             <div class="skeleton db-sk">
@@ -358,7 +363,6 @@
         </div>
 
         <!-- DIv #3 Databases -->
-
         <div class="databases">
           <div class="database-inner">
             <h3>Your Databases</h3>
@@ -444,6 +448,7 @@
             </div>
           </div>
         </div>
+
         <!-- Div #4 settings -->
         <div class="settings-overlay">
           <h2>Customize your settings</h2>
@@ -551,6 +556,79 @@
         </div>
 
 
+        <!-- Div #5 profile -->
+        <div class="profile-div">
+          <div class="profile-inner">
+          <h3>Profile</h3>
+          <hr>
+          <div class="accountLoader flex">
+            <div class="spinner"></div>
+            <h3>Getting account info...</h3>
+          </div>
+          <div class="account-details">
+            <h5>Account</h5>
+         <div class="cardys">
+         <div class="cardy"><b>Username: </b> <span class="p-usn"> -- </span> </div>
+         <div class="cardy"><b>Email: </b> <span class="p-email" style="font-size: 15px;"> --- </span> </div>
+         <div class="cardy"><b>Joined </b> <span class="p-joined" style="font-size: 15px;"> 00/00/0000</span> </div>
+         <div class="cardy"><b>Phone </b> <span class="p-phone">Null</span> </div>
+         <div class="cardy"><b>Allowed Devices</b><span class="p-devices">0</span> <a style="color: aqua;" href="#settings" onclick='document.querySelector("[data-id=settings]").click(); document.querySelector("[data-id=settings]").click()'> Change </a> </div>
+         <div class="cardy"><b>Logged in Devices: </b><span class="p-ldevices">0</span></div>
+         <div class="cardy"><b>Verified </b><span class="p-verified"></span></div>
+         </div>
+         <hr>
+         <h5>Devices</h5>
+         <div><b>Blocked Devices: </b><span class="b-devices">0</span> <details>
+          <summary>View</summary>
+          <ol class="bdl">
+            <li>Loading...</li>
+          </ol>
+         </details> </div>
+         <div><b>Reported Devices: </b><span class="r-devices">0</span>
+          <details>
+            <summary>View</summary>
+            <ol class="rdl">
+              <li>Loading...</li>
+            </ol>
+           </details>
+          </div>
+          <hr>
+          <h5>Security</h5>
+          <div><b>2FA: </b> <span class="p-2fa-status"> Loading...</span></div>
+          <div> <details><summary><b>Change Password: </b></summary>  
+              <form action="" id="reset-password" onsubmit="return false">
+                <div>
+                <label for="old-p">Enter Old Password</label>
+                <input type="password" name="" id="oldP" placeholder="Old Password" required autocomplete="addressline1" maxLength="6">
+              </div>
+              <div>
+                <label for="new-p">Enter New Password</label>
+                <input type="password" name="" id="newP" placeholder="New Password" required maxLength="6" autocomplete="off">
+                </div>
+                <div>
+                <label for="new-cp">Confirm New Password</label>
+                <input type="password" name="" id="newCP" placeholder="Confirm New Password" required maxLength="6" autocomplete="off">
+                </div>
+                <div>
+                <label for="otp">Enter OTP sent to your Email</label>
+                <input type="text" name="otp" id="otp" placeholder="Eg. TRY2DIE" autocomplete="otp" required maxLength="6" t="6 Chars">
+                </div>
+                <div style="max-width: none !important; width:100%">
+                  <button type="button" onclick="sendOTPEmail()" t="Sent to your account email" class="send-reset-otp">Send OTP</button>
+                </div>
+                <div>
+                  <button type="submit" class="reset-p"> Change Password</button>
+                </div>
+              </details> 
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+        </div>
+
+
       </div>
     </div>
 
@@ -593,42 +671,6 @@
         <p><span class="user_email">joesmith@mail.com</span></p>
       </div>
     </div>
-    <style>
-      .confirmActionDiv{
-        display: flex;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.655);
-        position: fixed;
-        z-index: 23000;
-        justify-content: center;
-        align-items: center;
-      }
-      .confirmDiv-inner{
-        background: rgb(169, 169, 169);
-        padding: 20px;
-        min-height: 150px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 10px;
-        color: rgb(0, 0, 0);
-        button{
-          display: flex;
-          padding: 10px 20px;
-          flex-grow: 1;
-          max-width: 45%;
-          justify-content: center;
-          align-items: center;
-          border: 0;
-          &:nth-child(1){
-            background: orangered;
-          }
-        }
-
-      }
-    </style>
     <div class="confirmActionDiv none">
 
       <div class="confirmDiv-inner">

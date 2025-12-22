@@ -144,3 +144,56 @@ def send_qr_email(mail, user_email, img, key, username=None):
 
     except Exception as e:
         print(f"[400] Email send failed: {e}")
+
+def send_reset_password_otp(mail, user_email, otp, username=None):
+    try:
+
+        plain_body = (
+            f"Hello, {username}\n\n"
+            f"Your FormBridge reset password OTP is: {otp}\n"
+            f"Please enter this OTP to enable you to reset your password.\n\n"
+            f"FormBridge Team"
+        )
+
+        html_body = f"""
+        <!doctype html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+        </head>
+        <body style="font-family: system-ui; margin:0; padding:0; background:#f4f6fb;">
+            <table width="100%" style="max-width:600px; margin:24px auto; background:#000; border-radius:12px; color:#fff;">
+                <tr>
+                    <td style="padding:28px; text-align:center;">
+                        <h1>Reset Password OTP</h1>
+                        <p>
+                            Hello {username or ''}, use this OTP to reset your password. If you did not request this OTP, please contact us <a href="https://formbridge.vercel.app/support">here</a>.
+                        </p>
+
+                        <div style="background:rgba(255,255,255,0.2); padding:16px; border-radius:8px; margin:18px 0; font-size:25px; font-weight:700;">
+                            {otp}
+                        </div>
+
+                        <p style="font-size:13px; opacity:0.85;">
+                            This OTP will expire in 24 Hours<br>
+                            FormBridge
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        """
+
+        msg = Message(
+            subject="FormBridge : Reset Password",
+            recipients=[user_email],
+            body=plain_body,
+            html=html_body
+        )
+        mail.send(msg)
+        print(f"Link sent to {user_email}")
+
+    except Exception as e:
+        print(f"[400] Email send failed: {e}")

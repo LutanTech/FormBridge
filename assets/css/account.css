@@ -820,7 +820,7 @@ color: white;
     }
 
     div:nth-child(3) {
-      color: rgb(0, 208, 255);
+      color: magenta;
     }
 
     div:nth-child(4) {
@@ -854,7 +854,7 @@ color: white;
     }
 
   }
-  .settings-overlay{
+  .settings-overlay, .profile-div{
     padding: 30px;
     display: flex;
     flex-direction: column;
@@ -867,7 +867,6 @@ color: white;
     bottom: 0;
     right: 0;
     left: 0;
-    /* z-index: 200; */
     margin-top: 40px;
   }
 
@@ -1215,4 +1214,130 @@ gap: 10px;
   font-size: 1.52em;
   font-weight: bolder;
   border-bottom: 2px solid rgba(0, 0, 0, 0.281);
+}
+.z-4{
+  z-index: 4 !important;
+}
+.z-1{
+  z-index: 1 !important;
+}
+.profile-div{
+  padding: 30px 20px;
+}
+.profile-inner{
+  hr{
+    border: 1px solid #eeeeee43 !important;
+  }
+}
+/* profile */
+.account-details{
+  div{
+    padding: 10px;
+    
+  }
+  hr{
+    margin-top: 20px;
+  }
+  h5{
+    margin-top: 10px;
+    padding: 5px ;
+    color: rgb(217, 0, 255);
+    background-color: #ffffff2a;
+  }
+}
+#reset-password{
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  gap: 5px;
+  div{
+    width: 100%;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  label{
+    width: 100%;
+  }
+  input{
+    width: 100%;
+    padding: 10px;
+    outline: none;
+    border: 2px solid magenta;
+  }
+  button{
+    padding: 10px;
+    border: 0;
+  }
+  .send-reset-otp{
+    background: rgb(0, 242, 255);
+  }
+  .reset-p{
+    background: #ff5e00;
+  }
+}
+@media (max-width:600px) {
+  #reset-password{
+    grid-template-columns: 1fr;
+  }  
+}
+.confirmActionDiv{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.655);
+  position: fixed;
+  z-index: 23000;
+  justify-content: center;
+  align-items: center;
+}
+.confirmDiv-inner{
+  background: rgb(169, 169, 169);
+  padding: 20px;
+  min-height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  color: rgb(0, 0, 0);
+  button{
+    display: flex;
+    padding: 10px 20px;
+    flex-grow: 1;
+    max-width: 45%;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    &:nth-child(1){
+      background: orangered;
+    }
+  }
+
+}
+.accountLoader{
+  position: fixed;
+  z-index: 10;
+  background: #000000;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+.sidebar::-webkit-scrollbar{
+  width: 5px;
+  background: #000000;
+  
+}
+.sidebar::-webkit-scrollbar-thumb{
+  width: 5px;
+  background: #f200ff;
+  background-color: #f200ff;
+  
 }

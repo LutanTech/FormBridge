@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from utils import generate_random_id, decode, generate_otp, encode, generate_token, validate_token, send_otp_email, make_pdf_all, get_totp, generate_2fa_secret, generate_temp_token, verify_temp_token, get_client_ip
 
-from emails import send_devices_limit_email, generate_temp_link, verify_temp_link, send_qr_email
+from emails import send_devices_limit_email, generate_temp_link, verify_temp_link, send_qr_email, send_reset_password_otp
 
 from flask_mail import Mail
 from datetime import datetime, timedelta
@@ -220,9 +220,21 @@ def check_device(ua, user_id, ip):
         ua=ua
     ).first()
 
+    user = User.query.filter_by(id=user_id).first()
+    if not user:
+        return False, "User not found"
+    
+    blocked = json.loads(user.blocked) if user.blocked else []
+    reported = json.loads(user.reported) if user.reported else []
+    
     if device:
         # device.last_login = now
         # device.ip = ip 
+        if device in blocked:
+            return False, 'Account blocked by User. Please contact support'
+        
+        if device in reported:
+            return False, 'Account under review due to user complaints. Please contact support'
         try:
             db.session.commit()
             return True, None
@@ -231,9 +243,6 @@ def check_device(ua, user_id, ip):
             log(f"[500] Failed updating device: {str(e)}", "error")
             return False, "Database error"
 
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        return False, "User not found"
 
     max_devices = int(user.devices) if user.devices else 1
 
@@ -441,7 +450,7 @@ def forms_list():
                         })
                             
                     return jsonify(encode({"forms": data,'devices':user.devices })), 200
-                return jsonify(encode({"msg": "No forms found. Please add some"})), 404
+                return jsonify(encode({"msg": "No forms found. Please add some", 'devices':user.devices})), 404
             return jsonify(encode({'error':'Unauthorized'})), 401
         return jsonify(encode({'error':'Failed to load account. Please reload the page or login again'})), 404
     return jsonify(encode({'error':'Misssing data in request. Please, try again'})), 404
@@ -1006,7 +1015,7 @@ def report_d(ua,id,token):
 
 import json
 
-@app.route('/block/device/<ua>/<int:id>/<token>')
+@app.route('/block_device/<ua>/<id>/<token>')
 def block_d(ua, id, token):
     if not ua or not id or not token:
         return jsonify({'error': 'Unauthorized action : Payload'}), 401
@@ -1031,13 +1040,158 @@ def block_d(ua, id, token):
         blocked.append(ua)
 
     user.blocked = json.dumps(blocked)
-
+    db.session.delete(device)
     db.session.commit()
     return jsonify({'msg': 'Blocked device successfully'}), 200
 
+@app.route('/send_reset_otp/<raw>')
+def send_reset_password_email(raw):
+    if raw:
+        decoded = decode(raw)
+        id = decoded.get('id')
+        if id:
+            user = User.query.filter_by(id=id).first()
+            if user:
+                try:
+                    otp = generate_otp(6)
+                    user.otp = otp
+                    db.session.commit()
+                    send_reset_password_otp(mail, user.email, otp, user.username)
+                    return jsonify(encode({'msg':f'OTP sent to your email ({user.email}) successfuly'})), 200
+                except Exception as e:
+                    log(f'[400] An unexpected error {str(e)} occured in /reset_password route for user : {user.email}', 'error')
+                    return jsonify(encode({'error':'Failed to send OTP. Please retry, 400'})), 400
+            return jsonify(encode({'error':'User not found. Please retry'})), 404
+        return jsonify(encode({'error':'Missing data in request : ID'})), 400
+    return jsonify(encode({'error':'Missing data in request'})), 400
 
+
+@app.route('/reset_password', methods=['POST'])
+def reset_password():
+    encoded = request.get_json()
+    if encoded:
+        decoded = decode(encoded.get('data'))
+        print(encoded, decoded)        
+        if decoded:
+            user_data = decoded.get('user_data')
+            raw_form_data = decoded.get('form_data')
+            form_data = decode(raw_form_data)
+            oldP = form_data.get('oldP')
+            newP = form_data.get('newP')
+            newCP = form_data.get('newCP')
+            otp = form_data.get('otp')
+            
+            if not oldP or not newCP or not newP or not otp:
+                return jsonify(encode({'error':'Invalid payload. Please retry'})), 400
+            
+            if  not user_data:
+                return jsonify(encode({'error':'Missing data in payload. Please retry'})), 404
+            
+            decoded_user = decode(user_data)
+            
+            if not decoded_user:
+                return jsonify(encode({'error':'Failed to parse user Please retry'})), 400
+            
+            id = decoded_user.get('id')
+            if not id:
+                return jsonify(encode({'error':'Missing data in payload: ID. Please retry'})), 404
+            
+            user = User.query.filter_by(id=id).first()
+            if not user:
+                return jsonify(encode({'error':'User not found. Please retry'})), 404
+            
+            if not check_password_hash(user.password, oldP):
+                return jsonify(encode({'error':'Incorrect Old Password. Please retry'})), 404
+            
+            if user.otp == otp:
+                if newP == newCP:
+                   user.otp = ''
+                   user.set_password(newP)
+                   db.session.commit()
+                   return jsonify(encode({'msg':'Password updated successfully'})), 200
+               
+                return jsonify(encode({'error':'Passwords do not match'})), 401
+            
+            return jsonify(encode({'error':'Incorrect OTP. Please retry'})), 401
+        
+        return jsonify(encode({'error':'Failed to parse data'})), 404
     
-                
+    return jsonify(encode({'error':'Invalid Payload'})), 404
+
+@app.route('/account/info', methods=['POST'])
+def account_info():
+    raw_data = request.get_json()
+    encoded = raw_data.get('data') 
+    if not encoded:
+        return jsonify({'error':'Invalid payload'}), 400
+    
+    decoded = decode(encoded)
+    if not decoded:
+        return jsonify({'error':'Failed to parse data'}), 400
+    user_data = decoded.get('user_data')
+    token  = decoded.get('token')
+    
+    if not user_data or not token:
+        return jsonify({'error':'Missing data in payload. Please retry'}), 404
+    
+    decoded_user = decode(user_data)
+    if not decoded_user:
+        return jsonify({'error':'Failed to parse user'}), 400
+    id = decoded_user.get('id')
+    if not id:
+        return jsonify({'error':'ID not found in payload'}), 400
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        return jsonify({'error':'User not found. Please retry'}), 404
+    devices = Device.query.filter_by(user_id=user.id).all()
+    
+    return jsonify(encode({'user':user.to_dict(), 'ld':len(devices)})), 200
+
+@app.route('/unblock/<ua>/<user_data>/<token>')
+def unban(ua, user_data, token):
+    if ua and user_data:
+        raw = decode(user_data)
+        if not raw:
+            return jsonify({'error':'Failed to parse data'}), 400
+        id = raw.get('id')
+        user = User.query.filter_by(id=id).first()
+        if not user:        
+            return jsonify({'error':'User can not be initiated. Please retry'}), 404
+        if not validate_token(token, user.id):
+            return jsonify({'error':'Unauthorized access. Please retry'}), 401
+        blocked = json.loads(user.blocked) if user.blocked else []
+        if ua in blocked:
+            blocked.remove(ua)
+            user.blocked = json.dumps(blocked)
+            db.session.commit()
+            return jsonify({'msg':'Unblocked successfully'}), 200
+        return jsonify({'error':'Device not found. Please retry or contact support'}), 400
+        
+    return jsonify({'error':'Invalid payload'}), 400
+
+@app.route('/unreport/<ua>/<user_data>/<token>')
+def unreport(ua, user_data, token):
+    if ua and user_data:
+        raw = decode(user_data)
+        if not raw:
+            return jsonify({'error':'Failed to parse data'}), 400
+        id = raw.get('id')
+        user = User.query.filter_by(id=id).first()
+        if not user:        
+            return jsonify({'error':'User can not be initiated. Please retry'}), 404
+        if not validate_token(token, user.id):
+            return jsonify({'error':'Unauthorized access. Please retry'}), 401
+        reported = json.loads(user.reported) if user.reported else []
+        if ua in reported:
+            reported.remove(ua)
+            user.reported = json.dumps(reported)
+            db.session.commit()
+            return jsonify({'msg':'Deleted successfully'}), 200
+        return jsonify({'error':'Device not found. Please retry or contact support'}), 400
+        
+    return jsonify({'error':'Invalid payload'}), 400
+    
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
