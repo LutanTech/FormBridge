@@ -228,8 +228,8 @@ def check_device(ua, user_id, ip):
     reported = json.loads(user.reported) if user.reported else []
     
     if device:
-        # device.last_login = now
-        # device.ip = ip 
+        device.last_login = now
+        device.ip = ip 
         if device in blocked:
             return False, 'Account blocked by User. Please contact support'
         
@@ -427,7 +427,7 @@ def forms_list():
             if not ok:
                 return jsonify(encode({"error": f'Failed to login. Key Error: {error}'})), 400
             if validate_token(token, user.id):
-                forms = Form.query.filter_by(user_id=id).all()
+                forms = Form.query.filter_by(user_id=id, is_deleted=False).all()
                 
                 if forms:
                     data = []
@@ -461,6 +461,8 @@ def get_form(id):
     if id:
         form = Form.query.filter_by(id=id).first()
         if form:
+            if form.is_deleted:
+                return jsonify({'error':'Form not foun:d'}), 404
             return jsonify({'form':form.to_v_dict()}), 200
         return jsonify({'error':'Page not found'}), 404
     return jsonify({'error':'Incomplete request'}), 400
@@ -479,6 +481,8 @@ def form_info():
             if validate_token(token, uid):
                 form = Form.query.filter_by(id=fid, user_id=uid).first()
                 if form:
+                    if form.is_deleted:
+                        return jsonify({'error':'Form not foun:d'}), 404
                     count = Submission.query.filter_by(form_id=form.id).count()
                     return jsonify(encode({'submissions': count,'form':form.to_dict(), 'db_id':encode({'u':uid, 'f':fid}), 'token':generate_token(uid)})), 200
 
@@ -510,7 +514,7 @@ def submit_form():
 
 
         # Fetch form
-        form = Form.query.filter_by(id=form_id).first()
+        form = Form.query.filter_by(id=form_id, is_deleted=False).first()
         if not form:
             return jsonify({"ok": False, "msg": "Form not found"}), 404
 
@@ -609,7 +613,7 @@ def delete_form():
                 form = Form.query.filter_by(id=fid).first()
                 if form:
                     try:
-                        db.session.delete(form)
+                        form.is_deleted = True
                         db.session.commit()
                         return jsonify({'msg':'Form deleted  successfully'}), 200
                     except Exception as e:

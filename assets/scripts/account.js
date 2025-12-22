@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                    div.querySelector('.delete').addEventListener('click', ()=>{
                     confirm(
                       "Are you sure you want to delete this form?",
-                      `<label for="del-pass"> Type <b>'DELETE/${f.name_str}'</b> here to proceed </label><input style="text-transform:uppercase" oninput="checkVal(this.value.trim().toUpperCase(),'DELETE/${f.name_str}' )" type="text" autocomplete="off" id="del-pass" placeholder="Type 'DELETE/${f.name_str}' here to proceed">`, 'danger',
+                      `<label for="del-pass"> Type <b>'DELETE/${f.name_str}'</b> here to proceed </label><input style="text-transform:uppercase" oninput="checkVal(this.value.trim(),'DELETE/${f.name_str}' )" type="text" autocomplete="off" id="del-pass" placeholder="Type 'DELETE/${f.name_str}' here to proceed">`, 'danger',
                     `DELETE/${f.name_str}`,
                       (value)=>{
                       alert('Info', 'Deleting form' + f.id, 'info')
@@ -359,7 +359,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkVal(val, expected) {
     const btn = document.querySelector('[data-id="continue"]')
     if (!btn) return
-    btn.disabled = (val !== expected ? expected : 'false')
+    var fval = val.toUpperCase()
+    var fexpected = expected.toUpperCase()
+    btn.disabled = fval != fexpected
+    console.log(fval, fexpected)
+    console.log(fval == fexpected)
+
   }
   function delete_form(payload){
     if(payload){
