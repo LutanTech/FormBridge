@@ -459,6 +459,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if(user){
             const uid = user.id
             const token = getCookie('token')
+            
+            const select = document.querySelector('#preview')
+
+            const select_id = select.dataset.id || ''
+            
+            const rawFields = JSON.parse(select.dataset.selects || '[]')
+            
+            const fields = rawFields.map(f =>
+              f.replaceAll(' ', '_').toLowerCase()
+            )
+            
 
             const data = {
             'deadline': deadline,
@@ -467,7 +478,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'desc': desc ? desc : '',
             'ins': ins ? ins : '',
             'uid':uid,
-            'token':token
+            'token':token,
+            'selects':{
+              'id':select_id ? select_id : '',
+              'fields':fields ? fields : []
+            }
             }
     
         createForm((data))
@@ -809,8 +824,6 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then(res => res.json())
       .then(data => {
-        console.log('Response:', data);
-
         if (data.qr_code_base64) {
           showQR(data)
 
@@ -955,7 +968,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.confirmAction = confirmAction
   function logoutDevice(ua){
-    console.log(ua)
     if(ua == obf(navigator.userAgent)){
       window.location.href= '/logout'
       return
@@ -968,7 +980,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Error',data.error, 'error')
       } else{
         alert('Success',data.msg, 'success')
-        console.log(data)
         getDevices()
       }
     })
@@ -978,7 +989,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function blockDevice(ua){
-    console.log(ua)
     if(ua == obf(navigator.userAgent)){
       alert('Error','You can not block your own device', 'error')
       return
@@ -992,7 +1002,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Error',data.error, 'error')
       } else{
         alert('Success',data.msg, 'success')
-        console.log(data)
         getDevices()
 
       }
@@ -1003,7 +1012,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function reportDevice(ua){
-    console.log(ua)
     if(ua == obf(navigator.userAgent)){
       alert('Error', 'You can not block your own device', 'error' )
       return
@@ -1017,7 +1025,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Error',data.error, 'error')
       } else{
         alert('Success',data.msg, 'success')
-        console.log(data)
         getDevices()
 
       }
@@ -1125,7 +1132,6 @@ document.addEventListener('DOMContentLoaded', () => {
       fetch(`${baseUrl}/change_devices_limit/${i}/${t}/${v}`)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.error) {
             alert('Error', data.error, 'error')
             document.querySelector('.lcl-inner').classList.add('error-div')
@@ -1148,3 +1154,94 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
   })
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const dl = document.querySelector('#deadline')
+    const fd = document.querySelector('.feedback')
+  
+    dl.addEventListener('input', () => {
+      const now = new Date()
+      const newdate = new Date(dl.value)
+  
+      const diff = newdate.getTime() - now.getTime()
+  
+      if (diff > 0) {
+        setTimeout(() => {
+          const seconds = Math.floor(diff / 1000)
+          const minutes = Math.floor(seconds / 60)
+          const hours = Math.floor(minutes / 60)
+          const days = Math.floor(hours / 24)
+  
+          fd.textContent = `Deadline in ${days} days ${hours % 24} hrs ${minutes % 60} mins`
+        fd.style.color = '#0f0'
+
+
+        }, 1000)
+      } else {
+        fd.textContent = 'That deadline already expired'
+        fd.style.color = 'red'
+      }
+    })
+  })
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const sname = document.querySelector('#select-name')
+    const selectsInp = document.querySelector('#selects')
+    const preview = document.querySelector('#preview')
+    const previewLabel = document.querySelector('#prev-label')
+    setTimeout(() => {
+      if(sname.value){
+        preview.setAttribute('data-id', sname.value.trim())
+        previewLabel.innerHTML = `${sname.value.trim()} (Preview)`
+      }
+      if(selectsInp.value){
+        const raw = selectsInp.value.trim()
+  
+        const values = raw
+          ? raw.split(',').map(v => v.trim()).filter(Boolean)
+          : []
+    
+        preview.innerHTML = '<option value="">--Select--</option>'
+    
+        values.forEach(v => {
+          const opt = document.createElement('option')
+          opt.value = v.replaceAll(' ', '_').toLowerCase()
+          opt.textContent = v
+          preview.appendChild(opt)
+        })
+    
+        preview.dataset.selects = JSON.stringify(values)
+        preview.dataset.id = sname.value
+      }
+      
+    }, 100);
+  
+    sname.addEventListener('input', () => {
+      if (sname.value.trim()) {
+        preview.setAttribute('data-id', sname.value.trim())
+        previewLabel.innerHTML = `${sname.value.trim()} (Preview)`
+      }
+    })
+
+  
+    selectsInp.addEventListener('input', () => {
+      const raw = selectsInp.value.trim()
+  
+      const values = raw
+        ? raw.split(',').map(v => v.trim()).filter(Boolean)
+        : []
+  
+      preview.innerHTML = '<option value="">--Select--</option>'
+  
+      values.forEach(v => {
+        const opt = document.createElement('option')
+        opt.value = v.replaceAll(' ', '_').toLowerCase()
+        opt.textContent = v
+        preview.appendChild(opt)
+      })
+  
+      preview.dataset.selects = JSON.stringify(values)
+      preview.dataset.id = sname.value
+    })
+  })
+  

@@ -351,9 +351,6 @@ def verify():
 def create_new_form():
     raw = request.get_json()
     encoded = raw.get("data")
-
-
-
     data = (encoded)
     if data:
         name = data.get('name')
@@ -364,6 +361,9 @@ def create_new_form():
         selected = data.get('selected') or []
         user_id = data.get('uid')
         token = data.get('token')
+        selects = data.get('selects') or {}
+        fields = selects.get('fields') or []
+        id = selects.get('id')
 
         if not user_id or not token:
             return jsonify({'error': 'Missing data in request. Please Login again'}), 404
@@ -378,7 +378,8 @@ def create_new_form():
                     desc=desc,
                     instructions=ins,
                     inputs=json.dumps(selected),
-                    deadline=deadline
+                    deadline=deadline, 
+                    selects = json.dumps({id:fields})
                 )
 
                 for i in selected:
@@ -498,7 +499,14 @@ def submit_form():
 
         form_id = data.get("form_id")
         user_data = data.get("user_data")
-
+        selects_data = data.get("selects")
+        if selects_data:
+            id = selects_data.get('id')
+            value = selects_data.get('value')
+            
+        if selects_data and not id or selects_data and not value:
+            return jsonify({'error':'Invalid payload'}), 400
+            
         if not form_id:
             return jsonify({"ok": False, "msg": "Missing form or user"}), 400
 
@@ -519,7 +527,7 @@ def submit_form():
 
         cleaned = {}
         for f in fields:
-            key = f.replace("-", "")  # "-name" becomes "name"
+            key = f.replace("-", "") 
             if key in user_data:
                 cleaned[key] = user_data[key]
 
@@ -534,7 +542,8 @@ def submit_form():
             email=cleaned.get("email"),
             topic=cleaned.get("topic"),
             assignment=cleaned.get("assignment"),
-            units=cleaned.get("units")
+            units=cleaned.get("units"),
+            selects=json.dumps({id:value})
         )
 
 
@@ -548,7 +557,7 @@ def submit_form():
         })
 
     except Exception as e:
-        log(f"[500] Database error in /submit route:  {str(e)}")
+        log(f"[500] Database error in /submit route:  {str(e)}", 'error')
         return jsonify({"ok": False, "msg": "Server error"}), 500
     
 @app.route('/toggle_db', methods=['POST'])

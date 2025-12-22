@@ -414,11 +414,10 @@
                 </div>
             </div>
         </div>
-    
         <script>
             let currentFormData = null; 
             let deadlineTime = null;
-    
+            
             const mainTitleEl = document.getElementById('main-form-title');
             const subtitleEl = document.getElementById('form-subtitle');
             const formElement = document.getElementById('dynamic-form');
@@ -448,26 +447,25 @@
                 'units': { label: 'Units/Courses', type: 'text', icon: 'fas fa-book', required: true, maxLength: 100 },
                 'topic': { label: 'Topic Name', type: 'text', icon: 'fas fa-tag', required: true, maxLength: 150 }
             };
-    
+            
+            // ---------------- Loader & Status ----------------
             function showLoader(text = "Processing Submission...") {
                 loaderText.textContent = text;
                 loader.classList.remove('hidden-force');
                 loader.classList.add('flex-force');
             }
-    
+            
             function hideLoader() {
                 loader.classList.add('hidden-force');
                 loader.classList.remove('flex-force');
             }
-    
+            
             function showStatusMessage(title, message, isSuccess = false) {
                 statusTitleEl.textContent = title;
                 statusTextEl.innerHTML = message;
-                
                 statusIconEl.innerHTML = isSuccess
                     ? `<i class="fas fa-check-circle" style="color: var(--color-success);"></i>`
                     : `<i class="fas fa-times-circle" style="color: var(--color-error);"></i>`;
-    
                 statusMessageEl.classList.remove('hidden-force');
                 statusMessageEl.classList.add('flex-force');
             }
@@ -476,7 +474,8 @@
                 statusMessageEl.classList.add('hidden-force');
                 statusMessageEl.classList.remove('flex-force');
             }
-    
+            
+            // ---------------- Confirmation ----------------
             function showConfirm(submissionData) {
                 let detailsHtml = '';
                 for (const key in submissionData.user_data) {
@@ -489,6 +488,14 @@
                             </div>
                         `;
                     }
+                    else{
+                        detailsHtml += `
+                        <div class="detail-row">
+                            <span class="detail-label">${key}</span>
+                            <span class="detail-value">${submissionData.user_data[key] || 'N/A'}</span>
+                        </div>
+                        `
+                    }
                 }
                 confirmDetailsEl.innerHTML = detailsHtml || `<p style="color: var(--color-text-muted);">No data collected to confirm.</p>`;
                 confirmDiv.classList.remove('hidden-force');
@@ -500,150 +507,171 @@
                 confirmDiv.classList.remove('flex-force');
             }
             
+            // ---------------- URL param helper ----------------
             function getUrlParameter(name) {
                 name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
                 const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
                 const results = regex.exec(location.search);
                 return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
             }
-    
+            
+            // ---------------- Fetch Form Config ----------------
             async function fetchFormConfiguration() {
                 const formId = getUrlParameter('id');
                 const API_BASE_URL = `${window.baseUrl}/form/`; 
                 const endpoint = API_BASE_URL + (formId || 'default-form');
-    
-                console.log(`Attempting to FETCH configuration from: ${endpoint}`);
-    
+                console.log(`Fetching configuration: ${endpoint}`);
                 try {
-                    const response = await fetch(endpoint, { signal: AbortSignal.timeout(4000) });
-    
-                    if (!response.ok) {
-                        throw new Error(`Server responded with status: ${response.status}`);
-                    }
+                    const response = await fetch(endpoint, { signal: AbortSignal.timeout(5000) });
+                    if (!response.ok) throw new Error(`Server responded with status: ${response.status}`);
                     const data = await response.json();
                     return data.form;
-    
                 } catch (error) {
-                    console.warn(`Could not connect to local server at ${endpoint}. Falling back to mock data. Error:`, error.message);
-                    
-                
+                    console.warn(`Could not fetch form:`, error.message);
                 }
             }
             
+            // ---------------- Render Form ----------------
             function renderForm(formData) {
                 mainTitleEl.textContent = formData.name_str || 'Dynamic Form';
-                subtitleEl.innerHTML = formData.desc || 'No description provided.';
-                
+                subtitleEl.innerHTML = formData.instructions || 'No description provided.';
                 deadlineTime = new Date(formData.deadline);
-    
-                formElement.innerHTML = ''; 
-    
+            
+                formElement.innerHTML = '';
+            
                 let inputsArray;
-                try {
-                    inputsArray = JSON.parse(formData.inputs || '[]');
-                } catch (e) {
-                    showStatusMessage('Configuration Error', 'Could not process form input configuration. Please contact support.', false);
-                    return;
-                }
-                
+                try { inputsArray = JSON.parse(formData.inputs || '[]'); } 
+                catch (e) { showStatusMessage('Configuration Error','Could not process input configuration.', false); return; }
+            
+                let selectsObj;
+                try { selectsObj = JSON.parse(formData.selects || '{}'); } 
+                catch (e) { showStatusMessage('Configuration Error','Could not process select configuration.', false); return; }
+            
+                // Render dynamic selects
+                Object.entries(selectsObj).forEach(([key, values]) => {
+                    const normalizedKey = key.replace(/^-/, '').trim();
+            
+                    const selectDiv = document.createElement('div');
+                    selectDiv.className = 'input-group';
+            
+                    const label = document.createElement('label');
+                    label.className = 'input-label';
+                    label.htmlFor = normalizedKey;
+                    label.textContent = key;
+            
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'input-wrapper';
+            
+                    const icon = document.createElement('div');
+                    icon.className = 'input-icon';
+                    icon.innerHTML = `<i class="fas fa-tag"></i>`;
+            
+                    const select = document.createElement('select');
+                    select.setAttribute('required', '')
+                    select.name = normalizedKey;
+                    select.id = normalizedKey;
+                    select.className = 'form-input';
+                    const def = document.createElement('option')
+                    def.value = ''
+                    def.setAttribute('selected', '')
+                    def.textContent = '--Select--'
+                    select.appendChild(def)
+
+            
+                    values.forEach(v => {
+                        const op = document.createElement('option');
+                        op.value = v;
+                        op.textContent = v.replaceAll('_', ' ');
+                        op.style.textTransform = 'capitalize';
+                        
+                        select.appendChild(op);
+                    });
+            
+                    wrapper.appendChild(icon);
+                    wrapper.appendChild(select);
+                    selectDiv.appendChild(label);
+                    selectDiv.appendChild(wrapper);
+                    formElement.appendChild(selectDiv);
+                });
+            
+                // Render normal inputs
                 let gridDiv = null;
-    
                 inputsArray.forEach(key => {
                     const normalizedKey = key.replace(/^-/, '').trim();
                     const fieldConfig = fieldMap[normalizedKey];
-    
-                    if (fieldConfig) {
-                        const fieldName = normalizedKey;
-                        const labelText = fieldConfig.label;
-                        const isRequired = fieldConfig.required ? 'required' : '';
-                        const customClass = fieldConfig.customClass || '';
-    
-                        const inputGroup = document.createElement('div');
-                        inputGroup.className = 'input-group';
-    
-                        const label = document.createElement('label');
-                        label.htmlFor = fieldName;
-                        label.className = 'input-label';
-                        label.textContent = labelText;
-    
-                        const inputWrapper = document.createElement('div');
-                        inputWrapper.className = 'input-wrapper';
-    
-                        const icon = document.createElement('div');
-                        icon.className = 'input-icon';
-                        icon.innerHTML = `<i class="${fieldConfig.icon}"></i>`;
-                        
-                        const input = document.createElement('input');
-                        input.type = fieldConfig.type || 'text';
-                        input.id = fieldName;
-                        input.name = fieldName;
-                        input.placeholder = `Enter your ${labelText.toLowerCase()}...`;
-                        input.className = `form-input ${customClass}`;
-                        input.setAttribute(isRequired, isRequired);
-                        if (fieldConfig.maxLength) {
-                            input.maxLength = fieldConfig.maxLength;
-                        }
-    
-                        inputWrapper.appendChild(icon);
-                        inputWrapper.appendChild(input);
-                        inputGroup.appendChild(label);
-                        inputGroup.appendChild(inputWrapper);
-                        
-                        if (fieldConfig.grid && !gridDiv) {
+                    if (!fieldConfig) return;
+            
+                    const inputGroup = document.createElement('div');
+                    inputGroup.className = 'input-group';
+            
+                    const label = document.createElement('label');
+                    label.htmlFor = normalizedKey;
+                    label.className = 'input-label';
+                    label.textContent = fieldConfig.label;
+            
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'input-wrapper';
+            
+                    const icon = document.createElement('div');
+                    icon.className = 'input-icon';
+                    icon.innerHTML = `<i class="${fieldConfig.icon}"></i>`;
+            
+                    const input = document.createElement('input');
+                    input.type = fieldConfig.type || 'text';
+                    input.id = normalizedKey;
+                    input.name = normalizedKey;
+                    input.placeholder = `Enter your ${fieldConfig.label.toLowerCase()}...`;
+                    input.className = `form-input ${fieldConfig.customClass || ''}`;
+                    if (fieldConfig.required) input.required = true;
+                    if (fieldConfig.maxLength) input.maxLength = fieldConfig.maxLength;
+            
+                    wrapper.appendChild(icon);
+                    wrapper.appendChild(input);
+                    inputGroup.appendChild(label);
+                    inputGroup.appendChild(wrapper);
+            
+                    if (fieldConfig.grid) {
+                        if (!gridDiv) {
                             gridDiv = document.createElement('div');
                             gridDiv.className = 'input-grid';
                             formElement.appendChild(gridDiv);
-                        } else if (!fieldConfig.grid && gridDiv) {
-                            gridDiv = null;
                         }
-    
-                        if (gridDiv) {
-                            gridDiv.appendChild(inputGroup);
-                        } else {
-                            formElement.appendChild(inputGroup);
-                        }
+                        gridDiv.appendChild(inputGroup);
+                    } else {
+                        if (gridDiv) { gridDiv = null; }
+                        formElement.appendChild(inputGroup);
                     }
                 });
-                
-                if (gridDiv) {
-                    gridDiv = null;
-                }
-    
-                formElement.querySelectorAll('input').forEach(input => {
-                    input.addEventListener('input', saveDraft);
-                    input.addEventListener('focusout', saveDraft);
-                });
-                
+            
+                // Submit button
                 const submitContainer = document.createElement('div');
                 submitContainer.style.paddingTop = '0.5rem';
-    
                 const submitButton = document.createElement('button');
                 submitButton.type = 'submit';
-                submitButton.innerHTML = 'Submit Details <i class="fas fa-arrow-right" style="margin-left: 0.5rem; font-size: 0.875rem; opacity: 0.8;"></i>';
+                submitButton.innerHTML = 'Submit Details <i class="fas fa-arrow-right" style="margin-left:0.5rem; font-size:0.875rem; opacity:0.8;"></i>';
                 submitButton.className = 'submit-button';
-    
                 submitContainer.appendChild(submitButton);
-                submitContainer.innerHTML += `
-                    <p class="submit-info">
-                        <i class="fas fa-lock"></i> Progress saved automatically
-                    </p>
-                    
-                `;
+                submitContainer.innerHTML += `<p class="submit-info"><i class="fas fa-lock"></i> Progress saved automatically</p>`;
                 formElement.appendChild(submitContainer);
-    
+            
+                // Draft saving events
+                formElement.querySelectorAll('input, select').forEach(el => {
+                    el.addEventListener('input', saveDraft);
+                    el.addEventListener('change', saveDraft);
+                    el.addEventListener('focusout', saveDraft);
+                });
+            
                 formElement.addEventListener('submit', handleFormPreSubmit);
-                
                 initForm();
-                updateCountdown(); 
-                setInterval(updateCountdown, 1000); 
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
             }
-    
+            
+            // ---------------- Draft Saving ----------------
             function saveDraft() {
                 const formData = new FormData(formElement);
                 const draft = {};
-                formData.forEach((value, key) => {
-                    draft[key] = value;
-                });
+                formData.forEach((value, key) => draft[key] = value);
                 localStorage.setItem('dynamicFormDraft', JSON.stringify(draft));
             }
             
@@ -653,153 +681,122 @@
                     const draft = JSON.parse(storedDraft);
                     for (const key in draft) {
                         const input = formElement.querySelector(`[name="${key}"]`);
-                        if (input) {
-                            input.value = draft[key];
-                        }
+                        if (input) input.value = draft[key];
                     }
                 }
             }
-    
+            
+            // ---------------- Countdown ----------------
             function updateCountdown() {
                 if (!deadlineTime) return;
-    
                 const now = new Date();
                 const diff = deadlineTime - now;
-                let mss = diff;
-
-// Get absolute value
-            let remSeconds = Math.floor(Math.abs(mss) / 1000);
-            let remhours = Math.floor(remSeconds / 3600);
-            let remminutes = Math.floor((remSeconds % 3600) / 60);
-            let remseconds = remSeconds % 60;
-
-
-                
-                if (diff < 0) {
-                    formCard.innerHTML = `
-                    <div class="form-content" style="text-align: center;">
-                       <div style="color: var(--color-error); font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-clock"></i></div>
-                       <h2 style="font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Submission Closed (-${remhours}h ${remminutes}m ${remseconds}s Ago)</h2>
-                       <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 1rem;">The deadline for submissions has passed.</p>
-                       <p style="color: var(--color-text-muted); font-size: 0.75rem;">Form ID: ${currentFormData.id}</p>
-                    </div>
-                    `;
+            
+                if (diff <= 0) {
                     countdownEl.textContent = "Deadline Passed";
-                    countdownEl.style.backgroundColor = 'rgba(248, 81, 73, 0.2)';
-                    countdownEl.style.color = "var('--color-error')";
-                    countdownEl.style.borderColor = 'rgba(248, 81, 73, 0.5)';
+                    countdownEl.style.backgroundColor = 'rgba(248,81,73,0.2)';
+                    countdownEl.style.color = 'var(--color-error)';
                     return;
                 }
-                
+            
                 const totalSeconds = Math.floor(diff / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
                 const minutes = Math.floor((totalSeconds % 3600) / 60);
                 const seconds = totalSeconds % 60;
-                
-                countdownEl.innerHTML = `<i class="far fa-clock" style="margin-right: 0.25rem;"></i> Deadline in: ${hours}h ${minutes}m ${seconds}s`;
+            
+                countdownEl.innerHTML = `<i class="far fa-clock" style="margin-right:0.25rem;"></i> Deadline in: ${hours}h ${minutes}m ${seconds}s`;
             }
             
+            // ---------------- Form Submission ----------------
             function handleFormPreSubmit(event) {
                 event.preventDefault();
-                
-                if (formElement.checkValidity()) {
-                    const formData = new FormData(formElement);
-                    const submissionData = {
-                        form_id: currentFormData.id,
-                        form_name: currentFormData.name_str,
-                        submission_time: new Date().toISOString(),
-                        user_data: {}
-                    };
-                    formData.forEach((value, key) => submissionData.user_data[key] = value);
-                    if (submissionData.user_data.phone && submissionData.user_data.phone.startsWith('254') || submissionData.user_data.phone.startsWith('+254')) {
-                        alert('Error',"Phone starting with 254 is not allowed. Please use 07...", 'error');
-                        return; 
-                    }
-                    
-                    confirmYes.onclick = () => { hideConfirm(); handleFormSubmit(jof(submissionData)); };
-                    
-                    showConfirm(submissionData);
-                } else {
+                if (!formElement.checkValidity()) {
                     formElement.reportValidity();
+                    return;
                 }
+            
+                const selectsPresent = formElement.querySelectorAll('select')
+                selectsPresent.forEach(s=>{
+                    var options = s.querySelectorAll('option')
+                   const option =  s.value
+
+                    const sp = {
+                        'id':s.id,
+                        'value':  option
+                    }
+                    window.sp = sp
+                })
+                const formData = new FormData(formElement);
+                const submissionData = { form_id: currentFormData.id, form_name: currentFormData.name_str, submission_time: new Date().toISOString(), user_data: {},
+                selects:  sp};
+                formData.forEach((value, key) => submissionData.user_data[key] = value);
+            
+                const phone = submissionData.user_data.phone || '';
+                if (phone.startsWith('254') || phone.startsWith('+254')) {
+                    showStatusMessage('Error', 'Phone starting with 254 is not allowed. Please use 07...', false);
+                    return;
+                }
+            
+                confirmYes.onclick = () => { hideConfirm(); handleFormSubmit(submissionData); };
+                showConfirm(submissionData);
             }
-    
+            
             async function handleFormSubmit(submissionData) {
                 showLoader("Submitting data...");
-                
-                const endpoint = `${window.baseUrl}/submit` 
-    
+                const endpoint = `${window.baseUrl}/submit`;
+            
                 try {
-                    await new Promise(resolve => setTimeout(resolve, 10));
                     const response = await fetch(endpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({data:submissionData})
+                        body: JSON.stringify({ data:jof(submissionData )})
                     });
-    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-    
-                    const result = await response.json();
-                    
+            
+                    if (!response.ok) throw new Error(`HTTP status: ${response.status}`);
+            
+                    await response.json();
                     hideLoader();
                     localStorage.removeItem('dynamicFormDraft');
                     formElement.reset();
-    
-                    showStatusMessage(
-                        'Submission Successful',
-                        `Your details for form <b>${currentFormData.id}</b> have been recorded.`,
-                        true
-                    );
-    
+                    showStatusMessage('Submission Successful', `Your details for form <b>${currentFormData.id}</b> have been recorded.`, true);
+            
                 } catch (error) {
                     hideLoader();
                     console.error('Submission failed:', error);
-                    showStatusMessage(
-                        'Submission Failed', 
-                        `Failed to submit data. If the local server (127.0.0.1:6500) is running, check your network and CORS configuration. Details: ${error.message}`, 
-                        false
-                    );
+                    showStatusMessage('Submission Failed', `Failed to submit data. Details: ${error.message}`, false);
                 }
             }
-    
+            
+            // ---------------- Initialize ----------------
             async function initializeApplication() {
                 closeStatusButton.addEventListener('click', hideStatusMessage);
                 confirmNo.addEventListener('click', hideConfirm);
-                
+            
                 try {
                     const data = await fetchFormConfiguration();
                     currentFormData = data;
-                    
-                    if (data.is_open) {
-                        renderForm(currentFormData);
-                    } else {
+                    if (data.is_open) renderForm(currentFormData);
+                    else {
                         mainTitleEl.textContent = `${data.name_str} - Closed`;
-                        subtitleEl.textContent = data.desc || 'This form is currently closed for submissions.';
-                        formElement.innerHTML = `
-                            <div style="padding: 2rem; text-align: center; background-color: var(--color-bg-dark); border-radius: 0.75rem; border: 1px solid var(--color-border);">
-                                <i class="fas fa-lock" style="font-size: 3rem; color: var(--color-error); margin-bottom: 1rem;"></i>
-                                <h2 style="font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">Form Closed</h2>
-                                <p style="color: var(--color-text-muted);">${data.instructions || 'The form submission period has ended or is temporarily unavailable.'}</p>
-                            </div>
-                        `;
+                        subtitleEl.textContent = data.desc || 'Form currently closed';
+                        formElement.innerHTML = `<div style="padding:2rem; text-align:center; background-color: var(--color-bg-dark); border-radius:.75rem;">
+                            <i class="fas fa-lock" style="font-size:3rem; color:var(--color-error); margin-bottom:1rem;"></i>
+                            <h2>Form Closed</h2>
+                            <p>${data.instructions || ''}</p>
+                        </div>`;
                         countdownEl.textContent = "Closed";
-                        countdownEl.style.backgroundColor = 'rgba(248, 81, 73, 0.2)';
-                        countdownEl.style.color = "var('--color-error')";
-                        countdownEl.style.borderColor = 'rgba(248, 81, 73, 0.5)';
                     }
-                    
                 } catch (error) {
                     mainTitleEl.textContent = 'Error Loading Form';
                     subtitleEl.textContent = 'Could not load form configuration.';
-                    loadingSpinner.innerHTML = `<p style="color: var(--color-error); font-weight: 500;">Error loading Form. Refresh the page or Contact your Instructor.</p>`;
-                    console.error('Initialization error:', error);
+                    loadingSpinner.innerHTML = `<p style="color:var(--color-error);">Error loading form. Refresh or contact support.</p>`;
+                    console.error(error);
                 }
             }
-    
+            
             window.onload = initializeApplication;
-        </script>
+            </script>
+            
 <!-- 
         </main>
     <footer class="page-footer">

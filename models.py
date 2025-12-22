@@ -130,7 +130,6 @@ class Form(db.Model):
             'id': self.id,
             'deadline': self.deadline.isoformat() if self.deadline else None,
             'name_str': self.name_str,
-            'desc': self.desc,
             'instructions': self.instructions,
             'is_open': self.is_open,
             'inputs': self.inputs,

@@ -178,7 +178,7 @@
       <style>
 
       </style>
-      <div class="overlay">
+      <div class="overlay vissible">
 
         <div class="back-btn" t="Back">
 
@@ -192,7 +192,7 @@
         </div>
 
         <!-- Div 1 Add New-->
-        <div class="newForm">
+        <div class="newForm z-4">
           <div class="inner">
             <form action="/new_form" id="newFormForm" method="post" onsubmit="return false">
               <div class="input">
@@ -201,29 +201,12 @@
               </div>
               <div class="input">
                 <label for="deadline" style="display: flex;justify-content:space-between">Submisssion Deadline
-                  <div class="feedback">34Hr 18mins from Now</div>
+                  <div class="feedback">0Hr 0m 0s from Now</div>
                 </label>
-                <input type="datetime-local" class="f-input" id="deadline" required>
-                <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                  const dl = document.querySelector('#deadline')
-                  dl.addEventListener('input', () => {
-                    const now = new Date().toISOString()
-                    const newdate = new Date(dl.value).toISOString()
-                    alert(now, newdate, 'success')
-                    const diff = newdate - now
-                    if (diff > 0) {
-                      setTimeout(() => {
-
-                      }, 3000)
-                    }
-                  })
-                })
-
-                </script>
+                <input type="datetime-local" class="f-input" id="deadline" required style="color: rgb(0, 0, 0) !important; background:white">
               </div>
               <div class="input">
-                <label for="desc">Enter Form Description <i>(Optional) Only Visible to you</i> </label>
+                <label for="desc">Enter Form Description <i>Only Visible to you</i> </label>
                 <textarea class="f-input" id="desc" placeholder=" Max: 255 Characters"></textarea>
               </div>
               <div class="input">
@@ -268,6 +251,18 @@
                   <input type="checkbox" name="" id="units">
                   <label for="units"> <i class="fas fa-book"></i> Units</label>
                 </div>
+              </div>
+              <div class="input" style="gap: 10px;">
+                <h3>Dropdown fields</h3>
+                <label for="select-name"> Enter field Name</label>
+                <input type="text" class="f-input" id="select-name" placeholder="Eg. Gender, Alcoholic" required maxLength="10">
+                <label for="selects"> Enter fields to make a dropdown * <i style="font-size: small;">Comma seperated</i></label>
+                <textarea class="f-input" name="selects" id="selects" placeholder="Eg. Male, Female, Rather not say yes, no, maybe" required style="text-transform: capitalize;">
+                </textarea>
+                <h3 id="prev-label">Preview</h3>
+                <select name="preview" id="preview" class="preview f-input">
+                  <option value="">--Empty--</option>
+                </select>
               </div>
               <hr style="width: 100vw; border:0.2px solid #eeeeee2c">
               <button type="submit" id="create-form"> Create </button>
