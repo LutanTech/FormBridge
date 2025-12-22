@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const continueBtn = inner.querySelector('[data-id="continue"]')
       continueBtn.onclick = () => {
         if(typeof proceed === "function" && inputField){
-          if(inputField.value.toUpperCase().trim() !== waitVal && waitVal){
+          if(inputField.value.toUpperCase().trim() !== waitVal.toUpperCase() && waitVal){
             alert('Error', 'Please type the required text: ' + waitVal, 'error')
             return
           }
@@ -1183,6 +1183,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
   })
+  function stripEmojis(value) {
+    return value.replace(
+      /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,
+      ''
+    )
+  }
   
   document.addEventListener('DOMContentLoaded', () => {
     const sname = document.querySelector('#select-name')
@@ -1217,31 +1223,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
   
     sname.addEventListener('input', () => {
+      sname.value = stripEmojis(sname.value)
+    
       if (sname.value.trim()) {
         preview.setAttribute('data-id', sname.value.trim())
         previewLabel.innerHTML = `${sname.value.trim()} (Preview)`
       }
     })
-
-  
+    
     selectsInp.addEventListener('input', () => {
+      selectsInp.value = stripEmojis(selectsInp.value)
+    
       const raw = selectsInp.value.trim()
-  
+    
       const values = raw
         ? raw.split(',').map(v => v.trim()).filter(Boolean)
         : []
-  
+    
       preview.innerHTML = '<option value="">--Select--</option>'
-  
+    
       values.forEach(v => {
         const opt = document.createElement('option')
         opt.value = v.replaceAll(' ', '_').toLowerCase()
         opt.textContent = v
         preview.appendChild(opt)
       })
-  
+    
       preview.dataset.selects = JSON.stringify(values)
       preview.dataset.id = sname.value
     })
-  })
+    
+    })
   

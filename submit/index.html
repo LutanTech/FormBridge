@@ -549,6 +549,7 @@
             
                 // Render dynamic selects
                 Object.entries(selectsObj).forEach(([key, values]) => {
+                    if(key){
                     const normalizedKey = key.replace(/^-/, '').trim();
             
                     const selectDiv = document.createElement('div');
@@ -592,7 +593,11 @@
                     selectDiv.appendChild(label);
                     selectDiv.appendChild(wrapper);
                     formElement.appendChild(selectDiv);
+                } else{
+
+                }
                 });
+
             
                 // Render normal inputs
                 let gridDiv = null;

@@ -504,8 +504,6 @@ def submit_form():
             id = selects_data.get('id')
             value = selects_data.get('value')
             
-        if selects_data and not id or selects_data and not value:
-            return jsonify({'error':'Invalid payload'}), 400
             
         if not form_id:
             return jsonify({"ok": False, "msg": "Missing form or user"}), 400
