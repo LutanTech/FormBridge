@@ -552,8 +552,8 @@ def submit_form():
 
         return jsonify({
             "ok": True,
+            'id':new_sub.id,
             "msg": "Submitted successfully",
-            "saved": cleaned
         })
 
     except Exception as e:

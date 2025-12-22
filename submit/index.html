@@ -750,15 +750,43 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ data:jof(submissionData )})
-                    });
-            
-                    if (!response.ok) throw new Error(`HTTP status: ${response.status}`);
-            
-                    await response.json();
-                    hideLoader();
-                    localStorage.removeItem('dynamicFormDraft');
-                    formElement.reset();
-                    showStatusMessage('Submission Successful', `Your details for form <b>${currentFormData.id}</b> have been recorded.`, true);
+                    })
+                    .then(res=>res.json())
+                    .then(data=>{ 
+                        if(data.error){
+                            hideLoader();
+                            console.error('Submission failed:', data.error);
+                            showStatusMessage('Submission Failed', `Failed to submit data. Details: ${data.error}`, false);
+                        } else{
+                        hideLoader();
+                        const cs = document.querySelector('#closeStatus')
+                        cs.disabled = true
+
+                        // localStorage.removeItem('dynamicFormDraft');
+                         formElement.reset();
+                         showStatusMessage('Submission Successful', `Your details have been recorded. Please screenshot this ID: <p style="font-size:25px; font-weight:600">
+                             <b style="background: #0f0; padding: 2px 10px;  margin: 20px 0; display: flex;  justify-content: center;color: black; border-radius: 5px;">${data.id}</b>
+
+                           <details>
+                                <summary>More Info</summary>
+                                This is the only proof of your submission. You are fully responsible for providing this ID if requested. Failure to provide it will be at your own risk.
+                            </details>
+
+                         </p>`, true);
+                            let index = 15
+                            setInterval(()=>{
+                                if(index < 1){
+                                    cs.disabled = false
+                                    cs.textContent = 'Close'
+                                } else{
+                            cs.textContent = `Wait ${index}s`
+                            cs.disabled = true
+                            index--
+                                }
+                        }, 1000)
+                        }
+                    })
+                    ;
             
                 } catch (error) {
                     hideLoader();

@@ -176,8 +176,8 @@ def make_pdf_all(header_text, footer_text, form, submissions):
 
     # Minimal widths
     min_col_widths = {
-        "row": 8, "adm": 40, "phone": 30, "name": 35, "age": 10, "email": 50,
-        "topic": 30, "assignment": 30, "units": 30
+        "row": 8, "adm": 40, "phone": 30, "name": 35, "age": 12, "email": 50,
+        "topic": 30, "assignment": 30, "units": 25
     }
 
     # --- Compute column widths ---
