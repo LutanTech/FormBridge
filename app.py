@@ -701,7 +701,6 @@ def edit_sub():
     if not data:
         return jsonify({'error': 'Invalid payload'}), 400
 
-    print(data)
 
     i = data.get('i')
     user_data = decode(i) if i else {}
@@ -710,7 +709,6 @@ def edit_sub():
     t = user_data.get('t')
     s_id = data.get('sid')
     fields = data.get('updated')
-    print(uid, t, s_id)
 
     if not uid or not t or not s_id:
         return jsonify({'error': 'Missing parameters'}), 400
@@ -760,7 +758,6 @@ def print_all():
         return jsonify({"error": "Form not found"}), 404
 
     submissions = Submission.query.filter_by(form_id=fid).all()
-    print(submissions)
 
     pdf_path = make_pdf_all(header, footer, form, submissions)
 
@@ -906,10 +903,8 @@ def logout():
     
     raw_data = request.get_json()
     data = decode(raw_data.get('data'))
-    print(data)
     token = data.get('t')
     user_data = decode(data.get('u'))
-    print(user_data)
     
     id = user_data.get('id')
     device_ua = data.get('d')
@@ -934,7 +929,6 @@ def logout():
 def change_limit(user_id, token, val):
     if user_id and token and val:
         user = User.query.filter_by(id=user_id).first()
-        print(user_id)
         if user:
             temp_link = generate_temp_link(user.id)
             payload = {
@@ -1082,7 +1076,6 @@ def reset_password():
     encoded = request.get_json()
     if encoded:
         decoded = decode(encoded.get('data'))
-        print(encoded, decoded)        
         if decoded:
             user_data = decoded.get('user_data')
             raw_form_data = decoded.get('form_data')
@@ -1202,6 +1195,115 @@ def unreport(ua, user_data, token):
         
     return jsonify({'error':'Invalid payload'}), 400
     
+
+
+#ADMIN++++++++++++++++++++++
+
+@app.route('/users/<user_data>/<token>', methods=['POST'])
+def users(user_data,token):
+    if user_data and token:
+        user_dict = decode(user_data)
+        if user_dict:
+            id = user_dict.get('id')
+            if id:
+                user = User.query.filter_by(id=id).first()
+                if user:
+                    if validate_token(token, user.id):
+                        if user.email == 'lutancorpinfoteam@gmail.com':
+                             users = User.query.all()
+                             return jsonify({'users':[u.to_dict() for u in users]}), 200
+                        log(f'[401] Unauthorized Admin login by email : {user.email}', 'error')
+                        return jsonify({'error':'Unauthorized'}), 401
+                    return jsonify({'error':'Unauthorized. Pleasse Login again'}), 401
+                return jsonify({'error':'User not found'}), 404
+            return jsonify({'error':'Missing data in request'}), 400
+        return jsonify({'error':'Failed to parse data'}), 400
+    return jsonify({'error':'Missing data in request : udt'}), 404
+
+
+@app.route('/logs/<user_data>/<token>', methods=['POST'])
+def logs(user_data,token):
+    if user_data and token:
+        user_dict = decode(user_data)
+        if user_dict:
+            id = user_dict.get('id')
+            if id:
+                user = User.query.filter_by(id=id).first()
+                if user:
+                    if validate_token(token, user.id):
+                        if user.email == 'lutancorpinfoteam@gmail.com':
+                             logs = Log.query.all()
+                             return jsonify({'logs':[l.to_dict() for l in logs]}), 200
+                        log(f'[401] Unauthorized Admin login by email : {user.email}', 'error')
+                        return jsonify({'error':'Unauthorized'}), 401
+                    return jsonify({'error':'Unauthorized. Pleasse Login again'}), 401
+                return jsonify({'error':'User not found'}), 404
+            return jsonify({'error':'Missing data in request'}), 400
+        return jsonify({'error':'Failed to parse data'}), 400
+    return jsonify({'error':'Missing data in request : udt'}), 404
+
+@app.route('/support/<user_data>/<token>', methods=['POST'])
+def support(user_data,token):
+    if user_data and token:
+        user_dict = decode(user_data)
+        if user_dict:
+            id = user_dict.get('id')
+            if id:
+                user = User.query.filter_by(id=id).first()
+                if user:
+                    if validate_token(token, user.id):
+                        if user.email == 'lutancorpinfoteam@gmail.com':
+                             logs = Help.query.all()
+                             return jsonify({'tickets':[l.to_dict() for l in logs]}), 200
+                        log(f'[401] Unauthorized Admin login by email : {user.email}', 'error')
+                        return jsonify({'error':'Unauthorized'}), 401
+                    return jsonify({'error':'Unauthorized. Pleasse Login again'}), 401
+                return jsonify({'error':'User not found'}), 404
+            return jsonify({'error':'Missing data in request'}), 400
+        return jsonify({'error':'Failed to parse data'}), 400
+    return jsonify({'error':'Missing data in request : udt'}), 404
+
+@app.route('/suspend/user/<id>/<otp>')
+def suspend(id, otp):
+    if id and otp:
+        user = User.query.filter_by(id=id).first()
+        if user:
+            admin = User.query.filter_by(email='lutancorpinfoteam@gmail.com', is_admin=True).first()
+            if admin:
+                if user.id == admin.id:
+                    log(f'[401] Critical error. Admin account susspension detected and stopped', 'error')
+                    return jsonify({'error':'Unauthorized action. Alerting System Manager'}), 401
+                admin_otp = admin.otp
+                if admin_otp:
+                    if otp == admin_otp:
+                        user.is_active = not user.is_active
+                        db.session.commit()
+                        action = 'Suspended'
+                        if user.is_active:
+                            action = 'Unsuspended'
+                        if not user.is_active:
+                            action = 'Suspended'
+                        log(f'[200] User {user.email}  {action} successfully', 'success')
+                        return jsonify({'msg':f'User  {action} successfully'}), 200
+                    return jsonify({'error':'Invalid OTP'}), 401
+                otp = generate_otp(6)
+                try:
+                    # send_otp_email(mail, admin.email, otp)
+                    admin.otp = otp
+                    # db.session.commit()
+                    return jsonify({'info':'Admin OTP not Generated. generating and sending now...'}), 201
+                except Exception as e:
+                    log(f'[400] Unexpected error in sending admin verification otp', 'error')
+                    return jsonify({'error':'Failed to send OTP'}), 400
+            return jsonify({'error':'Can not locate Admin. Please retry'}), 404
+        return jsonify({'error':'Can initiate user. Please retry'}), 404
+            
+    return jsonify({'error':'Invalid payload'}), 400
+
+@app.route('/ping/ms')
+def ping_stat():
+    
+    return jsonify({'msg':'pinged'}), 200
 
 if __name__ == '__main__':
     with app.app_context():

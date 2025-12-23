@@ -18,6 +18,7 @@ class User(db.Model):
     joined = db.Column(db.String(), default=get_offset_time_string)
     is_active = db.Column(db.Boolean, default=True)
     is_verified = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
     level = db.Column(db.String(10), default='1')
     devices = db.Column(db.Integer, default=2)
     otp = db.Column(db.String(5))
