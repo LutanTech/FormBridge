@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latency Monitor | Vertical Groups</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #111111;
+            --magenta: #ff00ff;
+            --text-main: #eeeeee;
+            --text-dim: #888888;
+            --bar-bg: #1a1a1a;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dashboard {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--magenta);
+            margin-bottom: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--magenta);
+            color: var(--magenta);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--magenta);
+            color: black;
+            font-weight: bold;
+        }
+
+        /* Chart Area with Scrolling */
+        .chart-scroll-container {
+            background: var(--surface);
+            border: 1px solid #222;
+            border-radius: 12px;
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--magenta) var(--surface);
+        }
+
+        .chart-scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .chart-scroll-container::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        .chart-scroll-container::-webkit-scrollbar-thumb {
+            background-color: var(--magenta);
+            border-radius: 10px;
+        }
+
+        .chart-viewport {
+            padding: 40px 20px 20px 20px;
+            min-height: 400px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            gap: 15px;
+            min-width: 100%;
+            width: max-content;
+        }
+
+        .y-axis-label {
+            position: sticky;
+            left: 10px;
+            top: 10px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            z-index: 10;
+            background: var(--surface);
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .bar-group {
+            width: 80px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 300px;
+            justify-content: flex-end;
+        }
+
+        .bar-container {
+            width: 100%;
+            max-width: 50px;
+            background: var(--bar-bg);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+
+        .bar-fill {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease;
+            position: relative;
+        }
+
+        .bar-fill:hover::after {
+            content: attr(data-latency);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--magenta);
+            color: black;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 20;
+        }
+
+        .bar-label {
+            margin-top: 15px;
+            font-size: 0.7rem;
+            text-align: center;
+            color: var(--text-dim);
+            font-family: 'SF Mono', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        .status-indicator {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            margin-top: 4px;
+            font-weight: bold;
+        }
+
+        .error-msg {
+            color: #ff4444;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .bar-label { transform: rotate(-45deg); margin-top: 25px; }
+            .chart-viewport { padding-bottom: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <header>
+            <h1>Latency Analysis</h1>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="setMode('raw')">Live (24h)</button>
+                <button class="tab-btn" onclick="setMode('weekly')">Weekly</button>
+                <button class="tab-btn" onclick="setMode('monthly')">Monthly</button>
+                <button class="tab-btn" onclick="setMode('yearly')">Yearly</button>
+            </div>
+        </header>
+
+        <div class="chart-scroll-container">
+            <div class="y-axis-label">LATENCY (0-15ms+)</div>
+            <div class="chart-viewport" id="chart">
+                <p style="text-align: center; color: var(--text-dim); width: 100%;">Aggregating data...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'https://formbridge.eu.pythonanywhere.com';
+        const API_ENDPOINT = `${BASE_URL}/uptime/stats`;
+        let currentMode = 'raw';
+        let rawData = [];
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${mode}'`));
+            });
+            renderChart();
+        }
+
+        function getColor(latency) {
+            const val = Math.min(Math.max(latency, 0), 15);
+            const pct = val / 15;
+            const hue = ((1 - pct) * 120).toString(10);
+            return `hsl(${hue}, 100%, 45%)`;
+        }
+
+        function getStatus(lt) {
+            if(lt < 2) return { text: 'Fast', color: '#00ff00' };
+            if(lt <= 5) return { text: 'Medium', color: '#ccff00' };
+            if(lt <= 10) return { text: 'Slow', color: '#ffcc00' };
+            return { text: 'Critical', color: '#ff0000' };
+        }
+
+        function getGroupKey(date, mode) {
+            const d = new Date(date);
+            if (mode === 'weekly') {
+                const oneJan = new Date(d.getFullYear(), 0, 1);
+                const week = Math.ceil((((d - oneJan) / 86400000) + oneJan.getDay() + 1) / 7);
+                return `Week ${week}, ${d.getFullYear()}`;
+            }
+            if (mode === 'monthly') {
+                return d.toLocaleString('default', { month: 'short', year: 'numeric' });
+            }
+            if (mode === 'yearly') {
+                return d.getFullYear().toString();
+            }
+            return d.toLocaleString(); 
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_ENDPOINT);
+                const data = await response.json();
+                rawData = data.logs || [];
+                renderChart();
+            } catch (error) {
+                document.getElementById('chart').innerHTML = `<p class="error-msg">Connection Error: ${error.message}</p>`;
+            }
+        }
+
+        function renderChart() {
+            const container = document.getElementById('chart');
+            if (rawData.length === 0) return;
+
+            let displayData = [];
+
+            if (currentMode === 'raw') {
+                // Filter for last 24 hours
+                const oneDayAgo = new Date().getTime() - (24 * 60 * 60 * 1000);
+                
+                displayData = rawData
+                    .filter(log => new Date(log.at).getTime() > oneDayAgo)
+                    .map(log => ({
+                        label: new Date(log.at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                        latency: parseFloat(atob(log.latency)) || 0,
+                        fullDate: new Date(log.at).toLocaleString()
+                    }));
+                
+                if (displayData.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; width: 100%;">No data in the last 24 hours.</p>';
+                    return;
+                }
+            } else {
+                const groups = {};
+                rawData.forEach(log => {
+                    const key = getGroupKey(log.at, currentMode);
+                    if (!groups[key]) groups[key] = { total: 0, count: 0, lastDate: log.at };
+                    groups[key].total += parseFloat(atob(log.latency)) || 0;
+                    groups[key].count += 1;
+                });
+
+                displayData = Object.keys(groups).map(key => ({
+                    label: key,
+                    latency: groups[key].total / groups[key].count,
+                    fullDate: new Date(groups[key].lastDate).toLocaleDateString()
+                }));
+            }
+
+            container.innerHTML = displayData.map(item => {
+                const heightPct = Math.min((item.latency / 10) * 100, 100);
+                const color = getColor(item.latency);
+                const status = getStatus(item.latency);
+
+                return `
+                    <div class="bar-group" title="${item.fullDate}">
+                        <div class="bar-container">
+                            <div class="bar-fill" 
+                                 data-latency="${item.latency.toFixed(2)}ms"
+                                 style="height: ${heightPct}%; background-color: ${color};">
+                            </div>
+                        </div>
+                        <div class="bar-label">${item.label}</div>
+                        <div class="status-indicator" style="color: ${status.color}">${status.text}</div>
+                    </div>
+                `;
+            }).join('');
+
+            if (currentMode === 'raw') {
+                const scrollParent = document.querySelector('.chart-scroll-container');
+                scrollParent.scrollLeft = scrollParent.scrollWidth;
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, 60000);
+    </script>
+</body>
+</html>

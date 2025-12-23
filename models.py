@@ -188,4 +188,15 @@ class Device(db.Model):
             'l': self.last_login.isoformat()
         }
 
+class Uptime(db.Model):
+    id = db.Column(db.String(10), primary_key=True, default=lambda: generate_random_id(10))
+    last_ping = db.Column(db.DateTime,default=lambda: datetime.utcnow() + timedelta(hours=3))
+    latency = db.Column(db.String(20))
+    
+    def to_dict(self):
+        return{
+            'id':self.id,
+            'at':self.last_ping,
+            'latency':self.latency
+        }
     

@@ -11,7 +11,7 @@ from flask_mail import Mail
 from datetime import datetime, timedelta
 from flask_migrate import Migrate
 import models
-from models import User, Log, Help, Form, Submission, Device
+from models import User, Log, Help, Form, Submission, Device, Uptime
 import pyotp, base64
 import qrcode
 from io import BytesIO
@@ -88,6 +88,10 @@ def log(content, type):
 def index():
     return '[500] Invalid response received from server'
 
+@app.route('/index')
+def index_2():
+    return '[500] Invalid response received from server'
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -157,23 +161,23 @@ def login():
     user = User.query.filter(
         (User.username == username) | (User.email == username)
     ).first()
-    
+
 
     if not user:
         return jsonify(encode({'error': 'User not found'})), 401
-    
+
     reported = json.loads(user.reported) if user.reported else []
-    
+
     if device in reported:
         log(f'[401] Unauthorized login from reported device on user account {user.email} by UA: {device}', 'error')
-        
+
         return jsonify(encode({'error':'Account suspended. Please contact support'})), 401
-    
+
     blocked = json.loads(user.blocked) if user.blocked else []
-    
+
     if device in blocked:
         log(f'[401] Unauthorized login from blocked device on user account {user.email} by UA: {device}', 'error')
-        
+
         return jsonify(encode({'error':'Account blocked. Please contact support'})), 401
 
     if not user.is_verified:
@@ -191,13 +195,13 @@ def login():
         })), 200
     ua = request.headers.get("User-Agent")
     ip = get_client_ip()
-    
+
     try:
         ok, error = check_device(device if device else ua, user.id, ip)
         if not ok:
             return jsonify(encode({"error": f'Failed to login Key Error: {error}'})), 400
-        
-        return jsonify(encode({ 
+
+        return jsonify(encode({
               'user': encode(user.to_dict()),
               'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
               'token': generate_token(user.id)
@@ -206,7 +210,7 @@ def login():
     except Exception as e:
         log(f'[400] Unknown error in /check_device route : {str(e)}','error')
         return jsonify({'error':f'Please try again: {str(e)}'}), 400
-    
+
 
 
 def check_device(ua, user_id, ip):
@@ -223,16 +227,15 @@ def check_device(ua, user_id, ip):
     user = User.query.filter_by(id=user_id).first()
     if not user:
         return False, "User not found"
-    
+
     blocked = json.loads(user.blocked) if user.blocked else []
     reported = json.loads(user.reported) if user.reported else []
-    
+
     if device:
         device.last_login = now
-        device.ip = ip 
+        device.ip = ip
         if device in blocked:
             return False, 'Account blocked by User. Please contact support'
-        
         if device in reported:
             return False, 'Account under review due to user complaints. Please contact support'
         try:
@@ -267,8 +270,8 @@ def check_device(ua, user_id, ip):
         return False, "Database error"
 
 
-          
-    
+
+
 @app.route('/login/two_fa', methods=['POST'])
 def two_fa_login():
 
@@ -280,7 +283,7 @@ def two_fa_login():
     device = data.get('ua')
     if not temp_token or not otp or not device:
         return jsonify({"error": "Invalid payload. Please try again"}), 400
-    
+
     user_id = verify_temp_token(temp_token)
     if not user_id:
         return jsonify({"error": "Invalid or expired token"}), 401
@@ -294,10 +297,10 @@ def two_fa_login():
 
     if not totp.verify(otp, valid_window=1):
         return jsonify({"error": "Invalid 2FA code"}), 401
-    
+
     ua = request.headers.get("User-Agent")
     ip = get_client_ip()
-    
+
 
     try:
         ok, error = check_device(device, user_id, ip)
@@ -309,7 +312,7 @@ def two_fa_login():
                 'expiry': (datetime.utcnow() + timedelta(hours=171)).isoformat(),
                 'token': generate_token(user.id)
             })), 200
-    
+
     except Exception as e:
         log(f'[400] Unknown error in /check_device route : {str(e)}','error')
         return jsonify({'error':f'Please try again: {str(e)}'}), 400
@@ -378,7 +381,7 @@ def create_new_form():
                     desc=desc,
                     instructions=ins,
                     inputs=json.dumps(selected),
-                    deadline=deadline, 
+                    deadline=deadline,
                     selects = json.dumps({id:fields})
                 )
 
@@ -415,12 +418,12 @@ def forms_list():
     id = data.get('u')
     token = data.get('t')
     device = data.get('d')
-    
+
     if id and token:
         user = User.query.filter_by(id=id).first()
         ua = request.headers.get("User-Agent")
         ip = get_client_ip()
-    
+
 
         if user:
             ok, error = check_device(device, user.id, ip)
@@ -428,7 +431,7 @@ def forms_list():
                 return jsonify(encode({"error": f'Failed to login. Key Error: {error}'})), 400
             if validate_token(token, user.id):
                 forms = Form.query.filter_by(user_id=id, is_deleted=False).all()
-                
+
                 if forms:
                     data = []
                     for f in forms:
@@ -449,7 +452,7 @@ def forms_list():
                             "c": sub_count,
                             "n": non_empty_count,
                         })
-                            
+
                     return jsonify(encode({"forms": data,'devices':user.devices })), 200
                 return jsonify(encode({"msg": "No forms found. Please add some", 'devices':user.devices})), 404
             return jsonify(encode({'error':'Unauthorized'})), 401
@@ -507,8 +510,8 @@ def submit_form():
         if selects_data:
             id = selects_data.get('id')
             value = selects_data.get('value')
-            
-            
+
+
         if not form_id:
             return jsonify({"ok": False, "msg": "Missing form or user"}), 400
 
@@ -529,7 +532,7 @@ def submit_form():
 
         cleaned = {}
         for f in fields:
-            key = f.replace("-", "") 
+            key = f.replace("-", "")
             if key in user_data:
                 cleaned[key] = user_data[key]
 
@@ -561,7 +564,7 @@ def submit_form():
     except Exception as e:
         log(f"[500] Database error in /submit route:  {str(e)}", 'error')
         return jsonify({"ok": False, "msg": "Server error"}), 500
-    
+
 @app.route('/toggle_db', methods=['POST'])
 def toggle():
         raw = request.get_json()
@@ -575,16 +578,16 @@ def toggle():
         id = data.get('u')
         token = data.get('t')
         user = User.query.filter_by(id=id).first()
-        
+
         if not user or not validate_token(token, user.id):
             return jsonify({'error':'Unauthorized. Please ogin again'}), 401
-        
-            
+
+
         form = Form.query.filter_by(id=form_id).first()
-        
+
         if not form:
             return jsonify({"ok": False, "msg": "Database not found"}), 404
-        
+
         if user.id != form.user_id:
             return jsonify({"ok": False, "msg": "Unauthorized"}), 401
 
@@ -595,7 +598,7 @@ def toggle():
         form.is_open = False
         db.session.commit()
         return jsonify({"ok": True, "msg": "Database Locked"}), 200
-        
+
 
 @app.route('/delete_form', methods=['POST'])
 def delete_form():
@@ -788,13 +791,13 @@ def activate_two_fa():
     if not user_data:
         return jsonify({"error": "Invalid user data"}), 400
 
-    uid = user_data.get("id")   
-    token = data.get("token") 
+    uid = user_data.get("id")
+    token = data.get("token")
     user = User.query.filter_by(id=uid).first()
-    
+
     if not user:
         return jsonify({'error': 'User not found'}), 404
-    
+
     if user.twofa_secret:
         return jsonify({'error': '2FA already active'}), 401
 
@@ -821,8 +824,8 @@ def activate_two_fa():
             'message': '2FA activated successfully',
             'account_name': account_name,
             'qr_code_base64': qr_b64,
-            'key': user.twofa_secret 
-            
+            'key': user.twofa_secret
+
         }), 200
 
     except Exception as e:
@@ -875,7 +878,7 @@ def resend_qr(payload):
                 log(f'[400] Unexpected error in send_qr_email // for user :( {user.email} ): {str(e)}', 'error')
     except Exception as e:
         log(f'[400] Unexpected error in send_qr_email // for user :( {user.email} ): {str(e)}', 'error')
-            
+
 
 @app.route('/get_devices', methods=['POST'])
 def devices():
@@ -900,15 +903,15 @@ def devices():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    
+
     raw_data = request.get_json()
     data = decode(raw_data.get('data'))
     token = data.get('t')
     user_data = decode(data.get('u'))
-    
+
     id = user_data.get('id')
     device_ua = data.get('d')
-    
+
     if data and id:
         user = User.query.filter_by(id=id).first()
         if user:
@@ -971,7 +974,7 @@ def activate_limit(raw):
                         return jsonify({'error':'Invalid payload. Please retry : UID'}), 400
                     return jsonify({'error':'Invalid payload. Please retry : P_STR'}), 400
                 return jsonify({'error':'Expired link. Please retry again'}), 401
-                
+
             return jsonify({'error':'Invalid payload. Please retry : V|L'}), 400
         return jsonify({'error':'Invalid payload. Please retry : P'}), 400
     return jsonify({'error':'Invalid payload. Please retry : R'}), 400
@@ -1084,60 +1087,60 @@ def reset_password():
             newP = form_data.get('newP')
             newCP = form_data.get('newCP')
             otp = form_data.get('otp')
-            
+
             if not oldP or not newCP or not newP or not otp:
                 return jsonify(encode({'error':'Invalid payload. Please retry'})), 400
-            
+
             if  not user_data:
                 return jsonify(encode({'error':'Missing data in payload. Please retry'})), 404
-            
+
             decoded_user = decode(user_data)
-            
+
             if not decoded_user:
                 return jsonify(encode({'error':'Failed to parse user Please retry'})), 400
-            
+
             id = decoded_user.get('id')
             if not id:
                 return jsonify(encode({'error':'Missing data in payload: ID. Please retry'})), 404
-            
+
             user = User.query.filter_by(id=id).first()
             if not user:
                 return jsonify(encode({'error':'User not found. Please retry'})), 404
-            
+
             if not check_password_hash(user.password, oldP):
                 return jsonify(encode({'error':'Incorrect Old Password. Please retry'})), 404
-            
+
             if user.otp == otp:
                 if newP == newCP:
                    user.otp = ''
                    user.set_password(newP)
                    db.session.commit()
                    return jsonify(encode({'msg':'Password updated successfully'})), 200
-               
+
                 return jsonify(encode({'error':'Passwords do not match'})), 401
-            
+
             return jsonify(encode({'error':'Incorrect OTP. Please retry'})), 401
-        
+
         return jsonify(encode({'error':'Failed to parse data'})), 404
-    
+
     return jsonify(encode({'error':'Invalid Payload'})), 404
 
 @app.route('/account/info', methods=['POST'])
 def account_info():
     raw_data = request.get_json()
-    encoded = raw_data.get('data') 
+    encoded = raw_data.get('data')
     if not encoded:
         return jsonify({'error':'Invalid payload'}), 400
-    
+
     decoded = decode(encoded)
     if not decoded:
         return jsonify({'error':'Failed to parse data'}), 400
     user_data = decoded.get('user_data')
     token  = decoded.get('token')
-    
+
     if not user_data or not token:
         return jsonify({'error':'Missing data in payload. Please retry'}), 404
-    
+
     decoded_user = decode(user_data)
     if not decoded_user:
         return jsonify({'error':'Failed to parse user'}), 400
@@ -1148,7 +1151,7 @@ def account_info():
     if not user:
         return jsonify({'error':'User not found. Please retry'}), 404
     devices = Device.query.filter_by(user_id=user.id).all()
-    
+
     return jsonify(encode({'user':user.to_dict(), 'ld':len(devices)})), 200
 
 @app.route('/unblock/<ua>/<user_data>/<token>')
@@ -1159,7 +1162,7 @@ def unban(ua, user_data, token):
             return jsonify({'error':'Failed to parse data'}), 400
         id = raw.get('id')
         user = User.query.filter_by(id=id).first()
-        if not user:        
+        if not user:
             return jsonify({'error':'User can not be initiated. Please retry'}), 404
         if not validate_token(token, user.id):
             return jsonify({'error':'Unauthorized access. Please retry'}), 401
@@ -1170,7 +1173,7 @@ def unban(ua, user_data, token):
             db.session.commit()
             return jsonify({'msg':'Unblocked successfully'}), 200
         return jsonify({'error':'Device not found. Please retry or contact support'}), 400
-        
+
     return jsonify({'error':'Invalid payload'}), 400
 
 @app.route('/unreport/<ua>/<user_data>/<token>')
@@ -1181,7 +1184,7 @@ def unreport(ua, user_data, token):
             return jsonify({'error':'Failed to parse data'}), 400
         id = raw.get('id')
         user = User.query.filter_by(id=id).first()
-        if not user:        
+        if not user:
             return jsonify({'error':'User can not be initiated. Please retry'}), 404
         if not validate_token(token, user.id):
             return jsonify({'error':'Unauthorized access. Please retry'}), 401
@@ -1192,9 +1195,9 @@ def unreport(ua, user_data, token):
             db.session.commit()
             return jsonify({'msg':'Deleted successfully'}), 200
         return jsonify({'error':'Device not found. Please retry or contact support'}), 400
-        
+
     return jsonify({'error':'Invalid payload'}), 400
-    
+
 
 
 #ADMIN++++++++++++++++++++++
@@ -1293,17 +1296,38 @@ def suspend(id, otp):
                     # db.session.commit()
                     return jsonify({'info':'Admin OTP not Generated. generating and sending now...'}), 201
                 except Exception as e:
-                    log(f'[400] Unexpected error in sending admin verification otp', 'error')
+                    log(f'[400] Unexpected error in sending admin verification otp {str(e)}', 'error')
                     return jsonify({'error':'Failed to send OTP'}), 400
             return jsonify({'error':'Can not locate Admin. Please retry'}), 404
         return jsonify({'error':'Can initiate user. Please retry'}), 404
-            
+
     return jsonify({'error':'Invalid payload'}), 400
+
 
 @app.route('/ping/ms')
 def ping_stat():
-    
-    return jsonify({'msg':'pinged'}), 200
+    return jsonify({'msg': f'pinged successfully'}), 200
+
+@app.route('/uptime/<latency>')
+def uptime_log(latency):
+    if not decode(latency):
+        return jsonify({'error':'Failed to parse data'}), 400
+    new_log = Uptime(id=generate_random_id(10), latency=latency)
+    try:
+        db.session.add(new_log)
+        db.session.commit()
+        return jsonify({'success':True}), 201
+    except Exception as e:
+        db.session.rollback()
+        log(f'[500] Database error in loging uptime : {str(e)}', 'error')
+        return jsonify({'success':False}), 500
+
+
+@app.route('/uptime/stats')
+def uptime_stats():
+    logs = Uptime.query.all()
+    return jsonify({'logs':[l.to_dict() for l in logs]})
+
 
 if __name__ == '__main__':
     with app.app_context():
