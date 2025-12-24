@@ -1,79 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <url>
-    <loc>https://formbridge.vercel.app/</loc>
-    <priority>1.0</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/login</loc>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/register</loc>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/logout</loc>
-    <priority>0.4</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/account</loc>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/status</loc>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/devices</loc>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/instance</loc>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/logbook</loc>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/submit</loc>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/support</loc>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/verify_email</loc>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/privacy_policy</loc>
-    <priority>0.4</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/terms</loc>
-    <priority>0.4</priority>
-  </url>
-
-  <url>
-    <loc>https://formbridge.vercel.app/404</loc>
-    <priority>0.1</priority>
-  </url>
-
+<url>
+<loc>https://formbridge.vercel.app/</loc>
+<lastmod>2025-12-24T05:26:41+00:00</lastmod>
+<priority>1.00</priority>
+</url>
+<url>
+<loc>https://formbridge.vercel.app/support</loc>
+<lastmod>2025-12-24T05:26:41+00:00</lastmod>
+<priority>0.80</priority>
+</url>
+<url>
+<loc>https://formbridge.vercel.app/login</loc>
+<lastmod>2025-12-24T05:26:41+00:00</lastmod>
+<priority>0.80</priority>
+</url>
+<url>
+<loc>https://formbridge.vercel.app/privacy_policy</loc>
+<lastmod>2025-12-24T05:26:42+00:00</lastmod>
+<priority>0.80</priority>
+</url>
+<url>
+<loc>https://formbridge.vercel.app/terms</loc>
+<lastmod>2025-12-24T05:26:42+00:00</lastmod>
+<priority>0.80</priority>
+</url>
+<url>
+<loc>https://formbridge.vercel.app/register</loc>
+<lastmod>2025-12-24T05:26:42+00:00</lastmod>
+<priority>0.64</priority>
+</url>
+<url>
+<loc>https://formbridge.vercel.app/cookies</loc>
+<lastmod>2025-12-24T05:26:42+00:00</lastmod>
+<priority>0.64</priority>
+</url>
 </urlset>
