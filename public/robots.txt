@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /account
+Disallow: /logout
+Disallow: /submit
+Disallow: /verify_email
+Disallow: /status/
+
+Sitemap: https://formbridge.vercel.app/sitemap.xml

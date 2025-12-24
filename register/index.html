@@ -7,16 +7,16 @@
     <meta name="title" content="FormBridge – Smart University Form Automation">
 <meta name="description" content="FormBridge simplifies form processing with fast, secure, digital tools for students and administrators. Create, submit, and track data effortlessly.">
 
-<link rel="canonical" href="https://formbridge.vercel.app/">
+<link rel="canonical" href="https://formbridge.vercel.app/register">
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://formbridge.vercel.app/">
+<meta property="og:url" content="https://formbridge.vercel.app/register">
 <meta property="og:title" content="FormBridge – Smart University Form Automation">
 <meta property="og:description" content="Fast, secure digital form management for universities.">
 <meta property="og:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://formbridge.vercel.app/">
+<meta name="twitter:url" content="https://formbridge.vercel.app/register">
 <meta name="twitter:title" content="FormBridge – The ultimate Simplifier">
 <meta name="twitter:description" content="Digital form management built for universities.">
 <meta name="twitter:image" content="https://formbridge.vercel.app/assets/images/logo-nbg.png">
@@ -26,8 +26,8 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "FormBridge",
-  "alternateName": "Form Bridge Platform",
-  "url": "https://formbridge.vercel.app/",
+  "alternateName": "Form Bridge || Register",
+  "url": "https://formbridge.vercel.app/register",
   "logo": "https://formbridge.vercel.app/assets/images/logo-nbg.png",
   "sameAs": []
 }
@@ -217,6 +217,10 @@
             flex-grow: 1;
             }
         }
+        label span{
+            font-size: small;
+            color: red;
+        }
         .reg{
             display: flex;
             width: 100%;
@@ -245,10 +249,10 @@
                 </div>
                 <hr style="width: 100%;">
                 <div class="div">
-                    <label for="username">Enter Username</label>
+                    <label for="username">Enter Username<span>* (Max. Length : 10)</span></label>
                     <div class="div-inp">
                         <i class="fas fa-user-circle"></i>
-                        <input type="text" name="username" id="username" placeholder="Username" maxLength="10" required>
+                        <input type="text" name="username" id="username" placeholder="Username" maxLength="10" required style="text-transform: lowercase;">
                     </div>
                 </div>
                 <div class="div">
@@ -259,17 +263,17 @@
                     </div>
                 </div>
                 <div class="div">
-                    <label for="password">Enter Password</label>
+                    <label for="password">Enter Password <span>* (Max. Length : 6)</span></label>
                     <div class="div-inp">
                         <i class="fas fa-lock"></i>
-                        <input type="password" name="password" id="password" placeholder="Password" required>
+                        <input type="password" name="password" id="password" placeholder="Password (Max. Length 6)" required maxLength="6">
                     </div>
                 </div>
                                 <div class="div">
-                    <label for="c-password">Confirm Password</label>
+                    <label for="c-password">Confirm Password <span>* Max. Length : 6</span></label>
                     <div class="div-inp">
                         <i class="fas fa-lock-open"></i>
-                        <input type="text" autocomplete="off" name="c-password" id="c-password" placeholder="Confirm Password" required>
+                        <input type="text" autocomplete="off" name="c-password" id="c-password" placeholder="Confirm Password)" maxLength="6" required>
                     </div>
                 </div>
                 <div class="actions" style="width: 100%;">
@@ -306,8 +310,16 @@
                 alert('Mismatch Error', 'Passwords do not match', 'error')
                 return
             }
+            if(password.length > 6 || c_password.length < 6 ){
+                alert('Password Error', 'Password should be 6 characters long', 'error')
+                return
+            }
+            if(username.length > 10 ){
+                alert('Username', 'Username should be 10 characters or less', 'error')
+                return
+            }
             const payload = {
-            username:username,
+            username:username.toLowerCase(),
             password:password,
             email:email
             }

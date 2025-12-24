@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formbridge Status</title>
+
+<style>
+:root{
+    --bg:#050505;
+    --surface:#111;
+    --accent:#ff00ff;
+    --text:#eee;
+    --dim:#aaa;
+    --bar-bg:#1a1a1a;
+}
+
+body{
+    margin:0;
+    padding:20px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Inter,system-ui,sans-serif;
+}
+
+.dashboard{
+    max-width:1200px;
+    margin:auto;
+}
+
+header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+h1{
+    color:var(--accent);
+    letter-spacing:4px;
+    font-size:1.3rem;
+}
+
+.tabs{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.tab-btn{
+    background:none;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    padding:8px 18px;
+    border-radius:20px;
+    font-size:.75rem;
+    cursor:pointer;
+}
+
+.tab-btn.active{
+    background:var(--accent);
+    color:#000;
+    font-weight:bold;
+}
+
+.chart-scroll-container{
+    background:var(--surface);
+    border-radius:14px;
+    border:1px solid #222;
+    overflow-x:auto;
+    padding-top:20px;
+}
+
+.chart-viewport{
+    display:flex;
+    gap:40px;
+    padding:20px 20px 60px;
+    width:max-content;
+}
+
+.group{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-right: 30px;
+}
+
+.group-header{
+    position:sticky;
+    top:0;
+    left: 0;
+    right: 0;
+    z-index:10;
+    background:#000;
+    color:var(--accent);
+    padding:6px 14px;
+    border-radius:999px;
+    font-size:.75rem;
+    justify-self: center;
+    letter-spacing:2px;
+    margin-bottom:18px;
+    box-shadow:0 0 12px #ff00ff66;
+}
+
+.bar-row{
+    display:flex;
+    gap:14px;
+    align-items:flex-end;
+}
+
+.bar-group{
+    width:42px;
+    height:260px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    position:relative;
+}
+
+.bar-container{
+    width:18px;
+    height:100%;
+    background:var(--bar-bg);
+    border-radius:6px 6px 0 0;
+    display:flex;
+    align-items:flex-end;
+    position:relative;
+}
+
+.bar-fill{
+    width:100%;
+    border-radius:6px 6px 0 0;
+    transition:height .6s ease;
+    position:relative;
+}
+
+.bar-fill:hover::after{
+    content:attr(data-ms);
+    position:absolute;
+    top:-30px;
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--accent);
+    color:#000;
+    padding:4px 7px;
+    border-radius:4px;
+    font-size:.65rem;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.bar-label{
+    margin-top:10px;
+    font-size:.65rem;
+    color:var(--dim);
+    text-align:center;
+}
+
+.status{
+    font-size:.6rem;
+    font-weight:bold;
+    margin-top:3px;
+}
+</style>
+</head>
+
+<body>
+<div class="dashboard">
+
+<header>
+    <h1>UPTIME STATUS</h1>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="setMode('raw')">Live 24h</button>
+        <button class="tab-btn" onclick="setMode('weekly')">Weekly</button>
+        <button class="tab-btn" onclick="setMode('monthly')">Monthly</button>
+        <button class="tab-btn" onclick="setMode('yearly')">Yearly</button>
+    </div>
+</header>
+
+<div class="chart-scroll-container">
+    <div class="chart-viewport" id="chart">Loading…</div>
+</div>
+
+</div>
+
+<script>
+const API = "https://formbridge.eu.pythonanywhere.com/uptime/stats";
+let rawData = [];
+let mode = "raw";
+
+function setMode(m){
+    mode = m;
+    document.querySelectorAll(".tab-btn")
+        .forEach(b=>b.classList.toggle("active", b.textContent.toLowerCase().includes(m)));
+    render();
+}
+
+function color(ms){
+    return `hsl(${(1-Math.min(ms,15)/15)*120},100%,45%)`;
+}
+
+function status(ms){
+    if(ms < 2) return ["Fast","#00ff00"];
+    if(ms <= 5) return ["Medium","#ccff00"];
+    if(ms <= 10) return ["Slow","#ff9900"];
+    return ["Critical","#ff0000"];
+}
+
+function groupKey(date){
+    const d = new Date(date);
+
+    if(mode === "weekly"){
+        const oneJan = new Date(d.getFullYear(),0,1);
+        const week = Math.ceil((((d - oneJan)/86400000) + oneJan.getDay() + 1)/7);
+        return `Week ${week} ${d.getFullYear()}`;
+    }
+
+    if(mode === "monthly"){
+        return d.toLocaleString("default",{month:"long",year:"numeric"});
+    }
+
+    if(mode === "yearly"){
+        return d.getFullYear().toString();
+    }
+
+    return d.toDateString();
+}
+
+async function fetchData(){
+    const r = await fetch(API);
+    rawData = (await r.json()).logs || [];
+    render();
+}
+
+function render(){
+    const el = document.getElementById("chart");
+    if(!rawData.length){
+        el.innerHTML = "No data";
+        return;
+    }
+
+    // const limit = mode === "raw" ? Date.now() - 86400000 : 0;
+    const limit = mode === "raw" ? 0 : 0;
+
+    const groups = {};
+
+    rawData
+        .filter(l => !limit || new Date(l.at).getTime() > limit)
+        .forEach(l=>{
+            const key = groupKey(l.at);
+            const ms = parseFloat(atob(l.latency)) || 0;
+
+            if(!groups[key]){
+                groups[key] = { total:0, count:0, logs:[] };
+            }
+
+            groups[key].total += ms;
+            groups[key].count += 1;
+            groups[key].logs.push({ at:l.at, ms });
+        });
+
+    el.innerHTML = Object.entries(groups).map(([key,g])=>{
+        const bars = mode === "raw"
+            ? g.logs.map(l=>renderBar(l.ms,l.at,false)).join("")
+            : renderBar(g.total/g.count,key,true);
+
+        return `
+            <div class="group">
+                <div class="group-header">${key}</div>
+                <div class="bar-row">${bars}</div>
+            </div>
+        `;
+    }).join("");
+
+    document.querySelector(".chart-scroll-container").scrollLeft = 999999;
+}
+
+function renderBar(ms, at, aggregated){
+    const h = Math.min(ms/10*100,100);
+    const [t,c] = status(ms);
+
+    return `
+        <div class="bar-group">
+            <div class="bar-container">
+                <div class="bar-fill"
+                    data-ms="${ms.toFixed(2)}ms"
+                    style="height:${h}%;background:${color(ms)}">
+                </div>
+            </div>
+            <div class="bar-label">
+                ${aggregated ? ms.toFixed(2)+"ms"
+                : new Date(at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}
+            </div>
+            <div class="status" style="color:${c}">${t}</div>
+        </div>
+    `;
+}
+
+fetchData();
+setInterval(fetchData,60000);
+</script>
+</body>
+</html>

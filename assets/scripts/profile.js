@@ -138,7 +138,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     function updateAccountInfo(data){
         const user = data.user
-        console.log(user)
         const usn = document.querySelector('.p-usn')
         const email = document.querySelector('.p-email')
         const phone = document.querySelector('.p-phone')

@@ -30,11 +30,11 @@ app.config['MAIL_DEFAULT_SENDER'] = ('FormBridge', 'lutancorpinfoteam@gmail.com'
 app.config['ADMIN_EMAIL'] = 'lutancorpinfoteam@gmail.com'
 
 ALLOWED_FRONTEND_ORIGINS = [
-     "http://127.0.0.1:5500",
-    "https://formbridge.vercel.app"
+    "https://formbridge.vercel.app",
+    "https://formbridge-admin.vercel.app"
 ]
 
-# CORS(app, origins=ALLOWED_FRONTEND_ORIGINS, supports_credentials=True)
+CORS(app, origins=ALLOWED_FRONTEND_ORIGINS, supports_credentials=True)
 CORS(app)
 models.db.init_app(app)
 db = models.db
@@ -939,7 +939,7 @@ def change_limit(user_id, token, val):
                 'v':val
             }
             try:
-                link = f'http://127.0.0.1:5500/devices/?p={encode(payload)}'
+                link = f'https://formbridge.vercel.app/devices/?p={encode(payload)}'
                 send_devices_limit_email(mail, user.email, link, user.username)
                 return jsonify({'msg':'Link send to your Email. Please open your mail app and click to verify'}), 200
             except Exception as e:
@@ -1291,15 +1291,15 @@ def suspend(id, otp):
                     return jsonify({'error':'Invalid OTP'}), 401
                 otp = generate_otp(6)
                 try:
-                    # send_otp_email(mail, admin.email, otp)
+                    send_otp_email(mail, admin.email, otp)
                     admin.otp = otp
-                    # db.session.commit()
+                    db.session.commit()
                     return jsonify({'info':'Admin OTP not Generated. generating and sending now...'}), 201
                 except Exception as e:
                     log(f'[400] Unexpected error in sending admin verification otp {str(e)}', 'error')
                     return jsonify({'error':'Failed to send OTP'}), 400
-            return jsonify({'error':'Can not locate Admin. Please retry'}), 404
-        return jsonify({'error':'Can initiate user. Please retry'}), 404
+            return jsonify({'error':'Failed to locate Admin. Please retry'}), 404
+        return jsonify({'error':'Failed to initiate user. Please retry'}), 404
 
     return jsonify({'error':'Invalid payload'}), 400
 

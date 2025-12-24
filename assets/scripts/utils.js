@@ -1,5 +1,3 @@
-// const baseUrl = 'http://127.0.0.1:6050'
-// const baseUrl = "http://10.130.144.82:6500"
 const baseUrl = 'https://formbridge.eu.pythonanywhere.com'
 window.baseUrl = baseUrl
 
@@ -144,3 +142,18 @@ function toggleBtn(id, text, toggle){
         }
 }
 window.toggleBtn = toggleBtn
+
+document.addEventListener('DOMContentLoaded', ()=>{
+initLinks()
+})
+function initLinks(){
+    const lbtns = document.querySelectorAll('button')
+    lbtns.forEach(btn=>{
+        if(btn.textContent == 'Log In'){
+            btn.setAttribute('onclick', 'window.location.href = "/login"')
+        }
+        if(btn.textContent == 'Register Now' || btn.textContent == 'Register'){
+            btn.setAttribute('onclick', 'window.location.href = "/register"')
+        }
+    })
+}
